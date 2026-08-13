@@ -3,6 +3,12 @@
 > 依据 [`plan.md`](plan.md) §28 实施路线图、§30 TODO List、§31 验收标准整理。
 > 状态标记：[x] 已完成 · [-] 进行中 · [ ] 待办。
 > 更新时间：2026-08-13（9 资产仓已同步，35 测试通过，ruff 干净）。
+>
+> **2026-08-13 HAC-IF 跨仓落地**：依据 [`digest/hwif.md`](digest/hwif.md) 向各 repo 添加 HAC-IF 内容，
+> Change Bundle 见 [`changesets/CHG-2026-HACIF-001.yaml`](changesets/CHG-2026-HACIF-001.yaml:1)。
+> HWIF `accelerator/hac_if` 六接口族 + schema/spec/sva/profiles；CBB 四个 HAC Adapter + HAC Shell 模板；
+> VIP `protocol/hac_if` 骨架；IP Golden Example `hac_aes`；Tool `aix-hwif-gen hac-generate`；
+> Catalog 四个 HAC 资产；SoC Integration 集成示例。`make check` 通过（51 测试），tool pytest 8 例通过。
 
 > 代码结构/工程化专项优化见 [`docs/optimization-plan.md`](docs/optimization-plan.md)。
 > **2026-08-13 已执行**：P0 五项缺陷修复、cli 拆包、schema 单一事实源、Makefile、

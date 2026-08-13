@@ -1,0 +1,79 @@
+# HAC-IF 跨仓落地（HWIF + CBB + VIP + IP + Tool + Catalog + SoC Integration）
+# 依据 digest/hwif.md（HAC-IF 总体规划 V0.1）。
+schema_version: aix.change-bundle/v1
+id: CHG-2026-HACIF-001
+title: HAC-IF 硬件加速核接口跨仓落地
+description: |
+  参考 digest/hwif.md 向各 repo 添加 HAC-IF 内容：
+  - HWIF：accelerator/hac_if 六接口族（ctrl/stream/mem/lmem/event/mgmt）+ schema + sva + spec + profiles；
+  - CBB：components/hac_if 四个 Adapter（AP/AXI/Stream/LMEM）+ templates/hac_shell_template + registry 注册；
+  - VIP：protocol/hac_if 骨架（metadata/docs/src/sva/seq/tb/tests/examples）+ vip_index 注册；
+  - IP：ips/aixsilicon/hac_aes（Golden Example A，HAC-P0）+ registry 注册；
+  - Tool：aix-hwif-gen 新增 hac-generate（HAC-IF 配置 SSOT → SV 参数包/capability）；
+  - Catalog：hwif-hac-if / cbb-hac-adapters / vip-hac-if / ip-hac-aes 资产条目 + index 注册；
+  - SoC Integration：examples/hac-accel-soc.yaml 集成示例。
+owner: eda
+status: draft
+
+repositories:
+  hwif:
+    branch: feature/hac-if-contract
+    base: main
+    pr: 0
+    merge_order: 1
+  cbb:
+    branch: feature/hac-if-adapters
+    base: main
+    pr: 0
+    depends_on: [hwif]
+    merge_order: 2
+  vip:
+    branch: feature/hac-if-vip
+    base: main
+    pr: 0
+    depends_on: [hwif, cbb]
+    merge_order: 3
+  ip:
+    branch: feature/hac-golden-example
+    base: main
+    pr: 0
+    depends_on: [hwif, cbb, vip]
+    merge_order: 4
+  tools:
+    branch: feature/hac-hwif-gen
+    base: main
+    pr: 0
+    depends_on: [hwif]
+    merge_order: 2
+  catalog:
+    branch: feature/hac-catalog
+    base: main
+    pr: 0
+    depends_on: [hwif, cbb, vip, ip]
+    merge_order: 5
+  soc-integration:
+    branch: feature/hac-soc-example
+    base: main
+    pr: 0
+    depends_on: [hwif, cbb, ip]
+    merge_order: 5
+
+validation:
+  profile: ip-dev
+  flow: cross-repo-qualification
+  required_targets:
+    - aixsilicon:interface:hac_if:lint
+    - aixsilicon:interface:hac_ctrl:lint
+    - aixsilicon:interface:hac_stream:lint
+    - aixsilicon:interface:hac_mem:lint
+    - aixsilicon:interface:hac_lmem:lint
+    - aixsilicon:interface:hac_event:lint
+    - aixsilicon:interface:hac_mgmt:lint
+    - aixsilicon:cbb:hac_shell:lint
+    - aixsilicon:ip:hac_aes:lint
+
+release_plan:
+  hwif: 0.1.0
+  cbb: 0.1.0
+  vip: 1.0.0
+  ip: 0.1.0
