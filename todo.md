@@ -4,6 +4,9 @@
 > 状态标记：[x] 已完成 · [-] 进行中 · [ ] 待办。
 > 更新时间：2026-08-13（9 资产仓已同步，35 测试通过，ruff 干净）。
 
+> 代码结构/工程化专项优化见 [`docs/optimization-plan.md`](docs/optimization-plan.md)
+> （cli 拆包、context 收敛、schema 单一事实源、Makefile、补齐 run/bundle/release 命令）。
+
 ## 总览
 
 | 阶段 | 周期 | 目标出口 | 状态 |
