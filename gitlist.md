@@ -18,4 +18,4 @@
 | skills | `aixsilicon_skill_repo` | https://github.com/boyangwang1991-design/aixsilicon_skill_repo | 已构建（README 初始提交，私有） |
 | knowledge | `aixsilicon_chipknowledge` | https://github.com/boyangwang1991-design/aixsilicon_chipknowledge | 已接入（仓库已建，内容待填充） |
 
-> 与 [`manifests/default.yaml`](manifests/default.yaml) 保持一致。`aix wf sync` 已克隆全部 9 仓，`aix wf status` 显示均为 `main / clean / sync`；`.aix/local.lock.yaml` 已记录各仓真实 SHA。
+> 与 [`manifests/default.yaml`](manifests/default.yaml) 保持一致。`aix wf sync` 已克隆全部 10 仓，`aix wf status` 显示均为 `main / clean / sync`；`.aix/local.lock.yaml` 已记录各仓真实 SHA。
