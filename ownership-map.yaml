@@ -1,6 +1,6 @@
 # Ownership Map：资产 → Owner 仓 → Skill 写入边界
 # 详见 plan.md §20.3。Skill 生成的文件必须按此表写入对应仓和目录。
-# 配套注册表：docs/schema-ownership.md（Schema 所有权 + 仓库注册表）。
+# 配套注册表：docs/archived/schema-ownership.md（Schema 所有权 + 仓库注册表）。
 
 schema_version: aix.ownership-map/v1
 
@@ -60,7 +60,7 @@ map:
     skill_write: 仅 Release 流程可写（生成草案 + PR，不自动 merge）
     allowed_paths: [assets, compatibility, maturity]
 
-# Schema 所有权（详见 docs/schema-ownership.md）—— 每个事实域只有一个 Owner 仓
+# Schema 所有权（详见 docs/archived/schema-ownership.md）—— 每个事实域只有一个 Owner 仓
 schema_ownership:
   - domain: workspace-manifest / lock / flow / change-bundle / tool-profile / evidence
     owner_repo: aixsilicon_workflow
@@ -84,7 +84,7 @@ schema_ownership:
 # 仓库注册表（补充：命名一致性）
 # dv-common / soc-integration 当前无 `_repo` 后缀；与其余 7 仓命名不一致。
 # 处置：本文件与 manifests 统一使用实际仓名；是否重命名为 *_repo 由 Owner 决策并在
-# docs/schema-ownership.md 仓库注册表登记后执行（GitHub 自动重定向旧 URL）。
+# docs/archived/schema-ownership.md 仓库注册表登记后执行（GitHub 自动重定向旧 URL）。
 repository_registry:
   - id: workflow
     repo: aixsilicon_workflow
@@ -124,11 +124,11 @@ repository_registry:
     type: other
     visibility: public
 
-# Tool 边界（ADR-0006 / docs/tool-placement.md）
+# Tool 边界（ADR-0006 / docs/archived/tool-placement.md）
 tool_boundary:
   t1_public_product_tools: aixsilicon_tool_repo        # 跨仓公共确定性工具（aixsilicon.commands 插件）
   t2_repo_local_scripts: 留在对应资产仓 tools/          # 单仓自维护脚本（测试/CI/文档/本地检查）
   t3_private_controlled_tools: 独立私有 overlay repo    # 商业 EDA/PDK/Memory 适配、内部 Runner/License（同一 Plugin API）
   t4_project_specific_scripts: 留在项目仓               # 项目 Waiver/胶水/迁移脚本
-  classification: docs/tool-placement.md
+  classification: docs/archived/tool-placement.md
   migration: 资产仓内的产品级确定性工具分阶段迁入 tool_repo（阶段 A 双入口 → 阶段 B aix tool → 阶段 C deprecated）
