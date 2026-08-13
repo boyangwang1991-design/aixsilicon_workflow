@@ -1,36 +1,66 @@
-# 团队默认集成基线（示例模板）
-# 警告：以下 SHA 为占位符。真实基线必须通过 `aix wf lock` 在真实仓库上生成，
-# 并通过完整跨仓资格验证 PR 更新。
 schema_version: aix.workspace-lock/v1
 workspace: aixsilicon
-profile: soc-integration
-manifest_digest: "sha256:0000000000000000000000000000000000000000000000000000000000000000"
-catalog:
-  revision: "0000000000000000"
+profile: release
+manifest_digest: sha256:246aa6dc14089740ab47a1726e727ea0658f282857ffa6d07063fe3a7daebdf9
 resolution_policy: release
-generator_type: cli
-
+generator_type: ci
 repositories:
   hwif:
     url: git@github.com:boyangwang1991-design/aixsilicon_hwif_repo.git
-    resolved_from: main
-    commit: "0000000000000000000000000000000000000000"
+    resolved_from: branch:main
+    commit: ded371f3f89948e32fc5b854481f261edf5538ef
+    tree: c663c4e2616f017b3b0c4ef26133ceac4ad12e4f
+    dirty: false
+    overridden: false
+  cbb:
+    url: git@github.com:boyangwang1991-design/aixsilicon_cbb_repo.git
+    resolved_from: branch:main
+    commit: 6a8392beb96a10216b77fdd60f8e5e4d6363c0ad
+    tree: 57d489a4ad793d894e1286ea86e8b8b3ccff77aa
+    dirty: false
+    overridden: false
+  ip:
+    url: git@github.com:boyangwang1991-design/aixsilicon_ip_repo.git
+    resolved_from: branch:main
+    commit: 3db998045fa054149b9df288cc51cf198e8c7ba4
+    tree: 783b919de087741deaaa52ee47f315c64fdf183c
     dirty: false
     overridden: false
   dv-common:
     url: git@github.com:boyangwang1991-design/aixsilicon_dv_common.git
-    resolved_from: main
-    commit: "0000000000000000000000000000000000000000"
+    resolved_from: branch:main
+    commit: ac858c0edc65d0a94acf6462bb54c755c40f5487
+    tree: 62ae6fd3f0fb0a18ec5f710f7c59043d4de84d7e
     dirty: false
     overridden: false
   vip:
     url: git@github.com:boyangwang1991-design/aixsilicon_vip_repo.git
-    resolved_from: main
-    commit: "0000000000000000000000000000000000000000"
+    resolved_from: branch:main
+    commit: 16f594623d3e9b40a5ff13f58e18dc63c0a7d5a3
+    tree: 83a6aaf8423558c73831a3264c4800c9b9ceea93
     dirty: false
     overridden: false
-
+  tools:
+    url: git@github.com:boyangwang1991-design/aixsilicon_tool_repo.git
+    resolved_from: branch:main
+    commit: eba49c55b56922040d8f0102285e46bc9d76bad8
+    tree: 44823f44d1dca6589900bbd5bd0da3ef072f2aa3
+    dirty: true
+    overridden: false
+  catalog:
+    url: git@github.com:boyangwang1991-design/aixsilicon_catalog_repo.git
+    resolved_from: branch:main
+    commit: 96652d4a33e87308bc6de1fac16bc39e97bcd402
+    tree: e6f73e684c463e3e241eb9d29f444124dea43155
+    dirty: false
+    overridden: false
+  soc-integration:
+    url: git@github.com:boyangwang1991-design/aixsilicon_soc_integration.git
+    resolved_from: branch:main
+    commit: d58313f6074375c88021188ecd4d44bd4dbd4a02
+    tree: bc9e2fe044dbfc4d3b172c1bdb4410703c96e8a3
+    dirty: false
+    overridden: false
 toolchain:
-  profile: blue-zone-2026.08
-  fusesoc: 2.4.x
-  python: "3.12"
+  profile: unset
+  python: '3.12'

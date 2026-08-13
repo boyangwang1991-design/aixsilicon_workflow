@@ -137,7 +137,7 @@ def resolve_repository(
 
     commit, resolved_from = _resolve_local(repo, revision, path)
 
-    tree = gitops.rev_parse(path, f"{commit}^{{tree}}") or ""
+    tree = gitops.rev_parse_any(path, f"{commit}^{{tree}}") or ""
     dirty, _, _, _ = gitops.dirty_status(path)
 
     if mode == RELEASE_MODE and dirty:
@@ -164,8 +164,12 @@ def generate_lock(
     workspace_root: Path,
     mode: str,
     toolchain: dict[str, object] | None = None,
+    fetch_first: bool = True,
 ) -> ResolutionResult:
-    """Resolve all enabled repositories and produce a lock result."""
+    """Resolve all enabled repositories and produce a lock result.
+
+    Set `fetch_first=False` for offline resolution (local refs only).
+    """
     profile = manifest.profile(profile_name)
     repos = manifest.enabled_repositories(profile)
     result = ResolutionResult(mode=mode, profile=profile_name)
@@ -179,6 +183,7 @@ def generate_lock(
                 override,
                 path=path,
                 mode=mode,
+                fetch_first=fetch_first,
             )
         )
     if toolchain is None:

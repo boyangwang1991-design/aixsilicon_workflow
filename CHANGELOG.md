@@ -22,9 +22,20 @@
 - Change Bundle Schema 与示例。
 - 单元测试与临时 Git 仓集成测试 Fixture。
 
+### 优化（2026-08-13 结构重构 + P0 修复）
+
+- 结构重构：`cli.py` 拆分为 `cli/` 包（`app` 分发、`args` 参数、`context` 统一上下文、`registry` 注册式命令、`wf/repo/extras` 命令模块）。
+- 修复 lockfile `tree` 为空（新增 `gitops.rev_parse_any`）。
+- 修复 `aix wf status` Baseline 列（`diverged` 分支可达）。
+- `aix wf sync --lock` 真正按 Lockfile commit 强制 checkout（release 语义）。
+- `aix wf lock --no-fetch` 离线解析模式。
+- 生成真实 `locks/baseline.lock.yaml`（8 仓 release 基线 + 真实 SHA）。
+- 新增 `aix wf run <flow>`（DAG 执行器接入）、`aix wf test --affected`（影响分析）、`aix bundle validate/status`（真实实现）。
+- 新增 `scripts/sync_schemas.py`（Schema 单一事实源）与 `Makefile`（统一任务入口）。
+- 测试扩充至 41 例（CLI 结构、tree 回归、registry 等）。
+
 ### 计划（后续阶段）
 
-- [ ] Flow DAG 执行器与 Run Manifest / Evidence Index 运行时实现。
-- [ ] Change Bundle CLI 与 PR refs 联合 checkout。
-- [ ] 影响分析引擎与 affected tests。
+- [ ] Flow action 真实实现（fusesoc.target / eda.regression / hwif.compatibility-check 等）。
+- [ ] Change Bundle PR refs 联合 checkout。
 - [ ] 发布协调、SBOM、签名与 Catalog 更新 PR。

@@ -70,3 +70,15 @@ def test_remote_empty_detected(tmp_path):
     empty = tmp_path / "empty.git"
     subprocess.run(["git", "init", "--bare", str(empty)], check=True, capture_output=True)
     assert not gitops.remote_has_branches(str(empty))
+
+
+def test_rev_parse_any_tree(make_git_repo, tmp_path):
+    """`rev_parse_any` must peel `sha^{tree}` (regression: lockfile tree was empty)."""
+    remote = make_git_repo("hwif_repo", files={"a.txt": "1"})
+    dest = tmp_path / "clone"
+    gitops.clone(str(remote), dest, branch="main")
+    sha = gitops.head_sha(dest)
+    tree = gitops.rev_parse_any(dest, f"{sha}^{{tree}}")
+    assert tree and len(tree) == 40
+    # the old path (rev_parse appending ^{commit}) must still be a commit sha
+    assert gitops.rev_parse(dest, sha) == sha

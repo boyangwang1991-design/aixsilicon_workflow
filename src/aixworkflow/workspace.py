@@ -98,8 +98,13 @@ def sync_workspace(
     *,
     repo_filter: str | None = None,
     mode: str = WORKSPACE_MODE,
+    locked: dict[str, str] | None = None,
 ) -> SyncReport:
-    """Clone/fetch/checkout all enabled repositories for the profile."""
+    """Clone/fetch/checkout all enabled repositories for the profile.
+
+    When `locked` (repo_id -> commit sha, from a lockfile) is given, the mode
+    must be RELEASE_MODE and the locked commit is force-checked-out.
+    """
     profile = manifest.profile(profile_name)
     enabled = manifest.enabled_repositories(profile)
     if repo_filter:
@@ -140,6 +145,14 @@ def sync_workspace(
                 repo=repo.id,
             )
 
+        # Release gate: local override is forbidden.
+        if mode == RELEASE_MODE and override.revision_for(repo.id) is not None:
+            raise BlockedError(
+                f"repository '{repo.id}' is overridden in release mode; "
+                "Release Gate rejects local override",
+                repo=repo.id,
+            )
+
         # Do not auto-checkout/reset when dirty.
         dirty, _, _, _ = gitops.dirty_status(path)
         if dirty:
@@ -159,6 +172,25 @@ def sync_workspace(
                 print(f"[{repo.id}] OPTIONAL_UNAVAILABLE; fetch failed ({exc}); skipped")
                 continue
             raise
+
+        # Locked mode: force-checkout the lockfile commit.
+        locked_sha = (locked or {}).get(repo.id)
+        if locked_sha is not None:
+            if mode != RELEASE_MODE:
+                raise BlockedError(
+                    f"repository '{repo.id}': --lock requires release mode", repo=repo.id
+                )
+            resolved = gitops.rev_parse_any(path, locked_sha)
+            if resolved is None:
+                raise InfraError(
+                    f"repository '{repo.id}': locked commit {locked_sha} is not reachable",
+                    repo=repo.id,
+                )
+            current = gitops.head_sha(path)
+            if current != resolved:
+                gitops.checkout(path, locked_sha)
+                report.checked_out.append(repo.id)
+            continue
 
         # Resolve the target revision from override or manifest.
         rev_override = override.revision_for(repo.id)
@@ -222,6 +254,8 @@ def generate_lock_for_profile(
     profile_name: str,
     override: Override,
     mode: str,
+    *,
+    fetch_first: bool = True,
 ) -> ResolutionResult:
     toolchain = {"profile": "unset", "python": python_version()}
     return generate_lock(
@@ -231,6 +265,7 @@ def generate_lock_for_profile(
         workspace_root=workspace_root,
         mode=mode,
         toolchain=toolchain,
+        fetch_first=fetch_first,
     )
 
 

@@ -4,8 +4,9 @@
 > 状态标记：[x] 已完成 · [-] 进行中 · [ ] 待办。
 > 更新时间：2026-08-13（9 资产仓已同步，35 测试通过，ruff 干净）。
 
-> 代码结构/工程化专项优化见 [`docs/optimization-plan.md`](docs/optimization-plan.md)
-> （cli 拆包、context 收敛、schema 单一事实源、Makefile、补齐 run/bundle/release 命令）。
+> 代码结构/工程化专项优化见 [`docs/optimization-plan.md`](docs/optimization-plan.md)。
+> **2026-08-13 已执行**：P0 五项缺陷修复、cli 拆包、schema 单一事实源、Makefile、
+> `aix wf run` / `aix wf test --affected` / `aix bundle validate|status` 接入（测试 41 例通过）。
 
 ## 总览
 
@@ -51,30 +52,30 @@
 - [ ] 验证所有 Core 可被 FuseSoC 发现（需安装 fusesoc 实跑）
 - [ ] 完成新成员从零初始化演练（clean 环境）
 
-### 阶段1 遗留 P0 缺陷（本次审查确认）
+### 阶段1 遗留 P0 缺陷（已修复 ✅）
 
-- [ ] 修复 lockfile `tree` 为空：`gitops.rev_parse` 追加 `^{commit}` 导致 `commit^{tree}^{commit}` 非法（[`resolver.py`](src/aixworkflow/resolver.py)；新增 `rev_parse_any`）
-- [ ] `aix wf lock` 支持 `--no-fetch`/offline：避免每次强制 fetch 受网络波动影响
-- [ ] 修复 `aix wf status` Baseline 列：`diverged` 分支不可达，且未对比 baseline lock
-- [ ] `aix wf sync --lock` 真正按 Lockfile 的 commit 强制 checkout（当前仅切 release 模式）
-- [ ] 生成真实 `locks/baseline.lock.yaml`（当前为占位模板），走 PR/CI 保护
+- [x] 修复 lockfile `tree` 为空：新增 `gitops.rev_parse_any`（[`resolver.py`](src/aixworkflow/resolver.py)）
+- [x] `aix wf lock --no-fetch` 离线模式
+- [x] 修复 `aix wf status` Baseline 列（`diverged` 分支可达）
+- [x] `aix wf sync --lock` 真正按 Lockfile 的 commit 强制 checkout
+- [x] 生成真实 `locks/baseline.lock.yaml`（8 仓 release 基线 + 真实 SHA）
 
 ## 阶段2：FuseSoC 与基础跨仓验证
 
 - [x] 生成 FuseSoC 配置与 VLNV 索引（`fusesoc.py`，[`generate_vlnv_index`](src/aixworkflow/fusesoc.py)）
 - [x] Core dependency graph（[`graph.py`](src/aixworkflow/graph.py)）
-- [-] Flow DAG 执行器 `aix wf run <flow>`：runner 已实现（[`runner.py`](src/aixworkflow/runner.py)），**未接入 CLI**（注册 action、前置条件、Evidence 汇总）
+- [x] Flow DAG 执行器 `aix wf run <flow>`：已接入 CLI（[`wf.py`](src/aixworkflow/cli/wf.py)），可执行 DAG 并输出 Run Manifest / Evidence；具体 action（fusesoc.target/eda.regression 等）待实现
 - [ ] APB 寄存器 IP 穿刺：HWIF SystemRDL/RAL + APB VIP + DV Common 联合闭环
-- [-] Run Manifest 与 Evidence Index：`evidence.py` 已实现，**未接入 run**（[`evidence.py`](src/aixworkflow/evidence.py)）
+- [x] Run Manifest 与 Evidence Index 接入 run（[`evidence.py`](src/aixworkflow/evidence.py)）
 - [-] GitHub reusable lint/unit workflow：文件已建，**内容为占位**（[`.github/workflows/`](.github/workflows/reusable-fusesoc-lint.yml)）
 
 ## 阶段3：Change Bundle 与影响分析
 
 - [x] Change Bundle Schema 与示例（[`schemas/change-bundle.schema.json`](schemas/change-bundle.schema.json)、[`changesets/examples/`](changesets/examples/CHG-2026-0042.yaml)）
-- [-] Change Bundle CLI（`aix bundle create/validate/status` 为桩）：校验 merge_order、状态机
+- [x] Change Bundle CLI：`aix bundle validate/status` 已实现（merge_order、状态显示）；`create` 为模板指引
 - [ ] PR refs 联合 checkout（`change-bundle.yml` 占位）
 - [x] 基础影响分析（[`impact.py`](src/aixworkflow/impact.py) + [`graph.transitive_closure`](src/aixworkflow/graph.py)）
-- [ ] HWIF→VIP→IP 影响规则与 affected tests（`aix wf test --affected`）
+- [x] `aix wf test --affected` 影响驱动验证入口（输出 direct/transitive + required/recommended gates）
 - [ ] X2X 三仓联合变更穿刺
 - [-] 防递归触发与 correlation ID（[`github.py`](src/aixworkflow/github.py) 已有 guard_event_loop 桩）
 

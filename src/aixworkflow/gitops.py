@@ -117,8 +117,16 @@ def head_sha(path: Path) -> str:
 
 
 def rev_parse(path: Path, revision: str) -> str | None:
-    """Resolve `revision` to a full SHA, or None when not resolvable."""
+    """Resolve `revision` to a commit SHA, or None when not resolvable."""
     proc = _run(["rev-parse", "--verify", f"{revision}^{{commit}}"], cwd=path, check=False)
+    if proc.returncode != 0:
+        return None
+    return proc.stdout.strip()
+
+
+def rev_parse_any(path: Path, revision: str) -> str | None:
+    """Resolve an arbitrary git object expression (e.g. `sha^{tree}`) to a SHA."""
+    proc = _run(["rev-parse", "--verify", revision], cwd=path, check=False)
     if proc.returncode != 0:
         return None
     return proc.stdout.strip()
