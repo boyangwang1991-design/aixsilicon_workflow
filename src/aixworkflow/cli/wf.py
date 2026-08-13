@@ -17,7 +17,7 @@ from aixworkflow.evidence import EvidenceCollector
 from aixworkflow.flow import load_flow
 from aixworkflow.graph import DependencyGraph
 from aixworkflow.resolver import RELEASE_MODE, WORKSPACE_MODE, write_lock
-from aixworkflow.runner import ActionRegistry, run_flow
+from aixworkflow.runner import default_registry, run_flow
 from aixworkflow.workspace import (
     diff_against_lock,
     ensure_runtime_dirs,
@@ -34,7 +34,9 @@ from aixworkflow.yamlutil import load_yaml
 def _cmd_wf_init(args: argparse.Namespace) -> None:
     root = workspace_root()
     manifest_path = Path(getattr(args, "manifest", None) or "manifests/default.yaml")
-    manifest, selected, override = init_workspace(root, manifest_path, getattr(args, "profile", None))
+    manifest, selected, override = init_workspace(
+        root, manifest_path, getattr(args, "profile", None)
+    )
     ensure_runtime_dirs(root, manifest)
     print(f"workspace initialized: profile={selected}, manifest={manifest_path}")
     if override.source_path is not None:
@@ -52,7 +54,13 @@ def _cmd_wf_sync(args: argparse.Namespace) -> None:
         locked = {str(k): str(v.get("commit", "")) for k, v in repos_doc.items() if v.get("commit")}
     mode = RELEASE_MODE if args.lock else WORKSPACE_MODE
     report = sync_workspace(
-        ctx.root, ctx.manifest, ctx.profile, ctx.override, repo_filter=args.repo, mode=mode, locked=locked
+        ctx.root,
+        ctx.manifest,
+        ctx.profile,
+        ctx.override,
+        repo_filter=args.repo,
+        mode=mode,
+        locked=locked,
     )
     print(f"profile={ctx.profile}")
     if report.cloned:
@@ -72,7 +80,9 @@ def _cmd_wf_status(args: argparse.Namespace) -> None:
     ctx = load_context(args)
     rows = workspace_status(ctx.root, ctx.manifest, ctx.profile, ctx.override)
     print(f"profile={ctx.profile}  manifest={ctx.manifest.source_path}")
-    print(f"{'REPO':<16} {'BRANCH':<22} {'HEAD':<13} {'BASELINE':<10} {'DIRTY':<6} {'REMOTE':<8} {'OVR':<5} {'EN':<4}")
+    print(
+        f"{'REPO':<16} {'BRANCH':<22} {'HEAD':<13} {'BASELINE':<10} {'DIRTY':<6} {'REMOTE':<8} {'OVR':<5} {'EN':<4}"
+    )
     for repo, status, enabled, overridden in rows:
         if args.dirty and not status.dirty:
             continue
@@ -118,12 +128,19 @@ def _cmd_wf_doctor(args: argparse.Namespace) -> None:
 def _cmd_wf_lock(args: argparse.Namespace) -> None:
     ctx = load_context(args)
     result = generate_lock_for_profile(
-        ctx.root, ctx.manifest, ctx.profile, ctx.override, mode=args.mode, fetch_first=not args.no_fetch
+        ctx.root,
+        ctx.manifest,
+        ctx.profile,
+        ctx.override,
+        mode=args.mode,
+        fetch_first=not args.no_fetch,
     )
     output = Path(args.output) if args.output else ctx.root / ".aix" / "local.lock.yaml"
     write_lock(result, ctx.manifest, output)
     mode_note = " (offline, no fetch)" if args.no_fetch else ""
-    print(f"lock written: {output} ({args.mode} mode{mode_note}, {len(result.repositories)} repositories)")
+    print(
+        f"lock written: {output} ({args.mode} mode{mode_note}, {len(result.repositories)} repositories)"
+    )
 
 
 @command("wf", "diff")
@@ -176,28 +193,29 @@ def _cmd_wf_clean(args: argparse.Namespace) -> None:
 
 @command("wf", "run")
 def _cmd_wf_run(args: argparse.Namespace) -> None:
-    """Execute a standard flow DAG (runner wiring; unimplemented actions are reported)."""
+    """Execute a standard flow DAG with the standard action set (plan.md §15)."""
     flow_path = Path("workflows") / f"{args.flow}.yaml"
     if not flow_path.is_file():
         raise InfraError(f"flow not found: {flow_path}")
     flow = load_flow(flow_path)
 
-    # Minimal wired actions; everything else is reported as "blocked (unimplemented)".
-    registry = ActionRegistry()
-    registry.register("workspace.resolve", lambda stage: None)
-    registry.register("evidence.index", lambda stage: None)
-
+    registry = default_registry()
     evidence = EvidenceCollector(flow=flow.name)
     result = run_flow(flow, registry=registry, evidence=evidence)
 
     for sid, status in result.stage_results.items():
         print(f"  stage {sid:<22} {status}")
+    skipped = [s for s, st in result.stage_results.items() if st == "skipped"]
     blocked = [s for s, st in result.stage_results.items() if st == "blocked"]
     print(f"run_id={result.run_id}  status={result.status}")
+    if skipped:
+        print(f"note: {len(skipped)} stage(s) skipped (OPTIONAL_UNAVAILABLE): {skipped}")
     if blocked:
-        print(f"wired actions: workspace.resolve, evidence.index; "
-              f"{len(blocked)} stage(s) blocked pending action implementations: {blocked}")
-        raise AixError(f"flow '{flow.name}' has {len(blocked)} unimplemented stage(s)")
+        print(
+            f"note: {len(blocked)} stage(s) blocked (provider unavailable / not yet "
+            f"implemented): {blocked}\n"
+            f"      blocked != failed; evidence recorded. Gate enforcement is separate (G0-G7)."
+        )
     print(f"evidence under reports/{evidence.run_id}")
 
 

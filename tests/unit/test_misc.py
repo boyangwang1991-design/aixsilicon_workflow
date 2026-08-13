@@ -16,6 +16,7 @@ from aixworkflow.yamlutil import dump_yaml
 
 # ---------------- safety ----------------
 
+
 def test_high_risk_detection():
     assert is_high_risk("git clean -ffdx")
     assert is_high_risk("rm -rf repos/*")
@@ -91,7 +92,9 @@ def test_run_flow_failure_collects_evidence(tmp_path):
     flow = load_flow(path)
     registry = ActionRegistry()
     registry.register("workspace.resolve", lambda s: None)
-    registry.register("fusesoc.target", lambda s: (_ for _ in ()).throw(RuntimeError("lint failed")))
+    registry.register(
+        "fusesoc.target", lambda s: (_ for _ in ()).throw(RuntimeError("lint failed"))
+    )
     with pytest.raises(DesignError) as excinfo:
         run_flow(flow, registry=registry)
     assert "lint" in str(excinfo.value)
@@ -156,6 +159,7 @@ def test_bundle_merge_cycle(tmp_path):
 
 
 # ---------------- evidence ----------------
+
 
 def test_evidence_collector_writes(tmp_path):
     collector = EvidenceCollector(flow="ip-verification")

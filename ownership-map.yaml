@@ -1,5 +1,6 @@
 # Ownership Map：资产 → Owner 仓 → Skill 写入边界
 # 详见 plan.md §20.3。Skill 生成的文件必须按此表写入对应仓和目录。
+# 配套注册表：docs/schema-ownership.md（Schema 所有权 + 仓库注册表）。
 
 schema_version: aix.ownership-map/v1
 
@@ -35,7 +36,7 @@ map:
     allowed_paths: [packages]
 
   - asset: SoC 通用 Schema / 模板
-    owner_repo: aixsilicon_soc_integration_repo
+    owner_repo: aixsilicon_soc_integration
     skill_write: 仅通用集成能力开发可写
     allowed_paths: [schema, templates, rules]
 
@@ -53,3 +54,77 @@ map:
     owner_repo: aixsilicon_workflow
     skill_write: 仅 Workflow 维护流程可写
     allowed_paths: [manifests, workflows, policies, schemas, changesets]
+
+  - asset: Catalog 资产条目
+    owner_repo: aixsilicon_catalog_repo
+    skill_write: 仅 Release 流程可写（生成草案 + PR，不自动 merge）
+    allowed_paths: [assets, compatibility, maturity]
+
+# Schema 所有权（详见 docs/schema-ownership.md）—— 每个事实域只有一个 Owner 仓
+schema_ownership:
+  - domain: workspace-manifest / lock / flow / change-bundle / tool-profile / evidence
+    owner_repo: aixsilicon_workflow
+  - domain: interface-contract / profile / binding / compatibility
+    owner_repo: aixsilicon_hwif_repo
+  - domain: cbb-metadata / params / result
+    owner_repo: aixsilicon_cbb_repo
+  - domain: vip-metadata / testplan / coverage / release-manifest
+    owner_repo: aixsilicon_vip_repo
+  - domain: dv-run-manifest / test-result / failure / metric
+    owner_repo: aixsilicon_dv_common
+  - domain: soc-config（instance/address/irq/crg/power/connect）
+    owner_repo: aixsilicon_soc_integration
+  - domain: catalog-asset
+    owner_repo: aixsilicon_catalog_repo
+  - domain: tool-result / diagnostic / artifact / plugin-manifest
+    owner_repo: aixsilicon_tool_repo
+  - domain: skill-metadata / context-pack / skill-result / eval
+    owner_repo: aixsilicon_skill_repo
+
+# 仓库注册表（补充：命名一致性）
+# dv-common / soc-integration 当前无 `_repo` 后缀；与其余 7 仓命名不一致。
+# 处置：本文件与 manifests 统一使用实际仓名；是否重命名为 *_repo 由 Owner 决策并在
+# docs/schema-ownership.md 仓库注册表登记后执行（GitHub 自动重定向旧 URL）。
+repository_registry:
+  - id: workflow
+    repo: aixsilicon_workflow
+    type: workflow
+  - id: hwif
+    repo: aixsilicon_hwif_repo
+    type: hw-interface
+  - id: cbb
+    repo: aixsilicon_cbb_repo
+    type: cbb
+  - id: ip
+    repo: aixsilicon_ip_repo
+    type: ip
+  - id: dv-common
+    repo: aixsilicon_dv_common
+    type: dv-common
+    naming_note: 无 _repo 后缀（待统一决策）
+  - id: vip
+    repo: aixsilicon_vip_repo
+    type: vip
+  - id: tools
+    repo: aixsilicon_tool_repo
+    type: tool
+  - id: catalog
+    repo: aixsilicon_catalog_repo
+    type: catalog
+  - id: soc-integration
+    repo: aixsilicon_soc_integration
+    type: soc-integration
+    naming_note: 无 _repo 后缀（待统一决策）
+  - id: skills
+    repo: aixsilicon_skill_repo
+    type: skill
+    visibility: private
+
+# Tool 边界（ADR-0006 / docs/tool-placement.md）
+tool_boundary:
+  t1_public_product_tools: aixsilicon_tool_repo        # 跨仓公共确定性工具（aixsilicon.commands 插件）
+  t2_repo_local_scripts: 留在对应资产仓 tools/          # 单仓自维护脚本（测试/CI/文档/本地检查）
+  t3_private_controlled_tools: 独立私有 overlay repo    # 商业 EDA/PDK/Memory 适配、内部 Runner/License（同一 Plugin API）
+  t4_project_specific_scripts: 留在项目仓               # 项目 Waiver/胶水/迁移脚本
+  classification: docs/tool-placement.md
+  migration: 资产仓内的产品级确定性工具分阶段迁入 tool_repo（阶段 A 双入口 → 阶段 B aix tool → 阶段 C deprecated）

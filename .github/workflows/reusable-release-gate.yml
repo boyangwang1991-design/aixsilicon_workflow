@@ -1,5 +1,6 @@
 # Reusable: release readiness gate (G7 checks).
 # Requires a protected environment with human approval.
+# Public workflows must pin a Release Tag or Commit SHA, never long-lived `main`.
 name: Reusable Release Gate
 
 on:
@@ -14,6 +15,10 @@ on:
       lock_path:
         type: string
         required: true
+      workflow_ref:
+        type: string
+        required: true
+        description: 'pinned workflow repo ref, e.g. v0.1.0'
     secrets:
       inherit:
 
@@ -23,12 +28,19 @@ jobs:
     environment: release
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install CLI (pinned ref)
+        run: pip install "git+https://github.com/boyangwang1991-design/aixsilicon_workflow.git@${{ inputs.workflow_ref }}"
       - name: Assert clean and locked
         run: |
-          # Must be clean; must use fixed lock; no local override.
           test -z "$(git status --porcelain)" || { echo "dirty workspace"; exit 1; }
           test -f "${{ inputs.lock_path }}" || { echo "missing lock"; exit 1; }
-      - name: Verify release material
+      - name: Prepare release material (G7 guard: dirty/override blocked)
+        run: aix release prepare --asset "${{ inputs.asset }}" --version "${{ inputs.version }}"
+      - name: Verify required delivery artifacts
         run: |
-          echo "asset=${{ inputs.asset }} version=${{ inputs.version }}"
-          echo "Release material checks (CHANGELOG/SBOM/RTM) run here."
+          for f in CHANGELOG.md LICENSE; do
+            test -f "$f" || { echo "missing required artifact: $f"; exit 1; }
+          done

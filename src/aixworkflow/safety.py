@@ -14,8 +14,6 @@ import shlex
 from dataclasses import dataclass
 from pathlib import Path
 
-from aixworkflow.errors import SafetyError
-
 # Substrings that mark a command line as high-risk when operating on the
 # workspace root (or anywhere in `repos/`).
 _HIGH_RISK_PATTERNS: tuple[str, ...] = (
@@ -60,15 +58,6 @@ def guard_high_risk(
             ),
         )
     return GuardResult(allowed=True)
-
-
-def guard_recursive_clean(workspace_root: Path) -> None:
-    """Refuse `git clean -ffdx` / `rm -rf repos/*` in the workspace root."""
-    # Placeholder hook: called before wf clean; only generated dirs may be removed.
-    raise SafetyError(
-        "refusing recursive clean of the workspace root; use `aix wf clean` which "
-        "only removes generated dirs registered in local state"
-    )
 
 
 def allowed_clean_dirs() -> list[str]:

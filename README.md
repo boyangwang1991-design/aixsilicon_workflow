@@ -33,6 +33,17 @@
 
 > 完整仓库清单与状态见 [`gitlist.md`](gitlist.md)；仓库布局与分支策略见 [`manifests/default.yaml`](manifests/default.yaml)。
 
+## 治理与命名规范（V0.2）
+
+跨仓契约统一决议见 ADR 与配套规范（2026-08-13）：
+
+- **VLNV 统一 `aixsilicon:*`**（[`ADR-0003`](docs/adr/0003-unified-vlnv-namespace.md)）；CLI 二进制名保持 `aix`；
+- **单一 CLI 入口 + 插件组 `aixsilicon.commands`**（[`ADR-0004`](docs/adr/0004-cli-entry-and-plugin-registry.md)）：`aix tool` 由 `aixsilicon_tool_repo` 插件提供，未安装时显式 `OPTIONAL_UNAVAILABLE`；
+- **跨仓边界映射**（[`ADR-0005`](docs/adr/0005-cross-repo-boundary-map.md)）、**工具归属与迁移**（[`ADR-0006`](docs/adr/0006-tool-ownership-and-migration.md)）；
+- **成熟度统一映射**：[`docs/maturity-model.md`](docs/maturity-model.md)；
+- **Schema 所有权与仓库注册表**：[`docs/schema-ownership.md`](docs/schema-ownership.md)；
+- 综合优化规划：[`plans/cross-repo-optimization-plan.md`](plans/cross-repo-optimization-plan.md)。
+
 ## 快速开始
 
 ### 前置条件

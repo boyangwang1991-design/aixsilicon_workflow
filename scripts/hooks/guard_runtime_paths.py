@@ -20,9 +20,7 @@ FORBIDDEN_PREFIXES = (
     "edalize_work_root/",
 )
 
-FORBIDDEN_FILENAMES = (
-    "fusesoc.conf",
-)
+FORBIDDEN_FILENAMES = ("fusesoc.conf",)
 
 FORBIDDEN_SUFFIXES = (
     ".log",

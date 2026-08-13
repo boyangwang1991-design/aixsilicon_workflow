@@ -64,7 +64,11 @@ def test_profile_selection(write_manifest, tmp_path):
 
     manifest, profile, _ = load_manifest(path, profile_name="ip-dev")
     assert profile == "ip-dev"
-    assert {r.id for r in manifest.enabled_repositories(manifest.profile("ip-dev"))} == {"hwif", "vip", "ip"}
+    assert {r.id for r in manifest.enabled_repositories(manifest.profile("ip-dev"))} == {
+        "hwif",
+        "vip",
+        "ip",
+    }
 
 
 def test_unknown_profile_rejected(write_manifest):
@@ -99,8 +103,12 @@ def test_extends_resolution(tmp_path, minimal_manifest_doc):
 def test_extends_cycle_detected(tmp_path):
     a = tmp_path / "a.yaml"
     b = tmp_path / "b.yaml"
-    a.write_text(dump_yaml({"schema_version": "aix.workspace/v1", "extends": "b.yaml"}), encoding="utf-8")
-    b.write_text(dump_yaml({"schema_version": "aix.workspace/v1", "extends": "a.yaml"}), encoding="utf-8")
+    a.write_text(
+        dump_yaml({"schema_version": "aix.workspace/v1", "extends": "b.yaml"}), encoding="utf-8"
+    )
+    b.write_text(
+        dump_yaml({"schema_version": "aix.workspace/v1", "extends": "a.yaml"}), encoding="utf-8"
+    )
     with pytest.raises(ManifestError):
         load_manifest(a)
 

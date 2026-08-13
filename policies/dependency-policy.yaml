@@ -40,6 +40,32 @@ rules:
     description: 私有 Skill 不成为开源仓构建、测试和发布验证的隐藏必需依赖
     enforcement: hard
 
+  - id: dep-vlnv-namespace
+    description: 全组织 VLNV 统一使用 aix vendor 前缀，禁止以 GitHub 组织名或占位符作 vendor（ADR-0003）
+    enforcement: hard
+
+  - id: dep-no-phantom-repo
+    description: 新 plan/文档不得引用未在 docs/schema-ownership.md 仓库注册表中登记的仓库（ADR-0005）
+    enforcement: hard
+
+  - id: dep-tool-delegation
+    description: 跨仓复用的产品级确定性工具必须由 aixsilicon_tool_repo 提供；资产仓 tools/ 只保留自维护脚本（ADR-0006）
+    enforcement: soft
+
+  - id: dep-tool-locked
+    description: 正式基线的 Workspace Lock 必须记录 Tool 包版本与 hash（workspace-lock schema tools 段）
+    enforcement: release_only
+
+# 影响分析 gate 映射：仓库类型 → 该类型 required gate（impact.py 读取，替代硬编码）
+gate_map:
+  hw-interface: hwif-schema
+  vip: axi-vip-unit
+  cbb: cbb-unit
+  ip: ip-smoke
+  dv-common: dv-common-unit
+  tool: tool-contract
+  soc-integration: soc-connect-check
+
 unknown_dependency_behavior:
   # 影响图不完整时扩大测试范围，不静默缩小
   expand_coverage: true

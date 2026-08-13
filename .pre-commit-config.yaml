@@ -5,6 +5,7 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
+        exclude: ^\.github/workflows/   # GitHub workflow `on:` 触发 YAML1.1 布尔解析
       - id: check-json
       - id: check-added-large-files
         args: [--maxkb=1024]
@@ -16,21 +17,24 @@ repos:
     hooks:
       - id: aix-guard-runtime-paths
         name: aix-guard-runtime-paths
-        entry: python3 scripts/hooks/guard_runtime_paths.py
+        entry: .venv/bin/python scripts/hooks/guard_runtime_paths.py
         language: system
         pass_filenames: false
         always_run: true
         stages: [pre-commit]
 
+      - id: aix-check-vlnv-namespace
+        name: aix-check-vlnv-namespace
+        entry: .venv/bin/python scripts/hooks/check_vlnv_namespace.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+  # 统一格式化/风格由 ruff 承担（移除冗余的 black，见 P0-工程化）。
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.4.9
     hooks:
       - id: ruff
         args: [--fix]
       - id: ruff-format
-
-  - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 24.4.2
-    hooks:
-      - id: black
-        args: [--line-length=100]

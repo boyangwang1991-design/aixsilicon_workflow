@@ -57,7 +57,9 @@ def init_workspace(
 ) -> tuple[Manifest, str, Override]:
     """Initialize the workspace and record local state."""
     manifest, selected, override = load_manifest(
-        manifest_path, profile_name=profile_name, override_path=default_override_path(workspace_root)
+        manifest_path,
+        profile_name=profile_name,
+        override_path=default_override_path(workspace_root),
     )
     ensure_runtime_dirs(workspace_root, manifest)
 
@@ -81,9 +83,7 @@ def _load_workspace(workspace_root: Path, profile_name: str | None, manifest_pat
         if default.is_file():
             path = default
         else:
-            raise ManifestError(
-                "no manifest found; run `aix wf init --profile <name>` first"
-            )
+            raise ManifestError("no manifest found; run `aix wf init --profile <name>` first")
     manifest, selected, override = load_manifest(
         Path(path), profile_name=profile_name, override_path=default_override_path(workspace_root)
     )
@@ -110,7 +110,9 @@ def sync_workspace(
     if repo_filter:
         enabled = [r for r in enabled if r.id == repo_filter]
         if not enabled:
-            raise ManifestError(f"repository '{repo_filter}' is not enabled for profile '{profile_name}'")
+            raise ManifestError(
+                f"repository '{repo_filter}' is not enabled for profile '{profile_name}'"
+            )
 
     report = SyncReport(cloned=[], fetched=[], checked_out=[], skipped=[], optional_unavailable=[])
 
@@ -120,13 +122,17 @@ def sync_workspace(
 
         if not gitops.is_repo(path):
             try:
-                gitops.clone(url, path, branch=repo.revision.get("branch"), shallow=repo.checkout.shallow)
+                gitops.clone(
+                    url, path, branch=repo.revision.get("branch"), shallow=repo.checkout.shallow
+                )
                 report.cloned.append(repo.id)
                 continue
             except InfraError:
                 if not repo.required and repo.visibility == "private":
                     report.optional_unavailable.append(repo.id)
-                    print(f"[{repo.id}] OPTIONAL_UNAVAILABLE (private repo not accessible); skipped")
+                    print(
+                        f"[{repo.id}] OPTIONAL_UNAVAILABLE (private repo not accessible); skipped"
+                    )
                     continue
                 if not gitops.remote_has_branches(url):
                     raise InfraError(
@@ -157,9 +163,7 @@ def sync_workspace(
         dirty, _, _, _ = gitops.dirty_status(path)
         if dirty:
             if mode == RELEASE_MODE:
-                raise BlockedError(
-                    f"repository '{repo.id}' is dirty in release mode", repo=repo.id
-                )
+                raise BlockedError(f"repository '{repo.id}' is dirty in release mode", repo=repo.id)
             report.skipped.append(repo.id)
             continue
 
@@ -279,7 +283,9 @@ def write_fusesoc_configs(
     return write_generated_configs(manifest, repos, workspace_root)
 
 
-def diff_against_lock(lock_path: Path, manifest: Manifest, workspace_root: Path) -> dict[str, object]:
+def diff_against_lock(
+    lock_path: Path, manifest: Manifest, workspace_root: Path
+) -> dict[str, object]:
     """Compare the current checkout SHAs against a lockfile."""
     from aixworkflow.yamlutil import load_yaml
 
@@ -309,3 +315,38 @@ def diff_against_lock(lock_path: Path, manifest: Manifest, workspace_root: Path)
 
 def manifest_digest_of(manifest: Manifest) -> str:
     return manifest.digest()
+
+
+@dataclass
+class ReleaseGuard:
+    """Result of a release readiness guard check (G7, plan.md §23/§24)."""
+
+    ok: bool
+    reason: str = ""
+
+    def __bool__(self) -> bool:
+        return self.ok
+
+
+def release_guard_ok(
+    manifest: Manifest,
+    workspace_root: Path,
+    override: Override,
+    *,
+    require_clean: bool = True,
+) -> ReleaseGuard:
+    """Refuse release from a dirty tree or active local override.
+
+    G7: release must run from a clean, fixed baseline with no local override.
+    """
+    if override.source_path is not None:
+        return ReleaseGuard(
+            False, "local override active (NON-BASELINE); release requires a fixed baseline"
+        )
+    if require_clean:
+        dirty = [
+            r.id for r in manifest.repositories if gitops.dirty_status(workspace_root / r.path)[0]
+        ]
+        if dirty:
+            return ReleaseGuard(False, f"dirty repositories: {', '.join(sorted(dirty))}")
+    return ReleaseGuard(True)

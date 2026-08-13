@@ -25,5 +25,5 @@ rules:
     enforcement: hard
 
   - id: branch-optional-skill
-    description: visibility: private 且 required: false 的 Skill 仓无权限时显示 OPTIONAL_UNAVAILABLE，公共确定性 Flow 继续运行
+    description: "visibility: private 且 required: false 的 Skill 仓无权限时显示 OPTIONAL_UNAVAILABLE，公共确定性 Flow 继续运行"
     enforcement: hard

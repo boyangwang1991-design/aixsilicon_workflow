@@ -22,7 +22,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_init = wf_sub.add_parser("init", help="initialize the workspace")
     p_init.add_argument("--profile", default=None, help="profile to select (default from manifest)")
-    p_init.add_argument("--manifest", default=None, help="manifest path (default manifests/default.yaml)")
+    p_init.add_argument(
+        "--manifest", default=None, help="manifest path (default manifests/default.yaml)"
+    )
 
     p_sync = wf_sub.add_parser("sync", help="clone/fetch/checkout repositories")
     p_sync.add_argument("--repo", default=None, help="only sync this repository id")
@@ -38,9 +40,13 @@ def build_parser() -> argparse.ArgumentParser:
     wf_sub.add_parser("doctor", help="environment and workspace diagnostics")
 
     p_lock = wf_sub.add_parser("lock", help="generate a resolved lockfile")
-    p_lock.add_argument("-o", "--output", default=None, help="output path (default .aix/local.lock.yaml)")
+    p_lock.add_argument(
+        "-o", "--output", default=None, help="output path (default .aix/local.lock.yaml)"
+    )
     p_lock.add_argument("--mode", choices=[WORKSPACE_MODE, RELEASE_MODE], default=WORKSPACE_MODE)
-    p_lock.add_argument("--no-fetch", action="store_true", help="resolve from local refs only (offline)")
+    p_lock.add_argument(
+        "--no-fetch", action="store_true", help="resolve from local refs only (offline)"
+    )
     p_lock.add_argument("--profile", default=None)
     p_lock.add_argument("--manifest", default=None)
 
@@ -67,7 +73,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_test = wf_sub.add_parser("test", help="impact-driven verification (affected analysis)")
     p_test.add_argument("--affected", action="store_true", help="analyze impact of a changed repo")
-    p_test.add_argument("--repo", required=True, help="repository id whose change is being evaluated")
+    p_test.add_argument(
+        "--repo", required=True, help="repository id whose change is being evaluated"
+    )
     p_test.add_argument("--paths", default=None, help="comma separated changed file paths")
     p_test.add_argument("--profile", default=None)
     p_test.add_argument("--manifest", default=None)
@@ -112,7 +120,10 @@ def build_parser() -> argparse.ArgumentParser:
     # ---- bundle / release ----
     bundle = sub.add_parser("bundle", help="cross-repo change bundles (P1)")
     bundle_sub = bundle.add_subparsers(dest="command", required=True)
-    bundle_sub.add_parser("create", help="create a bundle from a template")
+    bc = bundle_sub.add_parser("create", help="create a bundle from a template")
+    bc.add_argument("bundle_id", nargs="?")
+    bc.add_argument("--title", default=None)
+    bc.add_argument("--owner", default=None)
     bv = bundle_sub.add_parser("validate", help="validate a bundle")
     bv.add_argument("bundle_id")
     bs = bundle_sub.add_parser("status", help="show bundle status")
@@ -123,5 +134,19 @@ def build_parser() -> argparse.ArgumentParser:
     rp = release_sub.add_parser("prepare", help="prepare release material")
     rp.add_argument("--asset", required=True)
     rp.add_argument("--version", required=True)
+    rpub = release_sub.add_parser("publish", help="publish an approved release candidate")
+    rpub.add_argument("--asset", required=True)
+    rpub.add_argument("--version", required=True)
+    rpub.add_argument("--lock", default=None, help="lockfile path used for the release")
+    rpub.add_argument("--manifest", default=None)
+
+    # ---- tool (deterministic tool domain, ADR-0004) ----
+    tool = sub.add_parser("tool", help="deterministic tool domain (aixsilicon_tool_repo plugin)")
+    tool.set_defaults(command="run")
+    tool.add_argument(
+        "args",
+        nargs=argparse.REMAINDER,
+        help="tool argv forwarded to the aix.commands 'tool' plugin",
+    )
 
     return parser

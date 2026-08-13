@@ -197,7 +197,9 @@ def dirty_status(path: Path) -> tuple[bool, int, int, int]:
 
 def upstream_relation(path: Path) -> tuple[int, int, str | None]:
     """Return (ahead, behind, upstream_ref)."""
-    proc = _run(["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"], cwd=path, check=False)
+    proc = _run(
+        ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"], cwd=path, check=False
+    )
     if proc.returncode != 0:
         return 0, 0, None
     upstream = proc.stdout.strip()
@@ -214,9 +216,18 @@ def upstream_relation(path: Path) -> tuple[int, int, str | None]:
 def get_status(path: Path, expected_url: str | None = None) -> RepoStatus:
     if not is_repo(path):
         return RepoStatus(
-            present=False, branch="", head="", dirty=False, staged=0,
-            unstaged=0, untracked=0, ahead=0, behind=0,
-            upstream=None, remote_url=None, detached=False,
+            present=False,
+            branch="",
+            head="",
+            dirty=False,
+            staged=0,
+            unstaged=0,
+            untracked=0,
+            ahead=0,
+            behind=0,
+            upstream=None,
+            remote_url=None,
+            detached=False,
         )
     branch, detached = current_branch(path)
     head = head_sha(path)

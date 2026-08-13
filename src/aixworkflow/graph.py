@@ -18,9 +18,7 @@ class DependencyGraph:
         for repo in repositories:
             for dep in repo.depends_on:
                 if dep not in self.nodes:
-                    raise ManifestError(
-                        f"repository '{repo.id}' depends on unknown id '{dep}'"
-                    )
+                    raise ManifestError(f"repository '{repo.id}' depends on unknown id '{dep}'")
                 self.edges[dep].add(repo.id)
 
     def adjacency(self) -> dict[str, list[str]]:

@@ -2,6 +2,11 @@
 
 > 对 `aixsilicon_workflow` 项目结构的整体审视与优化方案。
 > 执行入口见 [`todo.md`](../todo.md)；本文件聚焦**代码结构/工程化**层面。
+>
+> **执行状态（2026-08-13）**：P0 五项缺陷、R1（cli 拆包 + context + registry + schema-sync + Makefile）、
+> R2（`aix wf run` / `aix wf test --affected` / `aix bundle validate|status`）已完成；
+> 本规划新增 R2.5（标准 action 集 + release/bundle create + 统一退出码，见 [`plans/cross-repo-optimization-plan.md`](../plans/cross-repo-optimization-plan.md)）。
+> 剩余：S5 残余（`repo pr`）、S6（reusable workflows 真实化）。
 
 ## 1. 现状审视
 

@@ -1,0 +1,64 @@
+# APB 寄存器 IP 端到端穿刺 flow（plan.md §16.1 / §33）
+# 链路：HWIF Contract → SystemRDL/RAL → RTL → APB VIP → DV Common → Evidence → Catalog。
+# tool.* / eda.* 由 aixsilicon_tool_repo 与 EDA provider 提供；未安装时按 OPTIONAL_UNAVAILABLE 跳过。
+schema_version: aix.flow/v1
+name: apb-register-ip
+description: APB 寄存器 IP 端到端穿刺（HWIF→SystemRDL→RTL→VIP→DV Common→Evidence→Catalog）
+
+inputs:
+  - ip_vlnv
+  - tool_profile
+
+preconditions:
+  clean_workspace: true
+  lock_required: true
+  forbid_local_override: false
+
+stages:
+  - id: resolve
+    uses: workspace.resolve
+    with:
+      profile: ip-dev
+
+  - id: hwif-contract
+    needs: [resolve]
+    uses: hwif.compatibility-check
+    with:
+      producer: interfaces/apb/contract.yaml
+      consumer: interfaces/apb/profile/apb_csr_v1.yaml
+
+  - id: reg-schema
+    needs: [resolve]
+    uses: tool.schema
+    with:
+      input: regs/apb_csr.rdl
+
+  - id: ral-gen
+    needs: [reg-schema]
+    uses: tool.reg
+    with:
+      input: regs/apb_csr.rdl
+      views: [rtl, ral, cheader, doc]
+
+  - id: core-lint
+    needs: [ral-gen]
+    uses: fusesoc.target
+    with:
+      target: lint
+      vlnv: aixsilicon:ip:apb_csr:1.0.0
+
+  - id: vip-unit
+    needs: [core-lint]
+    uses: eda.regression
+    with:
+      command: ["echo", "vip-unit-command-provided-by-eda-provider"]
+
+  - id: evidence
+    needs: [core-lint, vip-unit]
+    uses: evidence.index
+
+  - id: catalog-entry
+    needs: [evidence]
+    uses: catalog.update
+    with:
+      asset: aixsilicon:ip:apb_csr:1.0.0

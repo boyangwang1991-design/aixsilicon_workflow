@@ -1,7 +1,7 @@
 # AIXSILICON Workflow Repository 完整规划
 
-> 文档状态：规划基线 V0.1  
-> 日期：2026-08-13  
+> 文档状态：规划基线 V0.1
+> 日期：2026-08-13
 > 适用范围：IP 设计、IP 验证、SoC 集成、多仓协同、Skill Suite 执行与资产发布
 
 ---
@@ -524,7 +524,7 @@ repositories:
     groups: [base, design, dv, soc]
     required: true
     owner: hw-platform
-    fusesoc_roots: [.] 
+    fusesoc_roots: [.]
     exports:
       - interface-contracts
       - fusesoc-cores
@@ -539,7 +539,7 @@ repositories:
     groups: [base, dv]
     required: true
     owner: dv-platform
-    fusesoc_roots: [.] 
+    fusesoc_roots: [.]
 
   - id: vip
     type: vip
@@ -551,7 +551,7 @@ repositories:
     groups: [dv, ip, soc]
     depends_on: [hwif, dv-common]
     owner: dv-platform
-    fusesoc_roots: [.] 
+    fusesoc_roots: [.]
 
   - id: cbb
     type: cbb
@@ -575,7 +575,7 @@ repositories:
     groups: [ip, soc]
     depends_on: [hwif, cbb]
     owner: ip-platform
-    fusesoc_roots: [.] 
+    fusesoc_roots: [.]
 
   - id: tools
     type: tool
@@ -1234,8 +1234,8 @@ validation:
   profile: ip-dev
   flow: cross-repo-qualification
   required_targets:
-    - aix:vip:axi:unit
-    - aix:ip:x2x:regression
+    - aixsilicon:vip:axi:unit
+    - aixsilicon:ip:x2x:regression
 
 release_plan:
   hwif: 2.0.0
@@ -1282,10 +1282,10 @@ change:
   paths: [interfaces/axi/contract.yaml]
 affected:
   direct:
-    - aix:vip:axi
-    - aix:cbb:axi_width_converter
+    - aixsilicon:vip:axi
+    - aixsilicon:cbb:axi_width_converter
   transitive:
-    - aix:ip:x2x
+    - aixsilicon:ip:x2x
 required_gates:
   - hwif-schema
   - hwif-generated-diff
@@ -1949,3 +1949,48 @@ Workspace init/sync
 > **Manifest定义工作区 → Lockfile冻结版本 → 独立Git仓承载资产 → FuseSoC构建设计依赖 → Workflow执行跨仓Gate → Skill辅助生成与编排 → Evidence证明结果 → Catalog发布合格资产。**
 
 这能保持各个资产仓的独立性，又让它们从“彼此相邻的仓库”升级为“可以协同开发、联合验证、独立发布、整体复现的工程体系”，最终完整支撑IP设计验证、CBB设计验证和SoC集成三条主Workflow。
+
+---
+
+## 35. V0.2 治理决议与执行状态（2026-08-13）
+
+> 本轮“扫描各仓 plan 后综合优化”的治理决议与落地结果，权威文件见 `docs/adr/`、`docs/maturity-model.md`、`docs/schema-ownership.md`、`plans/cross-repo-optimization-plan.md`。
+
+### 35.1 治理决议（ADR-0003～0006）
+
+| ADR | 决议 |
+|---|---|
+| [`0003`](docs/adr/0003-unified-vlnv-namespace.md) | 全组织统一 VLNV vendor 为 `aixsilicon`（`aix` 过短有歧义）；组织名仅作 URL 归属；存量 `aix:*`/`boyangwang1991-design:*` 走 deprecated 别名窗口 |
+| [`0004`](docs/adr/0004-cli-entry-and-plugin-registry.md) | `aix` 为唯一 CLI 入口；`aixsilicon_tool_repo` 通过插件组 `aixsilicon.commands` 暴露 `aix tool`；未装时显式 `OPTIONAL_UNAVAILABLE` |
+| [`0005`](docs/adr/0005-cross-repo-boundary-map.md) | 收敛幽灵仓：`eda-flow/eda-rules/hw-models/cbb-catalog/cbb-tech` 映射到 workflow/tool/catalog/techlib/overlay |
+| [`0006`](docs/adr/0006-tool-ownership-and-migration.md) | 产品级确定性工具归 tool_repo；资产仓 `tools/` 仅自维护脚本；分阶段迁移 |
+
+### 35.2 已落地（工作区本体）
+
+- **标准 action 集**：`workspace.resolve` / `fusesoc.target` / `hwif.compatibility-check` / `eda.regression` / `evidence.index` / `release.package`，缺失 provider 按 `skipped/blocked` 记录而非硬失败；
+- **统一退出码**（0/10/20/30/40/50/60），设计失败与环境失败可区分；
+- **release/bundle 闭环**：`aix release prepare/publish`（G7 guard：dirty/override 阻断、幂等）、`aix bundle create`（先校验后写）；
+- **FuseSoC 索引优化**：排除 `reference/`/`vendor/`/`.roo`，报告跨仓 VLNV 冲突（§14.3）；
+- **CI 真实化**：6 个 reusable/integration workflows 去占位、固定 ref；pre-commit 落地全绿。
+
+### 35.3 骨架仓最小落地
+
+- tool_repo P0 五包（aix-tool-core 含 Result 契约与 `aixsilicon.commands` 插件；schema/hwif-gen/reg-tool/core-tool 骨架）；
+- catalog_repo 资产条目 Schema V0.1 + 首批条目；
+- soc_integration_repo 通用 SoC 配置 Schema + Golden 示例；
+- skill_repo canonical `ip-development-suite`（21 子 skill、G0–G5、canonical 模型、UVM 1.2、8 eval）；
+- ip_repo 补 plan.md，VLNV 对齐 `aixsilicon:ip:*`。
+
+### 35.4 遗留（下一轮）
+
+- APB 完整仿真穿刺（SystemRDL/RAL→仿真）需 tool_repo `aix-reg-tool` 与 EDA provider；
+- 仓库重命名 `aixsilicon_dv_common`/`aixsilicon_soc_integration` 加 `_repo` 后缀（待 GitHub 操作）；
+- 各资产仓 todo.md 状态同步与 plan 引用章节修订（ADR-0005）。
+
+## 36. 跨仓整体架构评审结论（2026-08-13）
+
+> 全文见 [`plans/cross-repo-architecture-review.md`](plans/cross-repo-architecture-review.md)。
+
+- **不重复构建**：确定性工具收敛到 tool_repo（R1）；CLI 单入口 + `aixsilicon.commands` 插件组（R2）；Schema 单一 Owner（R3）；发布职责分工 ipkg / `aix release` / hwif package_release（R4）；“影响分析”区分接口影响 vs 仓库影响（R5）；VIP `common/` 与 dv-common 划界（R6）；ipkg 复用 `aix-core-tool`（R7）。
+- **架构修订**：IP 仓双态模型（开发分支可编辑 / 发布版本冻结，A1）；vendored `reference/` 排除出 fusesoc 正式发现与 Catalog（A2）；ghost repo 引用映射（A3）；techlib 统一为 `aixsilicon_techlib_repo`（A4）。
+- 各仓 plan/todo 已按本文档更新。

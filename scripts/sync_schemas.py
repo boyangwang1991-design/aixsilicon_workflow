@@ -62,7 +62,10 @@ def main() -> int:
                 print(f"removed  {dst.name}")
 
     if check and mismatched:
-        print(f"\n{REPO_SCHEMAS} and {PKG_SCHEMAS} differ ({mismatched} problem(s)); run without --check", file=sys.stderr)
+        print(
+            f"\n{REPO_SCHEMAS} and {PKG_SCHEMAS} differ ({mismatched} problem(s)); run without --check",
+            file=sys.stderr,
+        )
         return 1
     print(f"\nschemas in sync ({len(repo_files)} files)")
     return 0

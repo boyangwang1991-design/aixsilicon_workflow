@@ -28,9 +28,15 @@ jobs:
           python-version: '3.12'
       - name: Install FuseSoC
         run: pip install "fusesoc==${{ inputs.fusesoc_version }}"
-      - name: FuseSoC core lint
+      - name: Verify all cores parse under this repo root
         run: |
-          fusesoc library list
-          echo "target=${{ inputs.target }} repo_type=${{ inputs.repo_type }}"
-          # Replace with the organization-level target mapping:
-          fusesoc core list --cores-root . > /dev/null
+          set -euo pipefail
+          fusesoc --cores-root . core list > /dev/null
+      - name: Lint every core (fail on parse errors)
+        run: |
+          set -euo pipefail
+          cores=$(fusesoc --cores-root . core list 2>/dev/null | sed 's/:.*//' | tr -d ' ')
+          for core in $cores; do
+            echo "lint $core (target=${{ inputs.target }})"
+            fusesoc core lint "$core"
+          done

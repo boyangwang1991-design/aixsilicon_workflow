@@ -25,7 +25,9 @@ jobs:
       - name: Unit + integration tests
         run: pytest -q
       - name: Guard: no runtime paths in tree
-        run: python scripts/hooks/guard_runtime_paths.py || true
+        run: python scripts/hooks/guard_runtime_paths.py
+      - name: Guard: unified aixsilicon VLNV namespace
+        run: python scripts/hooks/check_vlnv_namespace.py
       - name: Guard: no sub-repo source / nested .git committed
         run: |
           set -e

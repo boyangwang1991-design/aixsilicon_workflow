@@ -62,6 +62,24 @@
           "additionalProperties": { "type": "string" }
         }
       }
+    },
+    "tools": {
+      "type": "object",
+      "description": "确定性工具版本锁定：aixsilicon_tool_repo 包与关键三方工具（ADR-0006 / tool_repo_plan.md §27.1）。",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["version"],
+        "additionalProperties": false,
+        "properties": {
+          "version": { "type": "string" },
+          "source": {
+            "type": "string",
+            "enum": ["wheel", "git", "system", "container"]
+          },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "git_commit": { "type": "string", "minLength": 7 }
+        }
+      }
     }
   }
 }

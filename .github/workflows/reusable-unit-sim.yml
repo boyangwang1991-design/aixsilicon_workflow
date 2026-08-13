@@ -1,4 +1,5 @@
 # Reusable: unit simulation for asset repos.
+# Public workflows must pin a Release Tag or Commit SHA, never long-lived `main`.
 name: Reusable Unit Sim
 
 on:
@@ -7,12 +8,19 @@ on:
       repo_type:
         type: string
         required: true
+      vlnv:
+        type: string
+        required: true
+        description: 'core to run (e.g. aix:vip:apb:1.0.0)'
       target:
         type: string
         default: unit_sim
       tool:
         type: string
         default: verilator
+      fusesoc_version:
+        type: string
+        default: '2.4.*'
     secrets:
       inherit:
 
@@ -25,9 +33,6 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install FuseSoC
-        run: pip install "fusesoc==2.4.*"
+        run: pip install "fusesoc==${{ inputs.fusesoc_version }}"
       - name: Run unit sim
-        run: |
-          echo "tool=${{ inputs.tool }} target=${{ inputs.target }} repo_type=${{ inputs.repo_type }}"
-          # FuseSoC run entry for the asset repo target:
-          fusesoc run --target "${{ inputs.target }}" --tool "${{ inputs.tool }}" "${{ inputs.target }}"
+        run: fusesoc run --target "${{ inputs.target }}" --tool "${{ inputs.tool }}" "${{ inputs.vlnv }}"

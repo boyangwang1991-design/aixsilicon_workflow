@@ -25,7 +25,7 @@ rules:
     enforcement: hard
 
   - id: sec-least-privilege-actions
-    description: 默认 contents: read；只在发布 Job 中临时授予 contents: write
+    description: "默认 contents: read；只在发布 Job 中临时授予 contents: write"
     enforcement: hard
 
   - id: sec-no-fork-secrets

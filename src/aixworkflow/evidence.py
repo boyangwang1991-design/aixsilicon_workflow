@@ -66,7 +66,9 @@ class EvidenceCollector:
             "failure_signature": failure_signature,
         }
 
-    def record_gate(self, gate_id: str, result: str, evidence_refs: list[str] | None = None, notes: str = "") -> None:
+    def record_gate(
+        self, gate_id: str, result: str, evidence_refs: list[str] | None = None, notes: str = ""
+    ) -> None:
         self.gates[gate_id] = {
             "result": result,
             "evidence_refs": evidence_refs or [],

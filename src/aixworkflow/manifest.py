@@ -60,9 +60,7 @@ def _load_with_extends(
     return merged
 
 
-def _merge_repositories(
-    base: dict[str, Any], child: dict[str, Any]
-) -> list[dict[str, Any]]:
+def _merge_repositories(base: dict[str, Any], child: dict[str, Any]) -> list[dict[str, Any]]:
     base_repos: list[dict[str, Any]] = list(base.get("repositories", []))
     child_repos: list[dict[str, Any]] = list(child.get("repositories", []))
     if not child_repos:
@@ -109,7 +107,9 @@ def load_manifest(
     }
     repositories = [Repository.from_dict(r) for r in doc.get("repositories", [])]
     profiles = {
-        str(k): Profile(name=str(k), include_groups=tuple(str(g) for g in v.get("include_groups", [])))
+        str(k): Profile(
+            name=str(k), include_groups=tuple(str(g) for g in v.get("include_groups", []))
+        )
         for k, v in doc.get("profiles", {}).items()
     }
 
@@ -136,9 +136,7 @@ def load_override(override_path: Path | None) -> Override:
     doc = load_yaml(override_path)
     version = doc.get("schema_version")
     if version != OVERRIDE_SCHEMA_VERSION:
-        raise ManifestError(
-            f"override {override_path}: unexpected schema_version '{version}'"
-        )
+        raise ManifestError(f"override {override_path}: unexpected schema_version '{version}'")
     repos_raw = doc.get("repositories", {})
     if not isinstance(repos_raw, dict):
         raise ManifestError(f"override {override_path}: 'repositories' must be a mapping")

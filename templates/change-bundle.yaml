@@ -30,8 +30,8 @@ validation:
   profile: ip-dev
   flow: cross-repo-qualification
   required_targets:
-    - aix:vip:<protocol>:unit
-    - aix:ip:<ip>:regression
+    - aixsilicon:vip:<protocol>:unit
+    - aixsilicon:ip:<ip>:regression
 
 release_plan:
   hwif: <next-version>

@@ -123,7 +123,9 @@ def resolve_repository(
         )
 
     if not gitops.is_repo(path):
-        raise InfraError(f"repository '{repo.id}' is not cloned at {path}; run sync first", repo=repo.id)
+        raise InfraError(
+            f"repository '{repo.id}' is not cloned at {path}; run sync first", repo=repo.id
+        )
 
     if not gitops.verify_remote(path, url):
         raise InfraError(
@@ -141,9 +143,7 @@ def resolve_repository(
     dirty, _, _, _ = gitops.dirty_status(path)
 
     if mode == RELEASE_MODE and dirty:
-        raise BlockedError(
-            f"repository '{repo.id}' is dirty in release mode", repo=repo.id
-        )
+        raise BlockedError(f"repository '{repo.id}' is dirty in release mode", repo=repo.id)
 
     return ResolvedRepository(
         id=repo.id,

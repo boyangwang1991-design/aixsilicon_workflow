@@ -80,7 +80,9 @@ def test_init_sync_status_lock(tmp_path, make_git_repo):
     assert by_id["hwif"][1].present
 
     # lock
-    result = generate_lock(manifest, profile, override, workspace_root=tmp_path, mode=WORKSPACE_MODE)
+    result = generate_lock(
+        manifest, profile, override, workspace_root=tmp_path, mode=WORKSPACE_MODE
+    )
     assert len(result.repositories) == 2
     lock = result.to_lock_doc(manifest, {"profile": "unset"})
     assert lock["repositories"]["hwif"]["commit"]

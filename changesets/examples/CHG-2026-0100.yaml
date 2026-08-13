@@ -1,0 +1,37 @@
+# APB 寄存器 IP 端到端支持（HWIF + IP + VIP 联合变更）
+schema_version: aix.change-bundle/v1
+id: CHG-2026-0100
+title: APB 寄存器 IP 端到端支持
+owner: test-owner
+status: draft
+
+repositories:
+  hwif:
+    branch: feature/apb-csr-contract
+    base: main
+    pr: 200
+    merge_order: 1
+  vip:
+    branch: feature/apb-vip
+    base: main
+    pr: 210
+    depends_on: [hwif]
+    merge_order: 2
+  ip:
+    branch: feature/apb-csr-ip
+    base: main
+    pr: 400
+    depends_on: [hwif, vip]
+    merge_order: 3
+
+validation:
+  profile: ip-dev
+  flow: apb-register-ip
+  required_targets:
+    - aixsilicon:ip:apb_csr:regression
+    - aixsilicon:vip:apb:unit
+
+release_plan:
+  hwif: 1.1.0
+  vip: 1.0.0
+  ip: 1.0.0

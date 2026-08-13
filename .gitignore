@@ -1,6 +1,6 @@
 # Independent repositories managed by aix workflow
 /repos/
-
+/.roo/
 # Generated workspace state
 /.aix/
 /build/

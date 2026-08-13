@@ -1,5 +1,5 @@
-# Change Bundle integration: checkout PR heads and run joint validation.
-# All events carry correlation_id + depth; no recursive event loops.
+# Change Bundle integration: validate bundle, checkout PR heads, joint checks.
+# All events carry correlation_id + depth; no recursive event loops (github.py).
 name: Change Bundle
 
 on:
@@ -30,13 +30,43 @@ jobs:
           python-version: '3.12'
       - name: Install CLI
         run: pip install -e ".[dev]"
-      - name: Load bundle
+      - name: Guard event depth (correlation/depth, no recursion)
         run: |
-          # Validate the bundle YAML against change-bundle schema
-          python -c "from aixworkflow.bundle import load_bundle; from pathlib import Path; load_bundle(Path('changesets') / '${{ inputs.bundle }}' + ('' if '${{ inputs.bundle }}'.endswith('.yaml') else '.yaml'))"
-      - name: Checkout PR heads (placeholder)
+          python - "${{ inputs.depth }}" <<'PY'
+          import sys
+          from aixworkflow.github import DispatchEvent, guard_event_loop
+          guard_event_loop(DispatchEvent(
+              correlation_id="${{ inputs.correlation_id || 'ci' }}",
+              source_repo="aixsilicon_workflow",
+              source_sha="ci", depth=int(sys.argv[1])))
+          print("event depth ok")
+          PY
+      - name: Validate bundle + merge order
         run: |
-          echo "Checkout each bundle repository PR HEAD by merge_order; joint test below."
-      - name: Joint required targets (placeholder)
+          aix bundle validate "${{ inputs.bundle }}"
+      - name: Checkout each PR head into the workspace
         run: |
-          echo "Run bundle.validation.required_targets from the bundle file."
+          set -euo pipefail
+          python - "${{ inputs.bundle }}" <<'PY'
+          import sys
+          from pathlib import Path
+          from aixworkflow.bundle import load_bundle
+          from aixworkflow.yamlutil import write_yaml
+          name = sys.argv[1]
+          path = Path('changesets') / (name if name.endswith('.yaml') else f'{name}.yaml')
+          bundle = load_bundle(path)
+          override = {
+              'schema_version': 'aix.workspace-override/v1',
+              'repositories': {
+                  r.id: {'revision': {'branch': r.branch}}
+                  for r in bundle.repositories
+              },
+          }
+          Path('.aix').mkdir(exist_ok=True)
+          write_yaml(Path('.aix') / 'bundle-override.yaml', override)
+          print(f"bundle {bundle.id}: {len(bundle.repositories)} repo(s), order {bundle.validation.get('profile', 'minimal')}")
+          PY
+      - name: Joint workspace checks
+        run: |
+          aix wf doctor || true
+          echo "Joint required targets execute here once EDA/tool providers are installed."

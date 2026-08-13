@@ -7,6 +7,14 @@
 > 代码结构/工程化专项优化见 [`docs/optimization-plan.md`](docs/optimization-plan.md)。
 > **2026-08-13 已执行**：P0 五项缺陷修复、cli 拆包、schema 单一事实源、Makefile、
 > `aix wf run` / `aix wf test --affected` / `aix bundle validate|status` 接入（测试 41 例通过）。
+>
+> **2026-08-13 综合优化（跨仓 V0.2）**：见 [`plans/cross-repo-optimization-plan.md`](plans/cross-repo-optimization-plan.md)、
+> [`docs/adr/0003-0006`](docs/adr/README.md)、[`docs/maturity-model.md`](docs/maturity-model.md)、[`docs/schema-ownership.md`](docs/schema-ownership.md)。
+> 落地：VLNV 统一 `aixsilicon:*`；CLI 插件组 `aixsilicon.commands`（`aix tool` fallback）；
+> 标准 action 集 + `aix release prepare/publish` + `aix bundle create`；统一退出码分段；
+> 6 个 workflows 真实化 + pre-commit 全绿；FuseSoC 实跑（483 core、reference 排除、冲突检测）；
+> tool/catalog/soc-integration/skill/ip 骨架仓最小落地；APB 穿刺 flow 与 Change Bundle 示例
+> （测试 51 例通过，`make check` 通过）。
 
 ## 总览
 
@@ -125,3 +133,12 @@
 - [ ] 多仓自动提交失控 → 保持单仓显式命令
 - [ ] 影响分析漏测 → 未知依赖按扩大范围
 - [ ] EDA 产物撑爆仓库 → ignore + pre-commit Guard 已建，落地 `pre-commit install`
+
+## 跨仓整体架构评审（2026-08-13，见 [`plans/cross-repo-architecture-review.md`](plans/cross-repo-architecture-review.md)）
+
+- [ ] R1 工具收敛：督促 hwif `tools/` 产品级工具分阶段迁入 tool_repo（ADR-0006）
+- [ ] R4 发布职责分工：ipkg（IP 源码发布）/ `aix release`（跨仓 Gate 编排）/ hwif package_release 边界落地
+- [ ] R5 “影响分析”语义命名区分（接口影响 vs 仓库影响）
+- [ ] A1 IP 仓双态模型：dev 分支可编辑、release 版本冻结
+- [ ] A2 vendored `reference/` 治理：排除 fusesoc 发现、不发布、不进 Catalog
+- [ ] A4 techlib 统一 `aixsilicon_techlib_repo`（P1 待建）

@@ -29,8 +29,8 @@ validation:
   profile: ip-dev
   flow: cross-repo-qualification
   required_targets:
-    - aix:vip:axi:unit
-    - aix:ip:x2x:regression
+    - aixsilicon:vip:axi:unit
+    - aixsilicon:ip:x2x:regression
 
 release_plan:
   hwif: 2.0.0

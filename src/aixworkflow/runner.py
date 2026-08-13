@@ -2,6 +2,10 @@
 
 P1 scope. The runner resolves stages in dependency order, checks preconditions,
 executes registered actions, and always collects evidence on failure.
+
+Actions that cannot run in the current environment raise `ActionSkipped`
+(OPTIONAL_UNAVAILABLE semantics, ADR-0004/0006); the runner records them as
+`skipped` and continues the DAG instead of failing.
 """
 
 from __future__ import annotations
@@ -10,6 +14,15 @@ from collections import deque
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from aixworkflow.actions import (
+    ActionSkipped,
+    eda_regression,
+    evidence_index,
+    fusesoc_target,
+    hwif_compatibility_check,
+    release_package,
+    workspace_resolve,
+)
 from aixworkflow.errors import AixError, DesignError
 from aixworkflow.evidence import EvidenceCollector
 from aixworkflow.flow import Flow
@@ -35,6 +48,23 @@ class ActionRegistry:
 
     def get(self, uses: str) -> object | None:
         return self._actions.get(uses)
+
+
+def default_registry() -> ActionRegistry:
+    """Registry with the standard actions (plan.md §15 / ADR-0006).
+
+    `hwif.compatibility` is kept as an alias of `hwif.compatibility-check`
+    because several flow documents use the shorter form.
+    """
+    registry = ActionRegistry()
+    registry.register("workspace.resolve", workspace_resolve)
+    registry.register("fusesoc.target", fusesoc_target)
+    registry.register("hwif.compatibility-check", hwif_compatibility_check)
+    registry.register("hwif.compatibility", hwif_compatibility_check)
+    registry.register("eda.regression", eda_regression)
+    registry.register("evidence.index", evidence_index)
+    registry.register("release.package", release_package)
+    return registry
 
 
 def run_flow(
@@ -72,7 +102,9 @@ def run_flow(
         stage = flow.stage_by_id(sid)
         action = registry.get(stage.uses)
         if action is None:
-            evidence.record_stage(sid, "blocked", failure_signature=f"unregistered action {stage.uses}")
+            evidence.record_stage(
+                sid, "blocked", failure_signature=f"unregistered action {stage.uses}"
+            )
             stage_results[sid] = "blocked"
             continue
         try:
@@ -80,10 +112,11 @@ def run_flow(
             fn(stage)
             evidence.record_stage(sid, "passed")
             stage_results[sid] = "passed"
+        except ActionSkipped as exc:
+            evidence.record_stage(sid, "skipped", failure_signature=str(exc))
+            stage_results[sid] = "skipped"
         except Exception as exc:  # noqa: BLE001 - normalize any stage failure
-            evidence.record_stage(
-                sid, "failed", failure_signature=str(exc), exit_code=1
-            )
+            evidence.record_stage(sid, "failed", failure_signature=str(exc), exit_code=1)
             stage_results[sid] = "failed"
             evidence.record_gate("G6", "fail", notes=f"stage {sid} failed: {exc}")
             evidence.write(Path("reports") / evidence.run_id)

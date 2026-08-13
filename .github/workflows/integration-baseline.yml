@@ -22,8 +22,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install CLI
-        run: pip install -e ".[dev]"
+      - name: Install CLI + FuseSoC
+        run: |
+          pip install -e ".[dev]"
+          pip install "fusesoc==2.4.*"
       - name: Init + sync (baseline lock)
         run: |
           aix wf init --profile "${{ inputs.profile || 'ip-dev' }}"
@@ -32,6 +34,13 @@ jobs:
         run: aix wf doctor
       - name: Generate FuseSoC config
         run: aix wf fusesoc --generate
-      - name: Compatibility / representative regression (placeholder)
+      - name: Discover all cores across roots (parse + VLNV index)
         run: |
-          echo "Run hwif-compat, representative IP/VIP regression here."
+          set -euo pipefail
+          fusesoc --cores-root repos core list > /dev/null
+          echo "cores discovered under repos/"
+      - name: Report drift vs baseline lock
+        run: |
+          set +e
+          aix wf diff --against locks/baseline.lock.yaml
+          echo "NOTE: drift is reported, never auto-changed (plan.md §19.3)"

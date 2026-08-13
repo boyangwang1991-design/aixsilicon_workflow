@@ -36,7 +36,9 @@ def run_doctor(manifest: Manifest, workspace_root: Path, profile_name: str) -> l
     try:
         graph = DependencyGraph(manifest.repositories)
         graph.ensure_acyclic()
-        checks.append(_check("dependency_dag", True, f"{len(manifest.repositories)} repos, acyclic"))
+        checks.append(
+            _check("dependency_dag", True, f"{len(manifest.repositories)} repos, acyclic")
+        )
     except Exception as exc:  # pragma: no cover - defensive
         checks.append(_check("dependency_dag", False, str(exc)))
 
