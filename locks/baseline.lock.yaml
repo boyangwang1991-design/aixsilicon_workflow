@@ -1,0 +1,36 @@
+# 团队默认集成基线（示例模板）
+# 警告：以下 SHA 为占位符。真实基线必须通过 `aix wf lock` 在真实仓库上生成，
+# 并通过完整跨仓资格验证 PR 更新。
+schema_version: aix.workspace-lock/v1
+workspace: aixsilicon
+profile: soc-integration
+manifest_digest: "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+catalog:
+  revision: "0000000000000000"
+resolution_policy: release
+generator_type: cli
+
+repositories:
+  hwif:
+    url: git@github.com:boyangwang1991-design/aixsilicon_hwif_repo.git
+    resolved_from: main
+    commit: "0000000000000000000000000000000000000000"
+    dirty: false
+    overridden: false
+  dv-common:
+    url: git@github.com:boyangwang1991-design/aixsilicon_dv_common.git
+    resolved_from: main
+    commit: "0000000000000000000000000000000000000000"
+    dirty: false
+    overridden: false
+  vip:
+    url: git@github.com:boyangwang1991-design/aixsilicon_vip_repo.git
+    resolved_from: main
+    commit: "0000000000000000000000000000000000000000"
+    dirty: false
+    overridden: false
+
+toolchain:
+  profile: blue-zone-2026.08
+  fusesoc: 2.4.x
+  python: "3.12"

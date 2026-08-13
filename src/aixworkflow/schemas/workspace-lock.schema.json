@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "aix.workspace-lock/v1",
+  "title": "AIXSILICON Workspace Lockfile",
+  "description": "可复现性核心：记录 Manifest 解析后的不可变状态（SHA、工具 Profile、Catalog 等）。",
+  "type": "object",
+  "required": [
+    "schema_version", "workspace", "profile", "manifest_digest",
+    "repositories", "toolchain"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "aix.workspace-lock/v1" },
+    "workspace": { "type": "string" },
+    "profile": { "type": "string" },
+    "manifest_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "catalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "revision": { "type": "string" },
+        "commit": { "type": "string" }
+      }
+    },
+    "resolution_policy": {
+      "type": "string",
+      "enum": ["workspace", "release"],
+      "default": "workspace"
+    },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "generator_type": { "type": "string", "enum": ["cli", "ci"] },
+    "repositories": {
+      "type": "object",
+      "description": "key 为仓库逻辑 ID。",
+      "patternProperties": {
+        "^[a-zA-Z0-9_-]+$": {
+          "type": "object",
+          "required": ["url", "resolved_from", "commit"],
+          "additionalProperties": false,
+          "properties": {
+            "url": { "type": "string" },
+            "resolved_from": { "type": "string" },
+            "commit": { "type": "string", "minLength": 7 },
+            "tree": { "type": "string" },
+            "dirty": { "type": "boolean", "default": false },
+            "overridden": { "type": "boolean", "default": false }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "toolchain": {
+      "type": "object",
+      "required": ["profile"],
+      "additionalProperties": false,
+      "properties": {
+        "profile": { "type": "string" },
+        "fusesoc": { "type": "string" },
+        "python": { "type": "string" },
+        "generators": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    }
+  }
+}

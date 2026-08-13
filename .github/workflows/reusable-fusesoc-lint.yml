@@ -1,0 +1,36 @@
+# Reusable: FuseSoC lint for asset repos (thin entry).
+# Public workflows must pin a Release Tag or Commit SHA, never long-lived `main`.
+name: Reusable FuseSoC Lint
+
+on:
+  workflow_call:
+    inputs:
+      repo_type:
+        type: string
+        required: true
+        description: 'asset repo type (ip/vip/cbb/hwif/dv-common)'
+      target:
+        type: string
+        default: lint
+      fusesoc_version:
+        type: string
+        default: '2.4.*'
+    secrets:
+      inherit:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install FuseSoC
+        run: pip install "fusesoc==${{ inputs.fusesoc_version }}"
+      - name: FuseSoC core lint
+        run: |
+          fusesoc library list
+          echo "target=${{ inputs.target }} repo_type=${{ inputs.repo_type }}"
+          # Replace with the organization-level target mapping:
+          fusesoc core list --cores-root . > /dev/null

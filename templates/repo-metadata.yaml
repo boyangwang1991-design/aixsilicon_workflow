@@ -1,0 +1,27 @@
+# 仓库元数据模板
+# 各资产仓应提供该元数据，供 Workflow 与 Catalog 消费。
+schema_version: aix.repo-metadata/v1
+
+id: <repo-logical-id>          # 例如 hwif / cbb / ip
+type: <hw-interface|cbb|ip|dv-common|vip|tool|catalog|soc-integration|skill>
+name: <repo-name>              # 例如 aixsilicon_hwif_repo
+description: <一句话职责>
+
+owner: <team-platform>         # 例如 hw-platform
+visibility: <public|private>
+default_branch: main
+license: Apache-2.0
+
+revision_strategy:
+  semver: true
+  source: <branch-based|contract-based|api-based>
+
+exports:
+  - <interface-contracts>
+  - <fusesoc-cores>
+
+fusesoc_roots:
+  - .
+
+maintainers:
+  - <github-handle>

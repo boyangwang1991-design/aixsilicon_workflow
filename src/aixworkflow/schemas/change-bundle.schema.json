@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "aix.change-bundle/v1",
+  "title": "AIXSILICON Change Bundle",
+  "description": "建立独立跨仓变更之间的逻辑关系与合并/验证顺序，不伪造跨仓原子提交。",
+  "type": "object",
+  "required": [
+    "schema_version", "id", "title", "owner", "status", "repositories"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "aix.change-bundle/v1" },
+    "id": { "type": "string", "pattern": "^CHG-[0-9]{4}-[0-9]{4,}$" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "owner": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft", "ready", "validating", "blocked", "review",
+        "merge-ready", "merged", "released", "closed"
+      ]
+    },
+    "repositories": {
+      "type": "object",
+      "description": "key 为仓库逻辑 ID。",
+      "patternProperties": {
+        "^[a-zA-Z0-9_-]+$": {
+          "type": "object",
+          "required": ["branch", "base"],
+          "additionalProperties": false,
+          "properties": {
+            "branch": { "type": "string" },
+            "base": { "type": "string" },
+            "pr": { "type": "integer" },
+            "merge_order": { "type": "integer", "minimum": 1 },
+            "depends_on": { "type": "array", "items": { "type": "string" } },
+            "sha": { "type": "string" }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "profile": { "type": "string" },
+        "flow": { "type": "string" },
+        "required_targets": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "release_plan": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "correlation_id": { "type": "string" }
+  }
+}

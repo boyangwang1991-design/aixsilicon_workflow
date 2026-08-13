@@ -1,0 +1,38 @@
+# 示例 Change Bundle：AXI USER sideband 端到端支持
+schema_version: aix.change-bundle/v1
+id: CHG-2026-0042
+title: AXI USER sideband端到端支持
+description: 涉及 HWIF 契约、VIP 事务与 IP 实现的跨仓联合变更。
+owner: wang-boyang
+status: validating
+
+repositories:
+  hwif:
+    branch: feature/axi-user-contract
+    base: main
+    pr: 128
+    merge_order: 1
+  vip:
+    branch: feature/axi-user-vip
+    base: main
+    pr: 207
+    depends_on: [hwif]
+    merge_order: 2
+  ip:
+    branch: feature/x2x-axi-user
+    base: main
+    pr: 381
+    depends_on: [hwif, vip]
+    merge_order: 3
+
+validation:
+  profile: ip-dev
+  flow: cross-repo-qualification
+  required_targets:
+    - aix:vip:axi:unit
+    - aix:ip:x2x:regression
+
+release_plan:
+  hwif: 2.0.0
+  vip: 1.4.0
+  ip: 1.1.0

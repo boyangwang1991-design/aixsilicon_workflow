@@ -1,0 +1,52 @@
+# 安全策略
+schema_version: aix.policy/v1
+name: security-policy
+version: 0.1.0
+
+rules:
+  - id: sec-url-allowlist
+    description: 所有外部仓库 URL 使用 allowlist（来自 Manifest approved remotes）
+    enforcement: hard
+
+  - id: sec-verify-canonical-remote
+    description: clone 后验证 canonical remote
+    enforcement: hard
+
+  - id: sec-no-arbitrary-shell
+    description: 禁止执行 Manifest 中任意 Shell 字符串；Flow uses 只能引用注册过的 Action
+    enforcement: hard
+
+  - id: sec-structured-params
+    description: 参数通过结构化接口传递，避免 Shell 注入
+    enforcement: hard
+
+  - id: sec-no-credentials-in-yaml
+    description: 凭据只由 SSH Agent、Git credential helper 或 CI Secret 提供，不进入 YAML
+    enforcement: hard
+
+  - id: sec-least-privilege-actions
+    description: 默认 contents: read；只在发布 Job 中临时授予 contents: write
+    enforcement: hard
+
+  - id: sec-no-fork-secrets
+    description: Fork PR 不得获得组织 Secret
+    enforcement: hard
+
+  - id: sec-event-loop-guard
+    description: 禁止跨仓触发事件环；事件携带 correlation_id、source、SHA 和 depth，超过深度即拒绝
+    enforcement: hard
+
+  - id: sec-high-risk-command-guard
+    description: 工作区根目录禁止递归 git clean -ffdx、rm -rf repos/*、无确认 reset --hard、自动 force-push
+    enforcement: hard
+
+  - id: sec-safety-git-c
+    description: 所有 Git 命令必须使用 git -C <resolved_repo_path>，禁止依赖当前目录猜测仓库
+    enforcement: hard
+
+exit_code_contract:
+  # 网络/EDA 失败与设计失败使用不同退出码
+  success: 0
+  design_failure: 1
+  infra_failure: 2
+  blocked: 3

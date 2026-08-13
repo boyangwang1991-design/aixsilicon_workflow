@@ -1,0 +1,58 @@
+# IP 资格验证 Workflow
+schema_version: aix.flow/v1
+name: ip-verification
+description: IP 发布前联合资格验证（clean/locked 环境）
+
+inputs:
+  - ip_vlnv
+  - tool_profile
+  - level
+
+preconditions:
+  clean_workspace: true
+  lock_required: true
+  forbid_local_override: true
+
+stages:
+  - id: resolve
+    uses: workspace.resolve
+
+  - id: contract
+    needs: [resolve]
+    uses: hwif.compatibility-check
+
+  - id: lint
+    needs: [resolve]
+    uses: fusesoc.target
+    with:
+      target: lint
+
+  - id: unit
+    needs: [contract, lint]
+    uses: fusesoc.target
+    with:
+      target: unit_sim
+
+  - id: regression
+    needs: [unit]
+    uses: eda.regression
+    with:
+      level: <level>
+
+  - id: package
+    needs: [regression]
+    uses: release.package
+
+  - id: evidence
+    needs: [contract, lint, unit, regression, package]
+    uses: evidence.index
+
+gates:
+  - G0
+  - G1
+  - G2
+  - G3
+  - G4
+  - G5
+  - G6
+  - G7

@@ -1,0 +1,39 @@
+# Change Bundle 模板
+# 复制到 changesets/<ID>.yaml 后编辑。
+schema_version: aix.change-bundle/v1
+id: CHG-2026-0000
+title: <变更标题>
+description: <变更描述>
+owner: <github-handle>
+status: draft
+
+repositories:
+  hwif:
+    branch: feature/<branch>
+    base: main
+    pr: <pr-number>
+    merge_order: 1
+  vip:
+    branch: feature/<branch>
+    base: main
+    pr: <pr-number>
+    depends_on: [hwif]
+    merge_order: 2
+  ip:
+    branch: feature/<branch>
+    base: main
+    pr: <pr-number>
+    depends_on: [hwif, vip]
+    merge_order: 3
+
+validation:
+  profile: ip-dev
+  flow: cross-repo-qualification
+  required_targets:
+    - aix:vip:<protocol>:unit
+    - aix:ip:<ip>:regression
+
+release_plan:
+  hwif: <next-version>
+  vip: <next-version>
+  ip: <next-version>

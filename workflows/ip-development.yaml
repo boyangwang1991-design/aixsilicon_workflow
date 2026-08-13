@@ -1,0 +1,71 @@
+# IP 设计验证 Workflow
+schema_version: aix.flow/v1
+name: ip-design
+description: IP 开发主线：规格 → 接口/CSR → RTL → 静态检查 → 验证 → 实现评估
+
+inputs:
+  - ip_name
+  - tool_profile
+
+preconditions:
+  lock_required: true
+
+stages:
+  - id: resolve
+    uses: workspace.resolve
+
+  - id: spec
+    needs: [resolve]
+    uses: skill.ip.spec
+    write_scope:
+      - {repo: ip, paths: [metadata, docs, testplan]}
+
+  - id: contract
+    needs: [spec]
+    uses: hwif.compatibility-check
+
+  - id: csr
+    needs: [spec]
+    uses: tool.reg-gen
+    write_scope:
+      - {repo: ip, paths: [csr, rtl, dv]}
+
+  - id: rtl
+    needs: [contract, csr]
+    uses: skill.ip.rtl
+    write_scope:
+      - {repo: ip, paths: [rtl]}
+
+  - id: lint
+    needs: [rtl]
+    uses: fusesoc.target
+    with:
+      target: lint
+
+  - id: unit
+    needs: [lint]
+    uses: fusesoc.target
+    with:
+      target: unit_sim
+
+  - id: regression
+    needs: [unit]
+    uses: eda.regression
+
+  - id: ppa
+    needs: [regression]
+    uses: eda.synthesis
+    with:
+      profile: <tech-profile>
+
+  - id: evidence
+    needs: [lint, unit, regression, ppa]
+    uses: evidence.index
+
+gates:
+  - G0
+  - G1
+  - G2
+  - G3
+  - G4
+  - G6

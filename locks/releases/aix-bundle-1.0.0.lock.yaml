@@ -1,0 +1,35 @@
+# 正式 Release Bundle 锁（示例模板）
+# 不允许原地修改；如需变更请新建下一个 Bundle 版本。
+schema_version: aix.workspace-lock/v1
+workspace: aixsilicon
+profile: release
+manifest_digest: "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+catalog:
+  revision: "0000000000000000"
+resolution_policy: release
+generator_type: ci
+
+repositories:
+  hwif:
+    url: git@github.com:boyangwang1991-design/aixsilicon_hwif_repo.git
+    resolved_from: v2.0.0
+    commit: "0000000000000000000000000000000000000000"
+    dirty: false
+    overridden: false
+  vip:
+    url: git@github.com:boyangwang1991-design/aixsilicon_vip_repo.git
+    resolved_from: v1.4.0
+    commit: "0000000000000000000000000000000000000000"
+    dirty: false
+    overridden: false
+  ip:
+    url: git@github.com:boyangwang1991-design/aixsilicon_ip_repo.git
+    resolved_from: v1.1.0
+    commit: "0000000000000000000000000000000000000000"
+    dirty: false
+    overridden: false
+
+toolchain:
+  profile: blue-zone-2026.08
+  fusesoc: 2.4.x
+  python: "3.12"

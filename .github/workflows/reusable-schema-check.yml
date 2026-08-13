@@ -1,0 +1,45 @@
+# Reusable: validate YAML facts against the packaged JSON schemas.
+name: Reusable Schema Check
+
+on:
+  workflow_call:
+    inputs:
+      paths:
+        type: string
+        required: true
+        description: 'space separated glob of YAML facts to validate'
+      schema_name:
+        type: string
+        required: true
+    secrets:
+      inherit:
+
+jobs:
+  schema-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install aixworkflow
+        run: pip install "git+https://github.com/boyangwang1991-design/aixsilicon_workflow.git@v0.1.0"
+      - name: Validate schemas
+        run: |
+          python - <<'PY'
+          import sys
+          from pathlib import Path
+          from aixworkflow.schema import validate
+          from aixworkflow.yamlutil import load_yaml
+          schema = "${{ inputs.schema_name }}"
+          failed = 0
+          for pattern in "${{ inputs.paths }}".split():
+              for p in Path('.').glob(pattern):
+                  try:
+                      validate(load_yaml(p), schema, source=str(p))
+                      print(f"OK   {p}")
+                  except Exception as e:
+                      print(f"FAIL {p}: {e}")
+                      failed = 1
+          sys.exit(failed)
+          PY

@@ -1,0 +1,56 @@
+# 跨仓联合资格验证（Change Bundle 验证入口）
+schema_version: aix.flow/v1
+name: cross-repo-qualification
+description: 拉取 Change Bundle 所有 PR HEAD，执行联合测试并产生结构化结论
+
+inputs:
+  - bundle_id
+  - tool_profile
+
+preconditions:
+  clean_workspace: true
+  lock_required: true
+  forbid_local_override: true
+
+stages:
+  - id: bundle-resolve
+    uses: bundle.resolve
+    with:
+      bundle: <bundle_id>
+
+  - id: checkout-prs
+    needs: [bundle-resolve]
+    uses: git.checkout-pr-refs
+    write_scope:
+      - {repo: '*', paths: [worktree]}
+
+  - id: dependency-graph
+    needs: [checkout-prs]
+    uses: graph.build
+
+  - id: impact
+    needs: [dependency-graph]
+    uses: impact.analyze
+
+  - id: required-targets
+    needs: [impact]
+    uses: fusesoc.target
+    with:
+      targets: <required_targets>
+
+  - id: representative-regression
+    needs: [required-targets]
+    uses: eda.regression
+
+  - id: evidence
+    needs: [dependency-graph, impact, required-targets, representative-regression]
+    uses: evidence.index
+
+gates:
+  - G0
+  - G1
+  - G2
+  - G3
+  - G4
+  - G5
+  - G6

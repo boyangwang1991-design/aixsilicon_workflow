@@ -1,0 +1,7 @@
+# soc-integration Profile：SoC 集成开发
+schema_version: aix.workspace/v1
+extends: default.yaml
+
+workspace:
+  name: aixsilicon
+  default_profile: soc-integration

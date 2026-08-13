@@ -1,0 +1,46 @@
+# 依赖策略
+schema_version: aix.policy/v1
+name: dependency-policy
+version: 0.1.0
+
+rules:
+  - id: dep-dag-acyclic
+    description: 仓库级依赖 depends_on 必须形成有向无环图
+    enforcement: hard
+
+  - id: dep-fusesoc-closure
+    description: FuseSoC VLNV 依赖闭包必须完整，不可解析的 Core 必须报错
+    enforcement: hard
+
+  - id: dep-no-relative-cross-repo
+    description: 禁止未声明的跨仓相对路径引用（如 ../../ip/...）
+    enforcement: hard
+
+  - id: dep-no-ip-to-vip-source
+    description: 禁止 IP 通过源码路径直接引用 VIP 内部文件（应使用 VLNV Core）
+    enforcement: hard
+
+  - id: dep-version-consistency
+    description: Manifest、Catalog 与 Core 文件的版本信息必须一致
+    enforcement: hard
+
+  - id: dep-baseline-fixed-sha
+    description: 正式基线必须使用可到达的固定 SHA，禁止 dirty tree 或不可达 commit
+    enforcement: release_only
+
+  - id: dep-dv-common-bottom
+    description: dv-common 不得依赖具体 VIP 与具体 IP
+    enforcement: hard
+
+  - id: dep-tool-not-rtl-dependency
+    description: Tool 是确定性执行依赖，不成为 RTL 逻辑依赖
+    enforcement: hard
+
+  - id: dep-skill-not-required
+    description: 私有 Skill 不成为开源仓构建、测试和发布验证的隐藏必需依赖
+    enforcement: hard
+
+unknown_dependency_behavior:
+  # 影响图不完整时扩大测试范围，不静默缩小
+  expand_coverage: true
+  mark_unknown: true

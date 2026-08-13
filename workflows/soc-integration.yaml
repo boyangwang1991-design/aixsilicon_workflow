@@ -1,0 +1,90 @@
+# SoC 集成 Workflow
+schema_version: aix.flow/v1
+name: soc-integration
+description: SoC 集成主线：资产选型 → 实例配置 → 地址/中断/CRG/Power → Top 生成 → 软件派生 → 集成验证
+
+inputs:
+  - soc_project
+  - tool_profile
+
+preconditions:
+  lock_required: true
+
+stages:
+  - id: resolve
+    uses: workspace.resolve
+
+  - id: asset-selection
+    needs: [resolve]
+    uses: catalog.resolve
+    with:
+      project: <soc_project>
+
+  - id: instance-config
+    needs: [asset-selection]
+    uses: soc.schema-check
+    write_scope:
+      - {repo: chip-<soc_project>-soc, paths: [config, instances]}
+
+  - id: address-space
+    needs: [instance-config]
+    uses: tool.address-gen
+
+  - id: interrupt
+    needs: [instance-config]
+    uses: tool.irq-gen
+
+  - id: clock-reset
+    needs: [instance-config]
+    uses: tool.crg-gen
+
+  - id: power-safety
+    needs: [instance-config]
+    uses: tool.power-check
+
+  - id: topgen
+    needs: [address-space, interrupt, clock-reset, power-safety]
+    uses: tool.top-gen
+    write_scope:
+      - {repo: chip-<soc_project>-soc, paths: [generated]}
+
+  - id: sw-derive
+    needs: [topgen]
+    uses: tool.sw-gen
+    write_scope:
+      - {repo: sw, paths: [bsp, headers, dts]}
+
+  - id: connectivity-check
+    needs: [topgen]
+    uses: tool.connect-check
+
+  - id: build-sim
+    needs: [connectivity-check]
+    uses: fusesoc.target
+    with:
+      target: soc_top_sim
+
+  - id: boot-smoke
+    needs: [build-sim]
+    uses: eda.regression
+    with:
+      scope: boot-smoke
+
+  - id: baseline
+    needs: [boot-smoke]
+    uses: soc.baseline
+    with:
+      lock: <candidate.lock.yaml>
+
+  - id: evidence
+    needs: [topgen, connectivity-check, build-sim, boot-smoke, baseline]
+    uses: evidence.index
+
+gates:
+  - G0
+  - G1
+  - G2
+  - G3
+  - G4
+  - G5
+  - G6

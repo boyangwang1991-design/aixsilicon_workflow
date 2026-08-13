@@ -1,0 +1,69 @@
+# VIP / DV Common 开发 Workflow
+schema_version: aix.flow/v1
+name: vip-development
+description: 协议与验证组件开发：公共 API 变更 → 单元 → 模拟器矩阵 → 自检 → 代表性回归
+
+inputs:
+  - vip_vlnv
+  - tool_profile
+
+preconditions:
+  lock_required: true
+
+stages:
+  - id: resolve
+    uses: workspace.resolve
+
+  - id: api
+    needs: [resolve]
+    uses: skill.vip.design
+    write_scope:
+      - {repo: vip, paths: [transactions, agents, bfm, monitor, checker, coverage]}
+
+  - id: unit
+    needs: [api]
+    uses: fusesoc.target
+    with:
+      target: unit_sim
+
+  - id: simulator-matrix
+    needs: [unit]
+    uses: eda.simulator-matrix
+
+  - id: selfcheck
+    needs: [simulator-matrix]
+    uses: eda.self-check
+    with:
+      negative_tests: true
+
+  - id: reference-dut
+    needs: [selfcheck]
+    uses: eda.reference-dut
+
+  - id: representative-regression
+    needs: [reference-dut]
+    uses: eda.regression
+    with:
+      scope: representative-cbb-ip
+
+  - id: system-spotcheck
+    needs: [representative-regression]
+    uses: eda.regression
+    with:
+      scope: soc-system-spotcheck
+
+  - id: coverage
+    needs: [system-spotcheck]
+    uses: eda.coverage-baseline
+
+  - id: evidence
+    needs: [unit, simulator-matrix, selfcheck, reference-dut, representative-regression, coverage]
+    uses: evidence.index
+
+gates:
+  - G0
+  - G1
+  - G2
+  - G4
+  - G5
+  - G6

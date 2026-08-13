@@ -1,0 +1,43 @@
+# Run Manifest 模板
+schema_version: aix.run-manifest/v1
+
+run_id: <run-id>
+correlation_id: <correlation-id>
+trigger: <cli|ci|nightly|manual|skill>
+
+flow:
+  name: <flow-name>
+  version: <flow-version>
+
+workspace:
+  profile: <profile>
+  manifest_digest: sha256:<64-hex>
+  lock: <path-to-resolved-lock>
+
+repositories:
+  <repo-id>:
+    commit: <sha>
+    dirty: false
+    overridden: false
+
+inputs: {}
+toolchain:
+  profile: <tool-profile>
+  tools: {}
+
+stages:
+  <stage-id>:
+    status: <passed|failed|skipped>
+    started_at: <ISO-8601>
+    finished_at: <ISO-8601>
+    exit_code: 0
+
+gates:
+  G0:
+    result: pass
+  G1:
+    result: pass
+
+random_seed: <seed>
+artifacts: []
+approvals: []

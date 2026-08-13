@@ -1,0 +1,37 @@
+# Independent repositories managed by aix workflow
+/repos/
+
+# Generated workspace state
+/.aix/
+/build/
+/reports/
+/cache/
+
+# Generated tool configurations
+/generated/
+/fusesoc.conf
+/edalize_work_root/
+
+# Logs and temporary files
+*.log
+*.jou
+*.wlf
+*.vcd
+*.fsdb
+*.shm
+*.tmp
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# IDE and local overrides
+.vscode/
+.idea/
+workspace.local.yaml
+overrides/local.yaml

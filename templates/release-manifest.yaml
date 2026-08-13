@@ -1,0 +1,41 @@
+# Release Manifest 模板
+# 记录某个正式发布包含什么内容、证据、SBOM、Hash 和签名。
+schema_version: aix.release-manifest/v1
+
+release_id: <asset-vlnv-or-bundle-id>
+version: <semver>
+date: <ISO-8601>
+owner: <team>
+
+assets:
+  - type: <ip|cbb|vip|hwif|tool|bundle>
+    id: <asset-id>
+    version: <semver>
+    vlnv: <vendor:library:name:version>
+
+locks:
+  workspace_lock: locks/releases/<bundle>.lock.yaml
+  manifest_digest: sha256:<64-hex>
+
+evidence:
+  run_id: <run-id>
+  evidence_index: reports/<run-id>/evidence_index.yaml
+  qualification: <G0-G7 status>
+
+sbom:
+  format: cyclonedx
+  path: <path-to-sbom>
+
+hashes:
+  - path: <artifact-path>
+    sha256: <64-hex>
+
+signatures:
+  - who: <signer>
+    method: <gpg|cosign>
+    ref: <key-ref>
+
+approvals:
+  - who: <approver>
+    when: <ISO-8601>
+    action: release-approve

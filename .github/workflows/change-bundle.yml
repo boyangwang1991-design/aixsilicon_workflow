@@ -1,0 +1,42 @@
+# Change Bundle integration: checkout PR heads and run joint validation.
+# All events carry correlation_id + depth; no recursive event loops.
+name: Change Bundle
+
+on:
+  workflow_dispatch:
+    inputs:
+      bundle:
+        type: string
+        required: true
+        description: 'bundle id under changesets/'
+      correlation_id:
+        type: string
+        required: false
+      depth:
+        type: number
+        default: 0
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  bundle-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install CLI
+        run: pip install -e ".[dev]"
+      - name: Load bundle
+        run: |
+          # Validate the bundle YAML against change-bundle schema
+          python -c "from aixworkflow.bundle import load_bundle; from pathlib import Path; load_bundle(Path('changesets') / '${{ inputs.bundle }}' + ('' if '${{ inputs.bundle }}'.endswith('.yaml') else '.yaml'))"
+      - name: Checkout PR heads (placeholder)
+        run: |
+          echo "Checkout each bundle repository PR HEAD by merge_order; joint test below."
+      - name: Joint required targets (placeholder)
+        run: |
+          echo "Run bundle.validation.required_targets from the bundle file."

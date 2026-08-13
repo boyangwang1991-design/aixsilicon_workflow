@@ -1,0 +1,26 @@
+# red-zone 工具链 Profile（隔离/受限环境，与 blue-zone 相同 Schema 与 Flow 语义）
+# 网络策略与工具路径分离；CI 只记录工具版本与 Profile ID，不回显敏感环境变量。
+schema_version: aix.tool-profile/v1
+name: red-zone-2026.08
+
+host:
+  os: linux
+
+python:
+  version: "3.12"
+
+tools:
+  fusesoc: 2.4.x
+  verilator:
+    version: pinned
+    enabled: true
+
+commercial:
+  vcs:
+    enabled: true
+    version: approved
+
+environment:
+  required_variables:
+    - AIX_EDA_LICENSE_PROFILE
+    - AIX_RED_ZONE_NETWORK_POLICY

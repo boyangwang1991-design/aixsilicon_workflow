@@ -1,0 +1,6 @@
+# 本地覆盖示例（复制为 overrides/local.yaml 后使用）
+schema_version: aix.workspace-override/v1
+repositories:
+  hwif:
+    revision:
+      branch: feature/axi-user-contract

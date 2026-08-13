@@ -1,0 +1,143 @@
+# AIXSILICON 默认工作区清单（完整基线）
+# 描述期望工作区；正式基线由 Lockfile 固定 SHA。
+schema_version: aix.workspace/v1
+
+workspace:
+  name: aixsilicon
+  default_profile: ip-dev
+  repos_root: repos
+  generated_root: .aix/generated
+  lock_root: .aix
+
+remotes:
+  origin:
+    base_url: git@github.com:boyangwang1991-design
+
+repositories:
+  - id: hwif
+    type: hw-interface
+    path: repos/aixsilicon_hwif_repo
+    remote: origin
+    repo: aixsilicon_hwif_repo.git
+    revision:
+      branch: main
+    groups: [base, design, dv, soc]
+    required: true
+    owner: hw-platform
+    fusesoc_roots: [.]
+    exports:
+      - interface-contracts
+      - fusesoc-cores
+
+  - id: cbb
+    type: cbb
+    path: repos/aixsilicon_cbb_repo
+    remote: origin
+    repo: aixsilicon_cbb_repo.git
+    revision:
+      branch: main
+    groups: [base, design, cbb, ip, soc]
+    depends_on: [hwif]
+    required: true
+    owner: hw-platform
+    fusesoc_roots: [.]
+
+  - id: ip
+    type: ip
+    path: repos/aixsilicon_ip_repo
+    remote: origin
+    repo: aixsilicon_ip_repo.git
+    revision:
+      branch: main
+    groups: [base, ip, soc]
+    depends_on: [hwif, cbb]
+    required: true
+    owner: ip-platform
+    fusesoc_roots: [.]
+
+  - id: dv-common
+    type: dv-common
+    path: repos/aixsilicon_dv_common
+    remote: origin
+    repo: aixsilicon_dv_common.git
+    revision:
+      branch: main
+    groups: [base, dv]
+    required: true
+    owner: dv-platform
+    fusesoc_roots: [.]
+
+  - id: vip
+    type: vip
+    path: repos/aixsilicon_vip_repo
+    remote: origin
+    repo: aixsilicon_vip_repo.git
+    revision:
+      branch: main
+    groups: [base, dv, ip, soc]
+    depends_on: [hwif, dv-common]
+    required: true
+    owner: dv-platform
+    fusesoc_roots: [.]
+
+  - id: tools
+    type: tool
+    path: repos/aixsilicon_tool_repo
+    remote: origin
+    repo: aixsilicon_tool_repo.git
+    revision:
+      branch: main
+    groups: [base, tools]
+    required: true
+    owner: engineering-platform
+
+  - id: catalog
+    type: catalog
+    path: repos/aixsilicon_catalog_repo
+    remote: origin
+    repo: aixsilicon_catalog_repo.git
+    revision:
+      branch: main
+    groups: [base, catalog]
+    required: true
+    owner: release-platform
+
+  - id: soc-integration
+    type: soc-integration
+    path: repos/aixsilicon_soc_integration_repo
+    remote: origin
+    repo: aixsilicon_soc_integration_repo.git
+    revision:
+      branch: main
+    groups: [base, soc]
+    depends_on: [hwif, cbb, ip, catalog, tools]
+    required: true
+    owner: soc-platform
+
+  - id: skills
+    type: skill
+    path: repos/aixsilicon_skill_repo
+    remote: origin
+    repo: aixsilicon_skill_repo.git
+    revision:
+      branch: main
+    groups: [skills]
+    visibility: private
+    required: false
+    owner: ai-engineering
+
+profiles:
+  minimal:
+    include_groups: [base]
+  ip-dev:
+    include_groups: [base, design, cbb, ip, dv, tools, catalog, skills]
+  cbb-dev:
+    include_groups: [base, design, cbb, dv, tools, catalog, skills]
+  dv-dev:
+    include_groups: [base, dv, tools, catalog, skills]
+  soc-integration:
+    include_groups: [base, design, cbb, dv, ip, soc, tools, catalog, skills]
+  release:
+    include_groups: [base, design, cbb, dv, ip, soc, tools, catalog]
+  all:
+    include_groups: ['*']

@@ -1,0 +1,55 @@
+# Ownership Map：资产 → Owner 仓 → Skill 写入边界
+# 详见 plan.md §20.3。Skill 生成的文件必须按此表写入对应仓和目录。
+
+schema_version: aix.ownership-map/v1
+
+map:
+  - asset: Interface Contract
+    owner_repo: aixsilicon_hwif_repo
+    skill_write: 生成草案可以，提交需人工确认
+    allowed_paths: [contracts, bindings, generated]
+
+  - asset: CBB 代码 / 属性 / PPA 配置
+    owner_repo: aixsilicon_cbb_repo
+    skill_write: 可写指定 CBB 目录，不能自动 commit
+    allowed_paths: [cbb]
+
+  - asset: VIP 代码
+    owner_repo: aixsilicon_vip_repo
+    skill_write: 可写工作树，不能自动 commit
+    allowed_paths: [transactions, agents, bfm, monitor, checker, coverage, sequences]
+
+  - asset: DV Common 组件
+    owner_repo: aixsilicon_dv_common
+    skill_write: 可写工作树，不能自动 commit
+    allowed_paths: [common]
+
+  - asset: IP RTL / SystemRDL / 文档
+    owner_repo: aixsilicon_ip_repo
+    skill_write: 可写指定 IP 目录
+    allowed_paths: [ips]
+
+  - asset: Tool 实现
+    owner_repo: aixsilicon_tool_repo
+    skill_write: 仅 Tool 开发流程可写
+    allowed_paths: [packages]
+
+  - asset: SoC 通用 Schema / 模板
+    owner_repo: aixsilicon_soc_integration_repo
+    skill_write: 仅通用集成能力开发可写
+    allowed_paths: [schema, templates, rules]
+
+  - asset: 具体 SoC 配置 / Top
+    owner_repo: chip_<project>_soc_repo
+    skill_write: 仅该项目 Workflow 可写
+    allowed_paths: [config, generated]
+
+  - asset: Skill 实现
+    owner_repo: aixsilicon_skill_repo
+    skill_write: 仅 Skill 开发流程可写；私有
+    allowed_paths: [skills]
+
+  - asset: Manifest / Flow / Policy
+    owner_repo: aixsilicon_workflow
+    skill_write: 仅 Workflow 维护流程可写
+    allowed_paths: [manifests, workflows, policies, schemas, changesets]

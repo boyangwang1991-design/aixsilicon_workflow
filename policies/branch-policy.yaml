@@ -1,0 +1,29 @@
+# 分支策略
+schema_version: aix.policy/v1
+name: branch-policy
+version: 0.1.0
+
+rules:
+  - id: branch-default-main
+    description: 默认分支统一为 main；开发分支以 feature/<name> 命名
+    enforcement: hard
+
+  - id: branch-no-force-push
+    description: 默认禁止 force push；force 操作必须显式确认并记录
+    enforcement: hard
+
+  - id: branch-dirty-protect
+    description: dirty tree 时不自动 checkout 或 reset
+    enforcement: hard
+
+  - id: branch-single-repo-commit
+    description: commit 只作用于指定子仓；多仓批量 commit 不作为常规能力
+    enforcement: hard
+
+  - id: branch-rebase-after-upstream
+    description: Bundle 上游合并后，下游必须 rebase/merge 并用上游真实 SHA 重测
+    enforcement: hard
+
+  - id: branch-optional-skill
+    description: visibility: private 且 required: false 的 Skill 仓无权限时显示 OPTIONAL_UNAVAILABLE，公共确定性 Flow 继续运行
+    enforcement: hard

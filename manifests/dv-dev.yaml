@@ -1,0 +1,7 @@
+# dv-dev Profile：验证环境开发（DV Common + VIP）
+schema_version: aix.workspace/v1
+extends: default.yaml
+
+workspace:
+  name: aixsilicon
+  default_profile: dv-dev

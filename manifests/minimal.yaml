@@ -1,0 +1,7 @@
+# minimal Profile：最小编译所需（base 组）
+schema_version: aix.workspace/v1
+extends: default.yaml
+
+workspace:
+  name: aixsilicon
+  default_profile: minimal

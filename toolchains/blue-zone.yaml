@@ -1,0 +1,31 @@
+# blue-zone 工具链 Profile（受控 Runner / 商业 EDA 可用）
+# 不保存许可证或内部路径；仅记录启用状态与版本策略。
+schema_version: aix.tool-profile/v1
+name: blue-zone-2026.08
+
+host:
+  os: linux
+
+python:
+  version: "3.12"
+
+tools:
+  fusesoc: 2.4.x
+  verilator:
+    version: pinned
+    enabled: true
+  verilator_lint:
+    version: enabled
+
+commercial:
+  vcs:
+    enabled: true
+    version: approved
+  vcs_lint:
+    enabled: true
+  questasim:
+    enabled: false
+
+environment:
+  required_variables:
+    - AIX_EDA_LICENSE_PROFILE

@@ -1,0 +1,69 @@
+# HWIF 变更子流程
+schema_version: aix.flow/v1
+name: hwif-change
+description: 接口契约变更 → Schema/语义检查 → 多视图生成 → SemVer 判定 → 下游影响验证
+
+inputs:
+  - contract_path
+  - change_type
+
+preconditions:
+  clean_workspace: true
+  lock_required: true
+
+stages:
+  - id: schema
+    uses: tool.schema-check
+    with:
+      contract: <contract_path>
+
+  - id: semantics
+    needs: [schema]
+    uses: tool.contract-semantics
+
+  - id: regenerate
+    needs: [semantics]
+    uses: tool.hwif-gen
+    write_scope:
+      - {repo: hwif, paths: [generated, sv, flat]}
+
+  - id: semver-impact
+    needs: [regenerate]
+    uses: tool.semver-impact
+    with:
+      change_type: <change_type>
+
+  - id: vip-build-test
+    needs: [semver-impact]
+    uses: fusesoc.target
+    with:
+      target: vip-compile
+
+  - id: cbb-ip-test
+    needs: [vip-build-test]
+    uses: fusesoc.target
+    with:
+      target: affected-compile
+
+  - id: soc-impact
+    needs: [cbb-ip-test]
+    uses: impact.analyze
+    with:
+      scope: soc-consumers
+
+  - id: compat-matrix
+    needs: [soc-impact]
+    uses: catalog.compatibility-update
+
+  - id: evidence
+    needs: [schema, semantics, regenerate, semver-impact, vip-build-test, cbb-ip-test, soc-impact]
+    uses: evidence.index
+
+gates:
+  - G0
+  - G1
+  - G2
+  - G3
+  - G4
+  - G5
+  - G6

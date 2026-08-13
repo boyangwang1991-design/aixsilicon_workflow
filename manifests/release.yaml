@@ -1,0 +1,7 @@
+# release Profile：正式发布基线（不含私有 Skill，保证公共确定性流程可运行）
+schema_version: aix.workspace/v1
+extends: default.yaml
+
+workspace:
+  name: aixsilicon
+  default_profile: release

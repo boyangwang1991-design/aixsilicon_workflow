@@ -1,0 +1,36 @@
+# 兼容性策略
+schema_version: aix.policy/v1
+name: compatibility-policy
+version: 0.1.0
+
+rules:
+  - id: compat-hwif-schema
+    description: HWIF Contract Schema 必须通过，Profile 与 Capability 必须兼容
+    enforcement: hard
+
+  - id: compat-vip-binding
+    description: VIP binding 版本必须匹配所依赖的 HWIF/接口版本
+    enforcement: hard
+
+  - id: compat-no-silent-truncation
+    description: 禁止静默截位、跨时钟直连等禁用行为
+    enforcement: hard
+
+  - id: compat-breaking-major-first
+    description: Breaking change 不得通过跨仓大提交掩盖；先发布新 major 版本再显式迁移
+    enforcement: hard
+
+  - id: compat-deprecation-window
+    description: 旧版本按 Deprecated 窗口继续保留，不允许立即删除
+    enforcement: hard
+
+  - id: compat-vlnv-no-shadow
+    description: 多个 Core root 出现相同 VLNV 时必须报错或要求显式选择，禁止目录顺序静默覆盖
+    enforcement: hard
+
+default_matrix:
+  # 各仓库类型默认要求的兼容性检查矩阵
+  hw-interface: [hwif-schema, profile-compat]
+  vip: [binding-compat, protocol-compat]
+  cbb: [param-schema, implementation-equiv]
+  ip: [interface-compat, system-compat]

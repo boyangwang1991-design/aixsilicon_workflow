@@ -1,0 +1,7 @@
+# ip-dev Profile：IP 设计验证开发
+schema_version: aix.workspace/v1
+extends: default.yaml
+
+workspace:
+  name: aixsilicon
+  default_profile: ip-dev

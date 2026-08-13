@@ -1,0 +1,71 @@
+# Release Train 发布协调
+schema_version: aix.flow/v1
+name: release-train
+description: 候选版本 → clean/locked 环境确认 → 资格验证 → 人工批准 → 发布 → Catalog 更新
+
+inputs:
+  - candidate_version
+  - assets
+
+preconditions:
+  clean_workspace: true
+  lock_required: true
+  forbid_local_override: true
+
+stages:
+  - id: candidate
+    uses: release.select-candidate
+    with:
+      version: <candidate_version>
+
+  - id: clean-confirm
+    needs: [candidate]
+    uses: workspace.clean-check
+
+  - id: qualification
+    needs: [clean-confirm]
+    uses: flow.qualification
+    with:
+      flow: ip-qualification
+
+  - id: doc-rtm-sbom
+    needs: [qualification]
+    uses: release.check-material
+    with:
+      check: [docs, rtm, manifest, sbom]
+
+  - id: version-changelog
+    needs: [doc-rtm-sbom]
+    uses: release.check-version
+
+  - id: approval
+    needs: [version-changelog]
+    uses: release.human-approval
+
+  - id: tag-release
+    needs: [approval]
+    uses: release.tag
+    write_scope:
+      - {repo: '<asset-repo>', paths: [release]}
+
+  - id: catalog-update
+    needs: [tag-release]
+    uses: catalog.update-pr
+
+  - id: bundle-evidence
+    needs: [catalog-update]
+    uses: release.bundle-evidence
+
+  - id: evidence
+    needs: [qualification, doc-rtm-sbom, version-changelog, approval, tag-release, catalog-update]
+    uses: evidence.index
+
+gates:
+  - G0
+  - G1
+  - G2
+  - G3
+  - G4
+  - G5
+  - G6
+  - G7
