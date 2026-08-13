@@ -136,6 +136,10 @@
 
 ## 跨仓整体架构评审（2026-08-13，见 [`plans/cross-repo-architecture-review.md`](plans/cross-repo-architecture-review.md)）
 
+## 新仓接入记录（2026-08-13）
+
+- ✅ **`aixsilicon_chipknowledge`（id=`knowledge`，type=`other`）**：芯片研发知识库（方法论/术语/参考索引，非 SSOT 替代）。已在 [`manifests/default.yaml`](manifests/default.yaml) 登记（groups `[base, knowledge]`）、[`ownership-map.yaml`](ownership-map.yaml) 注册表登记、README/gitlist/docs-schema-ownership 同步；仓库已用 README 骨架初始化并推送 `main`（`c3b01cb`），`aix wf sync` 后状态 `main / clean / sync`。工作区现共 10 仓。
+
 - [ ] R1 工具收敛：督促 hwif `tools/` 产品级工具分阶段迁入 tool_repo（ADR-0006）
 - [ ] R4 发布职责分工：ipkg（IP 源码发布）/ `aix release`（跨仓 Gate 编排）/ hwif package_release 边界落地
 - [ ] R5 “影响分析”语义命名区分（接口影响 vs 仓库影响）
