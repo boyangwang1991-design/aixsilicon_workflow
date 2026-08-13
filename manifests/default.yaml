@@ -104,9 +104,9 @@ repositories:
 
   - id: soc-integration
     type: soc-integration
-    path: repos/aixsilicon_soc_integration_repo
+    path: repos/aixsilicon_soc_integration
     remote: origin
-    repo: aixsilicon_soc_integration_repo.git
+    repo: aixsilicon_soc_integration.git
     revision:
       branch: main
     groups: [base, soc]
