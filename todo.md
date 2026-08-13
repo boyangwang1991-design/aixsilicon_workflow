@@ -1,92 +1,123 @@
-# AIXSILICON Workflow 工作空间优化 TODO
+# AIXSILICON Workflow 执行 TODO（参照 plan.md）
 
-> 基于 2026-08-13 工作空间审查（9 仓已同步、35 测试通过、ruff 干净）。
-> 优先级：P0（应立即修，含缺陷）→ P1（本季度）→ P2（后续）。
+> 依据 [`plan.md`](plan.md) §28 实施路线图、§30 TODO List、§31 验收标准整理。
+> 状态标记：[x] 已完成 · [-] 进行中 · [ ] 待办。
+> 更新时间：2026-08-13（9 资产仓已同步，35 测试通过，ruff 干净）。
 
-## 当前基线
+## 总览
 
-- 10 仓已接入（workflow + 9 资产仓），`aix wf sync` 已全部克隆，`aix wf status` 9/9 `main/clean/sync`。
-- CLI：`aix wf init/sync/status/doctor/lock/diff/graph/fusesoc/clean/foreach` + `aix repo status/shell/branch/commit/push/diff`。
-- 测试：35 通过；ruff 通过；20 个 YAML 通过 Schema 校验。
+| 阶段 | 周期 | 目标出口 | 状态 |
+|---|---|---:|---|
+| 阶段0 边界与ADR冻结 | 2周 | 仓库责任/依赖方向经 Owner 确认 | 基本达成，CBB/Tool/Catalog/SoCInt 内容待填充 |
+| 阶段1 Workspace MVP | 3~4周 | 一条命令建环境、子仓独立提交 | 基本达成，剩 P0 缺陷 |
+| 阶段2 FuseSoC与跨仓验证 | 4~6周 | 固定Lock重建APB验证闭环 | 进行中 |
+| 阶段3 Change Bundle与影响分析 | 4~6周 | HWIF→VIP→IP 联合变更 | 未开始 |
+| 阶段4 发布协调与Catalog | 4~6周 | IP资格验证+人工批准+Catalog更新 | 未开始 |
+| 阶段5 SoC集成与规模化 | 6~8周 | SoC锁定基线可重建 | 未开始 |
 
 ---
 
-## P0 缺陷（已确认，应立即修）
+## 阶段0：边界与 ADR 冻结
 
-- [ ] **修复 lockfile tree hash 为空**
-  - [`src/aixworkflow/resolver.py`](src/aixworkflow/resolver.py) 用 `rev_parse(path, f"{commit}^{{tree}}")`，但 [`src/aixworkflow/gitops.py`](src/aixworkflow/gitops.py) 的 `rev_parse` 会追加 `^{commit}`，拼成 `commit^{tree}^{commit}` 导致解析失败（已复现：返回 `None`，`tree: ''`）。
-  - 修法：新增 `gitops.rev_parse_any(path, rev)`（不带 `^{commit}` 后缀），tree 改用该函数；补单元测试。
+- [x] 冻结 `aixsilicon_workflow` 职责、非目标（§3）与 ADR（[`docs/adr/0001`](docs/adr/0001-manifest-over-submodule.md)、[`0002`](docs/adr/0002-schema-driven-yaml.md)）
+- [x] 确认全部 P0 仓库真实 URL、default branch、owner（[`gitlist.md`](gitlist.md)：9 仓 `boyangwang1991-design`）
+- [x] 固化全部仓库使用 `aixsilicon_` 前缀
+- [x] 定义 Manifest / Lock / Local Override Schema V0.1（[`schemas/`](schemas/workspace-manifest.schema.json)）
+- [x] 定义标准目录与 `.gitignore`（运行时目录完整忽略）
+- [x] 建立 ownership map（[`ownership-map.yaml`](ownership-map.yaml)）
+- [x] 建立仓库依赖 DAG（[`src/aixworkflow/graph.py`](src/aixworkflow/graph.py)，无环校验通过）
+- [x] 定义 P0 CLI 错误码与安全策略（[`src/aixworkflow/errors.py`](src/aixworkflow/errors.py)、[`policies/security-policy.yaml`](policies/security-policy.yaml)）
+- [x] 建立最小 Python 包和测试框架（[`pyproject.toml`](pyproject.toml)）
+- [x] 建立 README Quick Start（[`README.md`](README.md)）
+- [-] 初始化 `aixsilicon_cbb_repo`（已构建 ✅，内容续增）
+- [ ] 初始化 `aixsilicon_tool_repo` 并迁移确定性脚本（当前仅 README 骨架）
+- [ ] 初始化 `aixsilicon_catalog_repo` 并定义首版资产条目 Schema（当前仅 README 骨架）
+- [ ] 初始化 `aixsilicon_soc_integration_repo` 并定义 SoC 配置 Schema 边界（当前仅 README 骨架）
+- [ ] `aixsilicon_skill_repo`（私有）Skill Metadata 契约（当前仅 README 骨架）
 
-- [ ] **`aix wf lock` / `resolve_repository` 每次强制 `git fetch`**
-  - 网络波动时整个 lock 失败（已复现 `kex_exchange_identification`）。
-  - 优化：增加 `--no-fetch` / `offline` 模式，仅在本地 ref 解析不到时再 fetch；或 fetch 失败仅告警不中断（本地可解析时）。
+## 阶段1：Workspace MVP
 
-- [ ] **`aix wf status` Baseline 列逻辑错误**
-  - [`src/aixworkflow/cli.py`](src/aixworkflow/cli.py) 嵌套三元：`ahead` 优先，`diverged`（ahead+behind）分支不可达，永远显示 `ahead`。
-  - 修法：独立判断 `ahead/behind/diverged/clean`；并真正与 `locks/baseline.lock.yaml` 比较（而非只显示 git ahead/behind）。
+- [x] 实现 `aix wf init/sync/status/doctor/lock`（[`src/aixworkflow/cli.py`](src/aixworkflow/cli.py)）
+- [x] 实现 `aix repo status/shell/branch/commit/push` + `diff`
+- [x] 实现 remote、dirty、unpublished commit 保护（[`src/aixworkflow/gitops.py`](src/aixworkflow/gitops.py)、`workspace.py`）
+- [x] 支持 `minimal/ip-dev/cbb-dev/dv-dev/soc-integration/release` Profile
+- [x] 生成 `.aix/generated/fusesoc.conf` + core-roots/vlnv-index/dependency-graph（[`src/aixworkflow/fusesoc.py`](src/aixworkflow/fusesoc.py)）
+- [x] 完成临时 Git 仓 Fixture 测试（`tests/integration/`）
+- [x] 验证子仓 commit 不改变 Workflow 父仓状态
+- [x] 输出本地 Lock 和状态表（`.aix/local.lock.yaml`、`aix wf status`）
+- [ ] 验证所有 Core 可被 FuseSoC 发现（需安装 fusesoc 实跑）
+- [ ] 完成新成员从零初始化演练（clean 环境）
 
-- [ ] **`aix wf sync --lock <file>` 未真正按 Lockfile 解析**
-  - 当前 `--lock` 仅切换 release 模式，未读取 Lockfile 里的 commit 去 checkout。
-  - 修法：读取 lock，按 `commit` 强制 checkout（release 语义：clean 且无 override）。
+### 阶段1 遗留 P0 缺陷（本次审查确认）
 
-- [ ] **生成真实 `locks/baseline.lock.yaml`**
-  - 当前为全零占位模板；9 仓已可解析，应生成真实 SHA 并走 PR/CI 保护流程。
+- [ ] 修复 lockfile `tree` 为空：`gitops.rev_parse` 追加 `^{commit}` 导致 `commit^{tree}^{commit}` 非法（[`resolver.py`](src/aixworkflow/resolver.py)；新增 `rev_parse_any`）
+- [ ] `aix wf lock` 支持 `--no-fetch`/offline：避免每次强制 fetch 受网络波动影响
+- [ ] 修复 `aix wf status` Baseline 列：`diverged` 分支不可达，且未对比 baseline lock
+- [ ] `aix wf sync --lock` 真正按 Lockfile 的 commit 强制 checkout（当前仅切 release 模式）
+- [ ] 生成真实 `locks/baseline.lock.yaml`（当前为占位模板），走 PR/CI 保护
 
-## P1 功能缺口（阶段2～3 主线）
+## 阶段2：FuseSoC 与基础跨仓验证
 
-- [ ] **接入 Flow DAG 执行器 `aix wf run <flow>`**
-  - [`src/aixworkflow/runner.py`](src/aixworkflow/runner.py) 已实现，但未接入 CLI；需注册 action、前置条件（clean/lock/no-override）、失败收集 Evidence、结构化 Gate 结果。
-  - 首个穿刺：`ip-verification`（APB 寄存器 IP，`workflows/ip-verification.yaml`）。
+- [x] 生成 FuseSoC 配置与 VLNV 索引（`fusesoc.py`，[`generate_vlnv_index`](src/aixworkflow/fusesoc.py)）
+- [x] Core dependency graph（[`graph.py`](src/aixworkflow/graph.py)）
+- [-] Flow DAG 执行器 `aix wf run <flow>`：runner 已实现（[`runner.py`](src/aixworkflow/runner.py)），**未接入 CLI**（注册 action、前置条件、Evidence 汇总）
+- [ ] APB 寄存器 IP 穿刺：HWIF SystemRDL/RAL + APB VIP + DV Common 联合闭环
+- [-] Run Manifest 与 Evidence Index：`evidence.py` 已实现，**未接入 run**（[`evidence.py`](src/aixworkflow/evidence.py)）
+- [-] GitHub reusable lint/unit workflow：文件已建，**内容为占位**（[`.github/workflows/`](.github/workflows/reusable-fusesoc-lint.yml)）
 
-- [ ] **`aix wf test --affected` 影响驱动验证**
-  - 接入 [`src/aixworkflow/impact.py`](src/aixworkflow/impact.py)：按 changed files → 依赖图 → 必测集合。
+## 阶段3：Change Bundle 与影响分析
 
-- [ ] **Change Bundle CLI 完整化**
-  - `aix bundle create/validate/status` 目前是桩；补：校验 merge_order、PR refs 联合 checkout、状态机（draft→…→closed）。
+- [x] Change Bundle Schema 与示例（[`schemas/change-bundle.schema.json`](schemas/change-bundle.schema.json)、[`changesets/examples/`](changesets/examples/CHG-2026-0042.yaml)）
+- [-] Change Bundle CLI（`aix bundle create/validate/status` 为桩）：校验 merge_order、状态机
+- [ ] PR refs 联合 checkout（`change-bundle.yml` 占位）
+- [x] 基础影响分析（[`impact.py`](src/aixworkflow/impact.py) + [`graph.transitive_closure`](src/aixworkflow/graph.py)）
+- [ ] HWIF→VIP→IP 影响规则与 affected tests（`aix wf test --affected`）
+- [ ] X2X 三仓联合变更穿刺
+- [-] 防递归触发与 correlation ID（[`github.py`](src/aixworkflow/github.py) 已有 guard_event_loop 桩）
 
-- [ ] **`aix wf foreach --allow-write`**
-  - 当前 foreach 无写保护开关；补显式 `--allow-write` 并逐仓记录执行结果。
+## 阶段4：发布协调与 Catalog
 
-- [ ] **`aix repo pr` 与 `aix repo release`**
-  - PR 创建/查看（P1）、受控发布入口（P2）。
+- [x] Release Policy 与 protected environment 定义（[`policies/release-policy.yaml`](policies/release-policy.yaml)、`reusable-release-gate.yml` 占位）
+- [x] 幂等发布判定（[`release.py`](src/aixworkflow/release.py) `already_published`）
+- [ ] `aix release prepare/publish` 实现（当前桩）
+- [ ] IP Release Skill 接入（依赖 skill_repo）
+- [ ] Release Manifest / SBOM / RTM 完整性检查
+- [ ] Catalog 更新 PR 自动生成（依赖 catalog_repo 内容）
+- [ ] Baseline 升级与 Workspace Bundle Release
+- [ ] 并发互斥与失败恢复
 
-## P2 健壮性与体验
+## 阶段5：SoC 集成与规模化
 
-- [ ] **并行 fetch**：多仓 `git fetch` 并行执行，输出按仓聚合（plan §13）。
-- [ ] **`aix wf doctor` 增加 override/dirty/lock 一致性提示**。
-- [ ] **`aix wf clean` 状态数据库登记**：只清理生成目录并登记/回滚（plan §8.3）。
-- [ ] **路径逃逸校验**：init 时校验 manifest `path` 位于 `repos_root` 下、无 `..`/绝对路径（schema 已限制，代码层再兜底）。
-- [ ] **Schema 单一事实源**：`schemas/` 与 `src/aixworkflow/schemas/` 双份靠 `test_schema_parity` 防漂移；加同步脚本 `scripts/sync_schemas.py`。
-- [ ] **日志脱敏**：`evidence/runner` 输出统一脱敏（Token/路径/变量）。
-- [ ] **离线/弱网友好**：clone 失败可安全重试，lock 支持 `--no-fetch`。
+- [x] SoC 集成 Profile 与 Flow（[`manifests/soc-integration.yaml`](manifests/soc-integration.yaml)、[`workflows/soc-integration.yaml`](workflows/soc-integration.yaml)）
+- [x] blue-zone / red-zone 工具 Profile（[`toolchains/`](toolchains/blue-zone.yaml)）
+- [ ] 地址、中断、CRG、Power 域连接检查接口（依赖 soc_integration_repo + tool_repo）
+- [ ] PIC / 功能安全集成穿刺
+- [ ] 私有 Skill 可选依赖边界验证
+- [ ] AIXSILICON 项目座舱接入
+- [ ] 指标、容量和运营机制 / Nightly 兼容性矩阵
 
-## CI / GitHub 优化
+---
 
-- [ ] **GitHub Reusable Workflow 从占位到真实实现**
-  - `reusable-fusesoc-lint.yml` / `reusable-unit-sim.yml` 目前是 echo 占位；接 FuseSoC 真实命令并打 Tag（V1）。
-- [ ] **`integration-baseline.yml` 接入 `aix wf lock` 生成真实 baseline**。
-- [ ] **`change-bundle.yml` 实现 PR refs 联合 checkout**。
-- [ ] **pre-commit 安装落地**：`pre-commit install` 并纳入 CI。
+## 一期验收标准（plan.md §31）对照
 
-## 资产仓内容建设（P0 新仓骨架已就绪，待填充）
+- [x] 1. 一条命令按 Profile 下载全部仓库（`aix wf init` + `aix wf sync`）
+- [x] 2. 子仓位于 `repos/` 并被父仓可靠忽略
+- [x] 3. 任一子仓可独立建分支/commit/push，父仓无变化
+- [x] 4. dirty tree、错误 remote、不可达 SHA、local override 可识别
+- [ ] 5. 生成完整 FuseSoC 配置并发现全部 Core（待实跑 fusesoc）
+- [x] 6. Lockfile 记录各仓 SHA 与工具 Profile（可重建）
+- [ ] 7. APB 代表性 IP 完成跨仓 Lint/编译/仿真/Evidence
+- [x] 8. Change Bundle 描述 HWIF+VIP+IP 联合变更（示例）
+- [ ] 9. 联合 CI 拉取各仓 PR HEAD 并产生结构化结论
+- [ ] 10. 发布动作前人工确认，dirty/override 环境不可发布（Gate 已定义，未端到端跑）
+- [ ] 11. 失败 Run 定位到仓库/SHA/Stage/工具/Failure Signature（runner 就绪，未接入 run）
+- [x] 12. README、协作规范、故障文档可用
 
-- [ ] `aixsilicon_catalog_repo`：资产索引/兼容矩阵/成熟度 Schema 与首批条目。
-- [ ] `aixsilicon_tool_repo`：`packages/aix-schema`、`aix-core-gen` 等确定性工具首包。
-- [ ] `aixsilicon_soc_integration`：SoC/地址/中断/CRG/Power Schema 与集成模板。
-- [ ] `aixsilicon_skill_repo`（私有）：Skill 声明式 Metadata 契约与首批 Skill。
+## 风险对照（plan.md §32，重点盯防）
 
-## 测试与质量
-
-- [ ] 补测试：tree hash、status baseline、`sync --lock`、`--no-fetch`、路径逃逸、foreach 写保护。
-- [ ] `tests/golden/` 填充：fusesoc.conf / vlnv-index / dependency-graph 的确定性 golden。
-- [ ] 覆盖率基线：`pytest --cov` 目标 ≥ 70%。
-
-## 里程碑对照（plan.md 阶段）
-
-| 阶段 | 出口 | 对应 TODO |
-|---|---|---|
-| 阶段1 Workspace MVP | 一键按 Profile 建环境、子仓独立提交 | 已基本达成 ✅ |
-| 阶段2 FuseSoC+跨仓验证 | 固定 Lock 重建 APB 闭环 | P1 的 `aix wf run` + baseline lock |
-| 阶段3 Change Bundle | HWIF→VIP→IP 联合变更 | P1 的 bundle CLI + affected tests |
-| 阶段4 发布协调 | IP 资格验证+人工批准+Catalog | P2 的 release + catalog |
-| 阶段5 SoC 集成 | SoC 锁定基线重建 | 资产仓建设 + soc flow 接入 |
+- [ ] 防止 Workflow 变成超级仓库（ownership map + CI Guard 已建，需持续执行）
+- [ ] Manifest 与 Catalog 不重复（Catalog 未建内容，先定边界）
+- [ ] 只锁 Git 不锁工具 → Tool Profile 与生成器一并锁定
+- [ ] 多仓自动提交失控 → 保持单仓显式命令
+- [ ] 影响分析漏测 → 未知依赖按扩大范围
+- [ ] EDA 产物撑爆仓库 → ignore + pre-commit Guard 已建，落地 `pre-commit install`
