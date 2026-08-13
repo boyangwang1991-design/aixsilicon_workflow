@@ -1,6 +1,6 @@
 # AIXSILICON Build Todolist — Workflow 与各 Repos 建设顺序
 
-> 依据：[`plan.md`](plan.md)（含 §35 V0.2 治理决议）、[`plans/cross-repo-optimization-plan.md`](plans/cross-repo-optimization-plan.md)、
+> 依据：[`plan.md`](plan.md)（含 §35 V0.2 治理决议）、[`docs/plans/cross-repo-optimization-plan.md`](docs/plans/cross-repo-optimization-plan.md)、
 > [`todo.md`](todo.md)、[`docs/maturity-model.md`](docs/maturity-model.md)、[`docs/schema-ownership.md`](docs/schema-ownership.md)。
 > 本文件回答：**当前各仓到什么状态、按什么依赖顺序继续建设、每阶段出口是什么。**
 

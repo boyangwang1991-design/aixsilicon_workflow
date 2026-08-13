@@ -1954,7 +1954,7 @@ Workspace init/sync
 
 ## 35. V0.2 治理决议与执行状态（2026-08-13）
 
-> 本轮“扫描各仓 plan 后综合优化”的治理决议与落地结果，权威文件见 `docs/adr/`、`docs/maturity-model.md`、`docs/schema-ownership.md`、`plans/cross-repo-optimization-plan.md`。
+> 本轮“扫描各仓 plan 后综合优化”的治理决议与落地结果，权威文件见 `docs/adr/`、`docs/maturity-model.md`、`docs/schema-ownership.md`、`docs/plans/cross-repo-optimization-plan.md`。
 
 ### 35.1 治理决议（ADR-0003～0006）
 
@@ -1989,7 +1989,7 @@ Workspace init/sync
 
 ## 36. 跨仓整体架构评审结论（2026-08-13）
 
-> 全文见 [`plans/cross-repo-architecture-review.md`](plans/cross-repo-architecture-review.md)。
+> 全文见 [`docs/plans/cross-repo-architecture-review.md`](docs/plans/cross-repo-architecture-review.md)。
 
 - **不重复构建**：确定性工具收敛到 tool_repo（R1）；CLI 单入口 + `aixsilicon.commands` 插件组（R2）；Schema 单一 Owner（R3）；发布职责分工 ipkg / `aix release` / hwif package_release（R4）；“影响分析”区分接口影响 vs 仓库影响（R5）；VIP `common/` 与 dv-common 划界（R6）；ipkg 复用 `aix-core-tool`（R7）。
 - **架构修订**：IP 仓双态模型（开发分支可编辑 / 发布版本冻结，A1）；vendored `reference/` 排除出 fusesoc 正式发现与 Catalog（A2）；ghost repo 引用映射（A3）；techlib 统一为 `aixsilicon_techlib_repo`（A4）。

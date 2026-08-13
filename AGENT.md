@@ -16,7 +16,7 @@
 | 场景 | 必读 |
 |---|---|
 | 任何任务前（快速） | [`README.md`](README.md)、[`plan.md`](plan.md) §35/§36、[`todo.md`](todo.md) |
-| 规划/排期 | [`aixsilicon_build_todolist.md`](aixsilicon_build_todolist.md)、[`plans/cross-repo-optimization-plan.md`](plans/cross-repo-optimization-plan.md)、[`plans/cross-repo-architecture-review.md`](plans/cross-repo-architecture-review.md) |
+| 规划/排期 | [`aixsilicon_build_todolist.md`](aixsilicon_build_todolist.md)、[`docs/plans/cross-repo-optimization-plan.md`](docs/plans/cross-repo-optimization-plan.md)、[`docs/plans/cross-repo-architecture-review.md`](docs/plans/cross-repo-architecture-review.md) |
 | 跨仓契约/命名 | [`docs/adr/0003-0006`](docs/adr/README.md)、[`docs/schema-ownership.md`](docs/schema-ownership.md)、[`docs/maturity-model.md`](docs/maturity-model.md) |
 | 工具归属 | [`docs/tool-placement.md`](docs/tool-placement.md)（T1 公共工具→tool_repo / T2 单仓脚本→留仓 / T3 私有适配→私有 overlay / T4 项目脚本→项目仓） |
 | 写入边界 | [`ownership-map.yaml`](ownership-map.yaml) |

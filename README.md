@@ -43,7 +43,7 @@
 - **跨仓边界映射**（[`ADR-0005`](docs/adr/0005-cross-repo-boundary-map.md)）、**工具归属与迁移**（[`ADR-0006`](docs/adr/0006-tool-ownership-and-migration.md)）；
 - **成熟度统一映射**：[`docs/maturity-model.md`](docs/maturity-model.md)；
 - **Schema 所有权与仓库注册表**：[`docs/schema-ownership.md`](docs/schema-ownership.md)；
-- 综合优化规划：[`plans/cross-repo-optimization-plan.md`](plans/cross-repo-optimization-plan.md)。
+- 综合优化规划：[`docs/plans/cross-repo-optimization-plan.md`](docs/plans/cross-repo-optimization-plan.md)。
 
 ## 快速开始
 
@@ -161,6 +161,7 @@ aixsilicon_workflow/
 
 ## 文档
 
+- [体系架构与方案讨论（Workflow / Repo 关系、关系框图、各仓 plan/todo 统筹）](docs/architecture/README.md)
 - [Getting Started](docs/getting-started.md)
 - [Manifest 设计](docs/manifest.md)
 - [跨仓协作与 Change Bundle](docs/collaboration.md)

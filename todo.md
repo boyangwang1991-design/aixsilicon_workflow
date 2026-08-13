@@ -14,7 +14,7 @@
 > **2026-08-13 已执行**：P0 五项缺陷修复、cli 拆包、schema 单一事实源、Makefile、
 > `aix wf run` / `aix wf test --affected` / `aix bundle validate|status` 接入（测试 41 例通过）。
 >
-> **2026-08-13 综合优化（跨仓 V0.2）**：见 [`plans/cross-repo-optimization-plan.md`](plans/cross-repo-optimization-plan.md)、
+> **2026-08-13 综合优化（跨仓 V0.2）**：见 [`docs/plans/cross-repo-optimization-plan.md`](docs/plans/cross-repo-optimization-plan.md)、
 > [`docs/adr/0003-0006`](docs/adr/README.md)、[`docs/maturity-model.md`](docs/maturity-model.md)、[`docs/schema-ownership.md`](docs/schema-ownership.md)。
 > 落地：VLNV 统一 `aixsilicon:*`；CLI 插件组 `aixsilicon.commands`（`aix tool` fallback）；
 > 标准 action 集 + `aix release prepare/publish` + `aix bundle create`；统一退出码分段；
@@ -140,7 +140,7 @@
 - [ ] 影响分析漏测 → 未知依赖按扩大范围
 - [ ] EDA 产物撑爆仓库 → ignore + pre-commit Guard 已建，落地 `pre-commit install`
 
-## 跨仓整体架构评审（2026-08-13，见 [`plans/cross-repo-architecture-review.md`](plans/cross-repo-architecture-review.md)）
+## 跨仓整体架构评审（2026-08-13，见 [`docs/plans/cross-repo-architecture-review.md`](docs/plans/cross-repo-architecture-review.md)）
 
 ## 新仓接入记录（2026-08-13）
 
