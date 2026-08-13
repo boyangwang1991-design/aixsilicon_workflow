@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """pre-commit hook: refuse runtime/generated paths entering the parent index.
 
-Rejects `repos/`, `build/`, `cache/`, `reports/`, `.aix/`, `generated/`,
-`fusesoc.conf`, `edalize_work_root/`, and EDA log/waveform artifacts.
+Rejects `repos/`, `reference/`, `build/`, `cache/`, `reports/`, `.aix/`,
+`generated/`, `fusesoc.conf`, `edalize_work_root/`, and EDA log/waveform
+artifacts.
 """
 
 from __future__ import annotations
@@ -12,6 +13,7 @@ import sys
 
 FORBIDDEN_PREFIXES = (
     "repos/",
+    "reference/",
     "build/",
     "cache/",
     "reports/",

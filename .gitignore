@@ -1,5 +1,8 @@
 # Independent repositories managed by aix workflow
 /repos/
+
+# Vendored third-party reference material (unified under root; never uploaded)
+/reference/
 /.roo/
 # Generated workspace state
 /.aix/
