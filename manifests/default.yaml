@@ -126,6 +126,18 @@ repositories:
     required: false
     owner: ai-engineering
 
+  - id: knowledge
+    type: other
+    path: repos/aixsilicon_chipknowledge
+    remote: origin
+    repo: aixsilicon_chipknowledge.git
+    revision:
+      branch: main
+    groups: [base, knowledge]
+    required: true
+    owner: engineering-platform
+    exports: [chip-knowledge]
+
 profiles:
   minimal:
     include_groups: [base]

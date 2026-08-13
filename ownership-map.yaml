@@ -119,6 +119,10 @@ repository_registry:
     repo: aixsilicon_skill_repo
     type: skill
     visibility: private
+  - id: knowledge
+    repo: aixsilicon_chipknowledge
+    type: other
+    visibility: public
 
 # Tool 边界（ADR-0006 / docs/tool-placement.md）
 tool_boundary:

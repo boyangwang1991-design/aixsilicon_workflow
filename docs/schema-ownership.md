@@ -35,6 +35,7 @@
 | `aixsilicon_catalog_repo` | catalog | 已建（内容待填充） |
 | `aixsilicon_soc_integration` | soc-integration | 已建（内容待填充） |
 | `aixsilicon_skill_repo` | skill（私有） | 已建（内容待填充） |
+| `aixsilicon_chipknowledge` | other（知识库） | 已建（README 初始提交） |
 | `aixsilicon_techlib_repo` | techlib | 待建（P1） |
 | `aixsilicon_model_repo` | model | 按需（P1/P2） |
 | `aixsilicon_sw_repo` | software | 待建（P1） |
