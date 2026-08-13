@@ -19,17 +19,19 @@
 
 ## 仓库生态
 
-| 仓库 | 定位 | 开放性 |
-|---|---|---|
-| [`aixsilicon_hwif_repo`](manifests/default.yaml) | 接口语义契约与 HDL 多视图 | 开源 |
-| `aixsilicon_cbb_repo` | 可参数化公共逻辑构件与 PPA 实现 | 开源 |
-| `aixsilicon_ip_repo` | 可独立集成和发布的完整 IP | 开源 |
-| `aixsilicon_dv_common_repo` | 协议无关验证公共底座 | 开源 |
-| `aixsilicon_vip_repo` | 协议与系统验证组件 | 开源 |
-| `aixsilicon_tool_repo` | 确定性生成、检查、转换、打包工具 | 开源 |
-| `aixsilicon_catalog_repo` | 已发布资产索引、兼容矩阵和成熟度 | 开源 |
-| `aixsilicon_soc_integration_repo` | 通用 SoC 集成 Schema、模板、规则 | 开源 |
-| `aixsilicon_skill_repo` | AI 辅助研发 Skill Suite（私有） | **私有** |
+| 逻辑 ID | 仓库 | 定位 | 开放性 |
+|---|---|---|---|
+| hwif | [`aixsilicon_hwif_repo`](https://github.com/boyangwang1991-design/aixsilicon_hwif_repo) | 接口语义契约与 HDL 多视图 | 开源 |
+| cbb | [`aixsilicon_cbb_repo`](https://github.com/boyangwang1991-design/aixsilicon_cbb_repo) | 可参数化公共逻辑构件与 PPA 实现 | 开源 |
+| ip | [`aixsilicon_ip_repo`](https://github.com/boyangwang1991-design/aixsilicon_ip_repo) | 可独立集成和发布的完整 IP | 开源 |
+| dv-common | [`aixsilicon_dv_common`](https://github.com/boyangwang1991-design/aixsilicon_dv_common) | 协议无关验证公共底座 | 开源 |
+| vip | [`aixsilicon_vip_repo`](https://github.com/boyangwang1991-design/aixsilicon_vip_repo) | 协议与系统验证组件 | 开源 |
+| tools | [`aixsilicon_tool_repo`](https://github.com/boyangwang1991-design/aixsilicon_tool_repo) | 确定性生成、检查、转换、打包工具 | 开源 |
+| catalog | [`aixsilicon_catalog_repo`](https://github.com/boyangwang1991-design/aixsilicon_catalog_repo) | 已发布资产索引、兼容矩阵和成熟度 | 开源 |
+| soc-integration | [`aixsilicon_soc_integration`](https://github.com/boyangwang1991-design/aixsilicon_soc_integration) | 通用 SoC 集成 Schema、模板、规则 | 开源 |
+| skills | [`aixsilicon_skill_repo`](https://github.com/boyangwang1991-design/aixsilicon_skill_repo) | AI 辅助研发 Skill Suite（私有） | **私有** |
+
+> 完整仓库清单与状态见 [`gitlist.md`](gitlist.md)；仓库布局与分支策略见 [`manifests/default.yaml`](manifests/default.yaml)。
 
 ## 快速开始
 
