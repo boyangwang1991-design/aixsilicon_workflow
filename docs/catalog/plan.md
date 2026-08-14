@@ -1,6 +1,7 @@
 # catalog — AIXSILICON Catalog Repository 建设规划
 
 > 客观事实基线：2026-08-13（骨架：index + 7 资产条目 + schema）。原文细节见 [`../archived/architecture/repo-plans/catalog.md`](../archived/architecture/repo-plans/catalog.md)。
+> 本文件已并入 archived 原文的现状与待补充规划：资产条目索引（`catalog/index.yaml` + `catalog/assets/` + `schemas/catalog-asset.schema.json`）、定位/生命周期/发布更新流程与发布流对接。
 
 ## 1. 定位与边界
 
@@ -39,10 +40,17 @@
 | 阶段 | 目标 | 状态 |
 |---|---|---|
 | 骨架 | index + assets + schema | ✅ 完成 |
-| 首轮填充 | 首批 `qualified` 条目 | ⬜（随各仓 release） |
+| 首轮填充 | 首批 `qualified` 条目（出口：覆盖 IP/CBB/VIP/HWIF/DV-Common 至少各 1 个） | ⬜（随各仓 release） |
 | 完善 | 兼容矩阵、成熟度映射、自动更新 | ⬜ |
 
-## 6. 关联
+## 6. 仓级待办（本批追加）
+
+- [ ] 首批 `qualified` 资产条目：IP / HWIF / DV-Common 各至少 1（出口：覆盖 IP/CBB/VIP/HWIF/DV-Common 至少各 1 个 `qualified`）
+- [ ] 兼容矩阵与成熟度映射落地（各仓内部词汇 → `draft/qualified/proven/deprecated`）
+- [ ] 随各仓 release 自动/受控更新（`aix release publish` → Catalog PR，不自动 merge）
+
+## 7. 关联
 
 - Todo：[`todo.md`](todo.md)；原文：[`../archived/architecture/repo-plans/catalog.md`](../archived/architecture/repo-plans/catalog.md)
 - 全局：[`../workflow-repo-plan.md`](../workflow-repo-plan.md)
+- **来源**：本文件并入 archived `repo-plans/catalog.md` 现状（index/assets/schema）与待补充规划（定位/生命周期、发布更新流程、发布流对接）；仓级待办为本批追加。

@@ -1,6 +1,7 @@
 # skills — Todo
 
 > 状态：`[x]` 已完成 · `[-]` 进行中 · `[ ]` 待办。原文见 [`../archived/architecture/repo-plans/skills.md`](../archived/architecture/repo-plans/skills.md)。
+> 本文件已并入 archived 原文的 P0 首期实现清单（§19）、分阶段路线图（§20）、量化指标（§21）与 Definition of Done（§24），并追加仓级待办。
 
 ## 套件主体（ip-development-suite，已完成）
 
@@ -35,6 +36,21 @@
 - 任意 IP 变更可经套件受控完成：LRS → G0 → … → release → G5，且 evidence/trace/run_log 完整；
 - 无私有 Skill 时公共确定性流程仍可运行（不依赖本仓）。
 
+## 仓级待办（本批追加）
+
+- [ ] 套件自校验 / Eval 全链路（`validate_suite.py` + `pytest scripts/tests` + 8 个端到端 eval）
+- [ ] 与 workflow / tool 契约对齐：Context Pack / Change Plan / Skill Result（skill metadata → workflow Gate/evidence；确定性 extractor 与 tool_repo 边界，T1/T2）
+- [ ] IP Golden Path 端到端、Author/Verifier 双 Agent：出口——一个真实 IP 变更经 Skill 受控完成（LRS → G0 → … → release → G5）
+- [ ] CBB development suite、SoC integration suite（后续建设，衔接 cbb_repo / soc-integration + socgen）
+
+## 变更记录
+
+| 日期 | 变更内容 | 作者 |
+|------|---------|------|
+| 2026-08-13 | 创建 todo.md：套件主体、校验与自测、集成对齐、后续规划、验收标准 | Zoo |
+| 2026-08-13 | 本文件并入 archived 原文 P0 首期实现清单、分阶段路线图、量化指标与 Definition of Done（合并补充）并追加仓级待办（出口：真实 IP 变更经 Skill 受控完成） | Zoo |
+
 ## 关联
 
 - Plan：[`plan.md`](plan.md)；全局：[`../workflow-repo-plan.md`](../workflow-repo-plan.md)
+- **来源**：本文件并入 archived `repo-plans/skills.md`（todo 原文 + plan 原文）§19 P0 首期实现清单、§20 分阶段路线图、§21 量化指标、§24 Definition of Done；仓级待办为本批追加。

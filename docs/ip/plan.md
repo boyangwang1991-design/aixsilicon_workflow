@@ -1,6 +1,7 @@
 # ip — AIXSILICON IP Repository 建设规划
 
 > 客观事实基线：2026-08-13（建仓，uart 0.1.0）。原文细节见 [`../archived/architecture/repo-plans/ip.md`](../archived/architecture/repo-plans/ip.md)。
+> 本文件已并入 archived 原文的完整规划细节：建设结论与边界（§1–§2）、首批 IP 与路线图（§3）、验收标准（§4）与跨仓一致性修订 A1/A2/R4/R7（§5）。
 
 ## 1. 定位与边界
 
@@ -13,6 +14,7 @@
 | `ipkg`（本仓源码级发布工具） | 协议 VIP → vip |
 | | 确定性工具（CSR/HWIF/Core 生成）→ tools |
 | | 已发布资产索引 → catalog |
+| | 私有 Skill / 方法论 → skill_repo（私有） |
 
 ## 2. 现状（客观）
 
@@ -33,6 +35,18 @@
 - **双态模型（A1）**：开发源码在 feature 分支可编辑；发布时 `ipkg stage` 冻结为版本目录；`registry.yaml` 只索引已发布版本；workflow dev 模式指向分支、release 模式指向 tag/SHA；
 - **生成边界（R7）**：`.core` 生成/lint 复用 `aixsilicon_tool_repo` 的 `aix-core-tool`，ipkg 调用而非另造第二套。
 
+### 4.1 验收（G0–G7）
+
+- 每个发布 IP 具有 `aixsilicon:ip:*` VLNV、SemVer、Tag 与 `registry.yaml` 条目；
+- 生成物（RTL/RAL/Header）由 SystemRDL 确定性派生，禁止手工改动漂移；
+- 发布前经过 G0–G7 Gate（`aix release prepare`）且工作区 clean/locked；
+- **发布职责（R4）**：`ipkg` = 本仓源码级发布；跨仓 Gate/协调/Catalog 更新由 workflow `aix release` 编排。
+
+### 4.2 参考与引用治理（A2）
+
+- vendored `reference/` 只读参考：不发布、不进入 FuseSoC 正式发现与 Catalog；
+- `registry.yaml` 只索引已发布版本；workflow dev 模式指向分支、release 模式指向 tag/SHA。
+
 ## 5. 建设路线（客观）
 
 | 目标 IP | 说明 | 状态 |
@@ -45,3 +59,4 @@
 
 - Todo：[`todo.md`](todo.md)；原文：[`../archived/architecture/repo-plans/ip.md`](../archived/architecture/repo-plans/ip.md)
 - 全局：[`../workflow-repo-plan.md`](../workflow-repo-plan.md)
+- **来源**：本文件并入 archived `repo-plans/ip.md` §1 建设结论、§2 边界、§3 首批 IP 与路线图、§4 验收、§5 跨仓一致性修订（A1/A2/R4/R7）。
