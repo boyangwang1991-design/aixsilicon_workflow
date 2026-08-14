@@ -9,8 +9,12 @@
 5. 执行跨仓依赖检查、影响分析、联合验证与发布协调；
 6. 为 Skill Suite 提供统一、可发现、可复现、可留证的执行环境。
 
-> 统一材料入口见 [`docs/index.md`](docs/index.md)，跨仓路线图与进度分别见 [`docs/roadmap.md`](docs/roadmap.md) 和 [`docs/progress.md`](docs/progress.md)。本文档覆盖框架结构、安装、快速开始与核心概念。
+> 统一材料入口见 [`docs/index.md`](docs/index.md)，跨仓路线图、统一任务台账与里程碑进度分别见 [`docs/roadmap.md`](docs/roadmap.md)、[`docs/todo.md`](docs/todo.md) 和 [`docs/progress.md`](docs/progress.md)。本文档覆盖框架结构、安装、快速开始与核心概念。
 > 优化后的目标架构见 [`docs/architecture/target-design.md`](docs/architecture/target-design.md)；当前运行配置仍遵循已接受的 v1 契约，待 ADR-0007/0008 审核后迁移。
+
+![AIXSILICON 项目全景：Workflow 控制面协调十个独立资产仓，并通过设计、生成、验证、证据、审批、发布和消费形成闭环](docs/assets/project-panorama.png)
+
+全景图将项目分为控制面、十个平级资产仓和工程交付闭环：Workflow 通过 Manifest/Lock、Change Bundle 与 Flow/Gates 组织协作；EDA 只作为验证阶段的外部 Provider；Evidence 经人工审批后进入 Release 与 Catalog，并由消费反馈驱动下一轮工作。图中的连线用于解释职责和生命周期，不代替 [`manifests/default.yaml`](manifests/default.yaml)、[`ownership-map.yaml`](ownership-map.yaml) 或 [`workflows/`](workflows/) 中的精确依赖、所有权与执行定义。
 
 ## 推荐技术形态
 

@@ -16,7 +16,7 @@ Workflow 是 Manifest 驱动的多仓工作区控制面，负责 Workspace、Flo
 
 | 材料 | 唯一职责 |
 |---|---|
-| [`delivery.md`](delivery.md) | Workflow 唯一活动任务和验收台账 |
+| [`delivery.md`](delivery.md) | Workflow 稳定任务定义、依赖和验收条件；状态见 [`../todo.md`](../todo.md) |
 | [`manifest.md`](manifest.md) | Manifest、Profile、Lock 与 Override |
 | [`ownership.md`](ownership.md) | Schema/仓库/工具的唯一归属和写入边界 |
 | [`collaboration.md`](collaboration.md) | Change Bundle、影响分析和跨仓 CI |

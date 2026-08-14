@@ -9,6 +9,7 @@
 | [`documentation-map.png`](documentation-map.png) | 解释文档五层结构与阅读关系 | `docs/index.md` | 1672×941 |
 | [`control-plane-ecosystem.png`](control-plane-ecosystem.png) | 解释 Workflow、Tools、独立资产仓、EDA、Evidence 与 Catalog 的关系 | `docs/architecture/overview.md` | 1672×941 |
 | [`evidence-release-lifecycle.png`](evidence-release-lifecycle.png) | 解释从 Manifest/Lock 到 Gate/Evidence/人工批准/发布的闭环 | `docs/workflow/release.md` | 1672×941 |
+| [`project-panorama.png`](project-panorama.png) | 解释 Workflow 控制面、十个独立资产仓与端到端交付闭环 | 根 `README.md` | 1672×941 |
 
 ## 生成记录
 
@@ -18,6 +19,7 @@
 - 文档地图提示主题：五层材料 `ENTRY & STATUS / ARCHITECTURE / WORKFLOW CONTRACTS / REPO EXECUTION / REFERENCE`；
 - 控制面提示主题：可选 Skill、Workflow 控制面、Tools、六类独立资产仓、EDA、Evidence 和 Catalog；初稿的仓间串行箭头已通过一次定向编辑改为公共总线；
 - 发布闭环提示主题：`MANIFEST → LOCK → PREFLIGHT → FLOW + PROVIDER → GATES → EVIDENCE → human approval → RELEASE + CATALOG`，Gate 失败回到执行层；
+- 项目全景图生成日期为 2026-08-14；提示主题：`WORKFLOW` 通过 `MANIFEST + LOCK / CHANGE BUNDLE / FLOW + GATES` 协调十个平级仓，并沿 `DESIGN → GENERATE → VERIFY → EVIDENCE → APPROVE → RELEASE → CONSUME` 形成反馈闭环，EDA 仅作为外部验证 Provider；
 - 约束：无品牌 Logo、无水印、无额外文案；所有标签均在落库前人工目视检查。
 
 ## 维护规则

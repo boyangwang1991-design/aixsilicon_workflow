@@ -1,6 +1,6 @@
 # Repo 方案与交付索引
 
-本文是现有仓和候选仓的统一入口。现有仓的 `README.md` 是仓级设计契约，`delivery.md` 是唯一活动任务台账，`design-reference.md` 只保存历史细节。
+本文是现有仓和候选仓的统一入口。现有仓的 `README.md` 是仓级设计契约，`delivery.md` 是任务定义与验收清单，`design-reference.md` 只保存历史细节；全部任务状态统一在 [`todo.md`](todo.md) 维护。
 
 ## 1. 现有仓覆盖矩阵
 
@@ -17,7 +17,7 @@
 | skills（私有） | ai-engineering | [`skills/README.md`](skills/README.md) | [`skills/delivery.md`](skills/delivery.md) | [`skills/design-reference.md`](skills/design-reference.md) | APB Author/Verifier Eval |
 | knowledge | engineering-platform | [`knowledge/README.md`](knowledge/README.md) | [`knowledge/delivery.md`](knowledge/delivery.md) | [`knowledge/design-reference.md`](knowledge/design-reference.md) | APB 知识路径与检索 |
 
-Workflow 控制面入口为 [`workflow/README.md`](workflow/README.md)，唯一活动台账为 [`workflow/delivery.md`](workflow/delivery.md)。
+Workflow 控制面入口为 [`workflow/README.md`](workflow/README.md)，任务定义与验收清单为 [`workflow/delivery.md`](workflow/delivery.md)，状态统一见 [`todo.md`](todo.md)。
 
 ## 2. 跨仓方案完整性
 

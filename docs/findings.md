@@ -1,6 +1,6 @@
 # 方案与实现 Findings
 
-更新时间：2026-08-14。本文记录文档审核中发现、但尚未由实现或验证证据关闭的问题。它不是任务看板：执行任务在各仓 `delivery.md`，组合状态在 [`progress.md`](progress.md)。
+更新时间：2026-08-14。本文记录文档审核中发现、但尚未由实现或验证证据关闭的问题。它不是任务看板：任务定义在各仓 `delivery.md`，任务状态在 [`todo.md`](todo.md)，组合状态在 [`progress.md`](progress.md)。
 
 ## 1. 使用规则
 
@@ -36,7 +36,7 @@
 
 | ID | 发现 | 处置 | 关闭证据 | 状态 |
 |---|---|---|---|---|
-| F-014 | plan/todo/design-reference 职责重叠，Todo 有重复任务和历史清单 | 改为 README 设计契约 + delivery 唯一活动台账；历史参考不维护状态 | 11/11 域覆盖、旧活动文件为 0、本地链接为 0 | `resolved` |
+| F-014 | plan/todo/design-reference 职责重叠，Todo 有重复任务和历史清单 | 改为 README 设计契约 + delivery 任务定义 + 根级 todo 唯一状态台账；历史参考不维护状态 | 11/11 域覆盖、79/79 任务纳入统一状态台账、delivery 状态列为 0、本地链接为 0 | `resolved` |
 | F-015 | Workflow 设计已按主题拆分，若再造 design-reference 会重复；Catalog/SoC 当前参考曾是占位 | Workflow 保留主题契约；Catalog/SoC 补当前设计契约；统一入口由 repositories 索引 | 设计/交付覆盖矩阵和链接检查通过 | `resolved` |
 | F-016 | techlib/reference-soc 等候选仓在局部任务中被当作既定工作 | 建立 proposals 和激活门；不提前形成依赖 | 4 份提案；roadmap/delivery/Manifest 角色一致 | `resolved` |
 | F-017 | 初稿中 Catalog/Release、SoC/Workflow、Tool/Workflow 任务存在互相等待风险 | 拆分领域契约、控制面实现和端到端验收，任务只保留一个 Owner | 79 个任务 ID 无重复、未知依赖或依赖环 | `resolved` |

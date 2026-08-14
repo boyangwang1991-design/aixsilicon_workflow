@@ -49,7 +49,7 @@
 | `plans/cross-repo-optimization-plan.md` | `docs/reference/cross-repo-optimization-plan.md`、`docs/roadmap.md` | 原规划 + 当前排序 | absorbed |
 | `root/README.md` | `docs/index.md`、`docs/governance.md` | 统一入口和历史规则 | absorbed |
 | `root/plan.md` | `docs/reference/workflow-requirements.md`、`docs/reference/workflow-repo-plan.md`、`docs/roadmap.md` | 完整历史参考 + 当前路线 | verbatim-reference |
-| `root/todo.md` | `docs/progress.md`、`docs/workflow/delivery.md` | 组合状态 + 仓级任务 | absorbed |
+| `root/todo.md` | `docs/todo.md`、`docs/progress.md`、`docs/workflow/delivery.md` | 统一任务状态 + 组合状态 + Workflow 任务定义 | absorbed |
 | `root/aixsilicon_build_todolist.md` | `docs/roadmap.md`、各仓 `delivery.md` | 按里程碑和 Owner 拆分 | absorbed |
 
 覆盖计数：根级 13 + ADR 8 + architecture 6 + repo-plans 11 + plans 3 + root 4 = **45/45**。
@@ -93,7 +93,7 @@
 | `docs/workflow/cross-repo-optimization-plan.md` | `docs/reference/cross-repo-optimization-plan.md` | 原决策背景保留；当前执行顺序看 roadmap |
 | `docs/workflow/schema-ownership.md` + `tool-placement.md` | `docs/workflow/ownership.md` | 合并为 Schema、仓库和工具统一归属契约 |
 | `docs/workflow/maturity-model.md` | `docs/workflow/release.md` | 成熟度并入 Gate/Evidence/Release 消费闭环 |
-| `docs/workflow/plan.md` + `todo.md` | `docs/workflow/README.md` + `delivery.md` | 移除全局阶段/状态复制，只保留 Workflow 设计契约与唯一活动台账 |
+| `docs/workflow/plan.md` + `todo.md` | `docs/workflow/README.md` + `delivery.md` + 根级 [`todo.md`](todo.md) | 移除阶段/状态复制；Workflow 保留设计契约和任务定义，全部状态集中到根级台账 |
 | `docs/COVERAGE.md` | `docs/MIGRATION.md` | 兼容指针无独立信息，入口收敛到本表 |
 
-当前结构：根级管理入口/治理/规划/状态，`architecture/` 管稳定结构，`workflow/` 管可执行契约和交付，`reference/` 管完整历史背景；各资产仓使用 README 设计契约 + delivery 活动台账 + design-reference 历史细节。
+当前结构：根级管理入口/治理/规划/统一任务状态/组合状态，`architecture/` 管稳定结构，`workflow/` 管可执行契约和任务定义，`reference/` 管完整历史背景；各资产仓使用 README 设计契约 + delivery 任务定义 + design-reference 历史细节，全部任务状态只在根级 [`todo.md`](todo.md) 维护。

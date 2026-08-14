@@ -16,7 +16,7 @@
 | 场景 | 必读 |
 |---|---|
 | 任何任务前（快速） | [`README.md`](README.md)、[`docs/index.md`](docs/index.md)（统一入口） |
-| 规划/排期 | [`docs/roadmap.md`](docs/roadmap.md)、[`docs/progress.md`](docs/progress.md)、对应仓 `plan.md`/`todo.md` |
+| 规划/排期 | [`docs/roadmap.md`](docs/roadmap.md)、[`docs/todo.md`](docs/todo.md)、[`docs/progress.md`](docs/progress.md)、对应仓 `delivery.md` |
 | 跨仓契约/命名 | [`docs/adr/README.md`](docs/adr/README.md)、[`docs/workflow/ownership.md`](docs/workflow/ownership.md)、[`docs/workflow/release.md`](docs/workflow/release.md) |
 | 工具归属 | [`docs/workflow/ownership.md`](docs/workflow/ownership.md)（T1 公共工具 / T2 单仓脚本 / T3 私有适配 / T4 项目脚本） |
 | 写入边界 | [`ownership-map.yaml`](ownership-map.yaml) |
@@ -112,7 +112,7 @@ aix tool schema|hwif|reg|core ...
 | 需求 | 文档 |
 |---|---|
 | 我是谁/在哪 | [`README.md`](README.md)、[`docs/index.md`](docs/index.md)、[`docs/workflow/ownership.md`](docs/workflow/ownership.md) |
-| 下一步该建什么 | [`docs/roadmap.md`](docs/roadmap.md)、[`docs/progress.md`](docs/progress.md)、各仓 `todo.md` |
+| 下一步该建什么 | [`docs/roadmap.md`](docs/roadmap.md)、[`docs/todo.md`](docs/todo.md)、[`docs/progress.md`](docs/progress.md)、对应仓 `delivery.md` |
 | 跨仓边界/命名/工具 | [`docs/adr/README.md`](docs/adr/README.md)、[`docs/workflow/ownership.md`](docs/workflow/ownership.md) |
 | 成熟度/门禁 | [`docs/workflow/release.md`](docs/workflow/release.md)、[`docs/architecture/target-design.md`](docs/architecture/target-design.md) §8～9 |
 | 具体 IP 研发方法 | skill_repo `skills/ip-development-suite/`（SKILL.md + artifact-contract） |

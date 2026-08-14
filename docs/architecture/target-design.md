@@ -19,9 +19,9 @@
 | A4 | P0 | 工具包骨架与端到端可用被混为“完成” | 进度和风险判断失真 | C0–C4 分级，provider 版本/hash 入 Lock/Evidence |
 | A5 | P0 | release-train 仍是契约桩 | G7、Catalog 和幂等发布不可证明 | 人工批准 + 资产 Release + Catalog PR 闭环 |
 | A6 | P1 | 文档候选仓名与 Manifest 真实名称漂移 | URL、CI、Lock 和引用可能失效 | Manifest ID/路径为 canonical；重命名单独 ADR |
-| A7 | P0 | 多份计划同时维护“当前状态” | 已完成/待接入口径冲突 | `progress.md` 管组合状态，仓 `delivery.md` 管唯一任务，设计文档不报状态 |
+| A7 | P0 | 多份计划同时维护“当前状态” | 已完成/待接入口径冲突 | `todo.md` 管唯一任务状态，`progress.md` 只汇总组合状态，仓 `delivery.md` 管任务定义，设计文档不报状态 |
 
-A7 已通过“README 设计契约 + delivery 活动台账 + historical reference”重组落实；A0–A6 仍需按路线图实施。`techlib`、`model`、`sw`、`reference-soc` 保持候选，方案见 [`../proposals/repositories/`](../proposals/repositories/README.md)，达到激活门禁并通过 ADR 后再建仓。
+A7 已通过“README 设计契约 + delivery 任务定义 + 统一 todo 状态 + historical reference”重组落实；A0–A6 仍需按路线图实施。`techlib`、`model`、`sw`、`reference-soc` 保持候选，方案见 [`../proposals/repositories/`](../proposals/repositories/README.md)，达到激活门禁并通过 ADR 后再建仓。
 
 ## 3. 保持不变的架构约束
 

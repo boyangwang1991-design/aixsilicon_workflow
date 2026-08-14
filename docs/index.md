@@ -13,7 +13,8 @@
 | 初次了解系统 | [`architecture/overview.md`](architecture/overview.md) → [`architecture/repos.md`](architecture/repos.md) → [`architecture/workflows.md`](architecture/workflows.md) |
 | 安装和使用 | [`getting-started.md`](getting-started.md) → [`workflow/troubleshooting.md`](workflow/troubleshooting.md) |
 | 审核目标方案 | [`architecture/target-design.md`](architecture/target-design.md) → [`roadmap.md`](roadmap.md) |
-| 查看当前状态 | [`progress.md`](progress.md) |
+| 查看当前任务与负责人 | [`todo.md`](todo.md) |
+| 查看里程碑、风险与决策 | [`progress.md`](progress.md) |
 | 查看审核缺陷与关闭条件 | [`findings.md`](findings.md) |
 | 修改 Workflow | [`workflow/README.md`](workflow/README.md) → [`workflow/delivery.md`](workflow/delivery.md) |
 | 查看 Repo 设计与交付 | [`repositories.md`](repositories.md) |
@@ -28,7 +29,8 @@
 | [`getting-started.md`](getting-started.md) | 安装、初始化和基本操作 |
 | [`governance.md`](governance.md) | 文档分层、状态规则和维护门禁 |
 | [`roadmap.md`](roadmap.md) | 唯一跨仓活动路线图、依赖顺序和验收出口 |
-| [`progress.md`](progress.md) | 唯一组合级状态、风险和阻塞台账 |
+| [`todo.md`](todo.md) | 唯一任务状态、负责人、日期、Evidence、下一动作和阻塞台账 |
+| [`progress.md`](progress.md) | 组合级里程碑状态、风险和决策队列 |
 | [`findings.md`](findings.md) | 方案/实现审核发现、处置和关闭证据 |
 | [`MIGRATION.md`](MIGRATION.md) | 45 份历史材料的覆盖与删除审计 |
 | [`repositories.md`](repositories.md) | 现有仓设计/交付入口与候选仓提案 |
@@ -50,7 +52,7 @@
 | 材料 | 唯一职责 |
 |---|---|
 | [`workflow/README.md`](workflow/README.md) | Workflow 文档入口和上下游边界 |
-| [`workflow/delivery.md`](workflow/delivery.md) | Workflow 唯一活动交付台账 |
+| [`workflow/delivery.md`](workflow/delivery.md) | Workflow 稳定任务定义、依赖和验收条件 |
 | [`workflow/manifest.md`](workflow/manifest.md) | Manifest、Profile、Lock 和 Override |
 | [`workflow/ownership.md`](workflow/ownership.md) | Schema、仓库和工具归属 |
 | [`workflow/collaboration.md`](workflow/collaboration.md) | Change Bundle、影响分析和联合 CI |
@@ -59,17 +61,17 @@
 
 ## 5. Repo：设计与交付
 
-每个现有资产仓只保留两份活动材料：`README.md` 是唯一仓级设计契约，`delivery.md` 是唯一任务/里程碑/验收台账。`design-reference.md` 仅保存完整历史细节。全部入口和跨仓覆盖矩阵见 [`repositories.md`](repositories.md)。
+每个现有资产仓的 `README.md` 是唯一仓级设计契约，`delivery.md` 保存稳定任务定义、依赖与验收条件，`design-reference.md` 仅保存完整历史细节；所有任务状态统一在根级 [`todo.md`](todo.md)。全部入口和跨仓覆盖矩阵见 [`repositories.md`](repositories.md)。
 
 尚未建仓的方案放在 [`proposals/repositories/`](proposals/repositories/README.md)；提案不代表已排期，也不得进入 Manifest 或 required dependency。
 
 ## 6. Reference：完整历史背景
 
-[`reference/`](reference/README.md) 保存旧总体需求、十仓全景、工程评审和跨仓优化原文。其旧 Todo、日期、比例、仓库状态和优先级不具执行效力；当前决策按 architecture/ADR，当前计划按 roadmap，当前状态按 progress。
+[`reference/`](reference/README.md) 保存旧总体需求、十仓全景、工程评审和跨仓优化原文。其旧 Todo、日期、比例、仓库状态和优先级不具执行效力；当前决策按 architecture/ADR，当前计划按 roadmap，任务状态按 todo，里程碑状态按 progress。
 
 ## 7. 图示约定
 
 - 项目图片统一保存在 [`assets/`](assets/README.md)；
 - 生成式图片用于建立整体心智模型，不替代正文、Mermaid、表格或机器可读配置；
 - 图片必须提供 alt 文本、文字解释和生成记录；
-- 精确依赖看 Manifest/`repos.md`，精确 Flow 看 `workflows/*.yaml`，当前状态只看 `progress.md`。
+- 精确依赖看 Manifest/`repos.md`，精确 Flow 看 `workflows/*.yaml`，任务状态只看 `todo.md`，里程碑状态只看 `progress.md`。
