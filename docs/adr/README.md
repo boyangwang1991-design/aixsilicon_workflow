@@ -12,6 +12,8 @@
 | [0004-cli-entry-and-plugin-registry](0004-cli-entry-and-plugin-registry.md) | 接受 | 统一 CLI 入口 `aix` 与插件注册组 `aixsilicon.commands` |
 | [0005-cross-repo-boundary-map](0005-cross-repo-boundary-map.md) | 接受 | 跨仓边界映射（幽灵仓库收敛） |
 | [0006-tool-ownership-and-migration](0006-tool-ownership-and-migration.md) | 接受 | 确定性工具归属四类与分阶段迁移路径 |
+| [0007-typed-dependencies-and-explicit-profiles](0007-typed-dependencies-and-explicit-profiles.md) | 建议 | 有类型依赖与显式 Profile，修正工作区闭包 |
+| [0008-action-capability-preflight](0008-action-capability-preflight.md) | 建议 | Action capability preflight 与 provider 版本锁定 |
 
 ## 如何新增 ADR
 

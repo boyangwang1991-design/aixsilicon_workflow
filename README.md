@@ -9,7 +9,8 @@
 5. 执行跨仓依赖检查、影响分析、联合验证与发布协调；
 6. 为 Skill Suite 提供统一、可发现、可复现、可留证的执行环境。
 
-> 完整规划见 [`docs/index.md`](docs/index.md)（全局建设规划 + 各仓 plan/todo 索引）；历史规划见 [`docs/archived/`](docs/archived/README.md)。本文档覆盖框架结构、安装、快速开始与核心概念。
+> 统一材料入口见 [`docs/index.md`](docs/index.md)，跨仓路线图与进度分别见 [`docs/roadmap.md`](docs/roadmap.md) 和 [`docs/progress.md`](docs/progress.md)。本文档覆盖框架结构、安装、快速开始与核心概念。
+> 优化后的目标架构见 [`docs/architecture/target-design.md`](docs/architecture/target-design.md)；当前运行配置仍遵循已接受的 v1 契约，待 ADR-0007/0008 审核后迁移。
 
 ## 推荐技术形态
 
@@ -38,12 +39,12 @@
 
 跨仓契约统一决议见 ADR 与配套规范（2026-08-13）：
 
-- **VLNV 统一 `aixsilicon:*`**（[`ADR-0003`](docs/archived/adr/0003-unified-vlnv-namespace.md)）；CLI 二进制名保持 `aix`；
-- **单一 CLI 入口 + 插件组 `aixsilicon.commands`**（[`ADR-0004`](docs/archived/adr/0004-cli-entry-and-plugin-registry.md)）：`aix tool` 由 `aixsilicon_tool_repo` 插件提供，未安装时显式 `OPTIONAL_UNAVAILABLE`；
-- **跨仓边界映射**（[`ADR-0005`](docs/archived/adr/0005-cross-repo-boundary-map.md)）、**工具归属与迁移**（[`ADR-0006`](docs/archived/adr/0006-tool-ownership-and-migration.md)）；
-- **成熟度统一映射**：[`docs/archived/maturity-model.md`](docs/archived/maturity-model.md)；
-- **Schema 所有权与仓库注册表**：[`docs/archived/schema-ownership.md`](docs/archived/schema-ownership.md)；
-- 综合优化规划：[`docs/archived/plans/cross-repo-optimization-plan.md`](docs/archived/plans/cross-repo-optimization-plan.md)。
+- **VLNV 统一 `aixsilicon:*`**（[`ADR-0003`](docs/adr/0003-unified-vlnv-namespace.md)）；CLI 二进制名保持 `aix`；
+- **单一 CLI 入口 + 插件组 `aixsilicon.commands`**（[`ADR-0004`](docs/adr/0004-cli-entry-and-plugin-registry.md)）：`aix tool` 由 `aixsilicon_tool_repo` 插件提供，未安装时显式 `OPTIONAL_UNAVAILABLE`；
+- **跨仓边界映射**（[`ADR-0005`](docs/adr/0005-cross-repo-boundary-map.md)）、**工具归属与迁移**（[`ADR-0006`](docs/adr/0006-tool-ownership-and-migration.md)）；
+- **Schema、仓库与工具归属**：[`docs/workflow/ownership.md`](docs/workflow/ownership.md)；
+- **成熟度、Gate 与发布**：[`docs/workflow/release.md`](docs/workflow/release.md)；
+- 历史综合优化依据：[`docs/reference/cross-repo-optimization-plan.md`](docs/reference/cross-repo-optimization-plan.md)（不维护当前状态）。
 
 ## 快速开始
 
@@ -139,7 +140,7 @@ aixsilicon_workflow/
 
 | 对象 | 回答的问题 |
 |---|---|
-| [Workspace Manifest](docs/archived/manifest.md) | 当前工作区需要克隆哪些 Git 仓库，放在哪里，使用何种开发分支或版本策略 |
+| [Workspace Manifest](docs/workflow/manifest.md) | 当前工作区需要克隆哪些 Git 仓库，放在哪里，使用何种开发分支或版本策略 |
 | Workspace Lockfile | 本次实际解析到了哪些 Git SHA、VLNV、工具版本和生成器版本 |
 | Local Override | 开发者本地临时替换（VIP 依赖未合入的 HWIF 分支等） |
 | Change Bundle | 本次跨仓变更由哪些分支/PR 组成，验证和合并顺序是什么 |
@@ -161,15 +162,17 @@ aixsilicon_workflow/
 
 ## 文档
 
-- [规划体系索引（全局建设规划 + 各仓 plan/todo + 归档区）](docs/index.md)
-- [全局建设规划（workflow-repo-plan）](docs/workflow-repo-plan.md)
-- [Getting Started（归档）](docs/archived/getting-started.md)
-- [Manifest 设计（归档）](docs/archived/manifest.md)
-- [跨仓协作与 Change Bundle（归档）](docs/archived/collaboration.md)
-- [发布与基线治理（归档）](docs/archived/release.md)
-- [故障处理（归档）](docs/archived/troubleshooting.md)
-- [架构决策记录 ADR（归档）](docs/archived/adr/)
-- [归档区索引](docs/archived/README.md)
+- [统一文档中心](docs/index.md)
+- [架构文档](docs/architecture/README.md)
+- [Workflow 契约与实施材料](docs/workflow/README.md)
+- [Getting Started](docs/getting-started.md)
+- [Manifest 设计](docs/workflow/manifest.md)
+- [跨仓协作与 Change Bundle](docs/workflow/collaboration.md)
+- [发布与基线治理](docs/workflow/release.md)
+- [故障处理](docs/workflow/troubleshooting.md)
+- [架构决策记录 ADR](docs/adr/README.md)
+- [路线图](docs/roadmap.md) / [进度台账](docs/progress.md)
+- [历史与设计参考](docs/reference/README.md)
 
 ## 许可证
 

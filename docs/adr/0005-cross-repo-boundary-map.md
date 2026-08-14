@@ -10,7 +10,7 @@
 - [`aixsilicon_dv_common/plan.md`](../../repos/aixsilicon_dv_common/plan.md:120) 与 [`aixsilicon_vip_repo/plan.md`](../../repos/aixsilicon_vip_repo/plan.md:57) 引用 `eda-flow`、`eda-rules`、`hw-models`；
 - [`aixsilicon_cbb_repo/cbb_repo_plan.md`](../../repos/aixsilicon_cbb_repo/cbb_repo_plan.md:449) 引用独立 `cbb-catalog`、`cbb-tech-<node>`。
 
-而 workflow [`workflow-repo-plan.md`](../workflow-repo-plan.md) §4.7 已明确不单独建设 `eda_flow_repo` / `eda_rule_repo`，并采用单一 `aixsilicon_catalog_repo` 与 `aixsilicon_techlib_repo`。
+而历史总体需求 [`workflow-requirements.md`](../reference/workflow-requirements.md) §4.7 已明确不单独建设 `eda_flow_repo` / `eda_rule_repo`，并采用单一 `aixsilicon_catalog_repo` 与 `aixsilicon_techlib_repo`。
 
 ## 决策
 
@@ -29,7 +29,7 @@
 1. 本 ADR 作为权威边界；
 2. 修订 dv-common / vip / cbb 三个 plan 的对应引用章节；
 3. [`policies/dependency-policy.yaml`](../../policies/dependency-policy.yaml) 增加 `dep-no-phantom-repo` 规则：新 plan/文档不得引用未注册仓库；
-4. 维护 `docs/` 下的“仓库注册表”（见 `docs/schema-ownership.md` 附注），任何新仓名需先在 workflow 侧登记。
+4. 维护 `docs/workflow/ownership.md` 的仓库注册表，任何新仓名需先在 workflow 侧登记。
 
 ## 备选方案
 

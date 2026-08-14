@@ -25,7 +25,7 @@
 - `ip_repo` 的 `ipkg.yaml` 中 `fusesoc.vendor` 从 `boyangwang1991-design` 改为 `aixsilicon`，`library` 保持 `ip`；
 - `cbb_repo` 冻结 `aixsilicon:cbb` 命名（其 registry 已用 `aixsilicon` vendor，保持不变），替换 `company:cbb` 占位；
 - 存量已发布 core 走迁移窗口：新增 `aixsilicon:` 别名 core 指向同一内容，旧 vendor（`aix:`/`boyangwang1991-design:`）core 标记 deprecated，一个 release 周期后移除；
-- `ownership-map.yaml`、`docs/schema-ownership.md`、`docs/maturity-model.md` 中的 VLNV 引用统一为 `aixsilicon:*`。
+- `ownership-map.yaml`、`docs/workflow/ownership.md`、`docs/workflow/release.md` 中的 VLNV 引用统一为 `aixsilicon:*`。
 
 ## 备选方案
 

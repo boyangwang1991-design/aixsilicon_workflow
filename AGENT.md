@@ -9,18 +9,18 @@
 
 - 本仓是 **Manifest 驱动的多仓工作区控制面**，不是源码汇总仓；子仓统一克隆到 `repos/`（父仓 `.gitignore` 完整忽略）。
 - 责任链：**Skill 决定“如何理解与辅助”→ Workflow 决定“顺序与 Gate”→ Tool 负责“确定性执行”→ 资产仓保存 SSOT/交付 → Catalog 发布合格资产 → EDA 提供工程证据**。
-- 统一命名：VLNV 一律 `aixsilicon:*`（[`ADR-0003`](docs/archived/adr/0003-unified-vlnv-namespace.md)）；CLI 单入口 `aix`（[`ADR-0004`](docs/archived/adr/0004-cli-entry-and-plugin-registry.md)）。
+- 统一命名：VLNV 一律 `aixsilicon:*`（[`ADR-0003`](docs/adr/0003-unified-vlnv-namespace.md)）；CLI 单入口 `aix`（[`ADR-0004`](docs/adr/0004-cli-entry-and-plugin-registry.md)）。
 
 ## 2. 开工前必读（按需渐进加载）
 
 | 场景 | 必读 |
 |---|---|
-| 任何任务前（快速） | [`README.md`](README.md)、[`docs/index.md`](docs/index.md)（规划索引）、[`docs/workflow-repo-plan.md`](docs/workflow-repo-plan.md)（全局规划） |
-| 规划/排期 | [`docs/archived/root/aixsilicon_build_todolist.md`](docs/archived/root/aixsilicon_build_todolist.md)、[`docs/archived/plans/cross-repo-optimization-plan.md`](docs/archived/plans/cross-repo-optimization-plan.md)、[`docs/archived/plans/cross-repo-architecture-review.md`](docs/archived/plans/cross-repo-architecture-review.md) |
-| 跨仓契约/命名 | [`docs/archived/adr/README.md`](docs/archived/adr/README.md)、[`docs/archived/schema-ownership.md`](docs/archived/schema-ownership.md)、[`docs/archived/maturity-model.md`](docs/archived/maturity-model.md) |
-| 工具归属 | [`docs/archived/tool-placement.md`](docs/archived/tool-placement.md)（T1 公共工具→tool_repo / T2 单仓脚本→留仓 / T3 私有适配→私有 overlay / T4 项目脚本→项目仓） |
+| 任何任务前（快速） | [`README.md`](README.md)、[`docs/index.md`](docs/index.md)（统一入口） |
+| 规划/排期 | [`docs/roadmap.md`](docs/roadmap.md)、[`docs/progress.md`](docs/progress.md)、对应仓 `plan.md`/`todo.md` |
+| 跨仓契约/命名 | [`docs/adr/README.md`](docs/adr/README.md)、[`docs/workflow/ownership.md`](docs/workflow/ownership.md)、[`docs/workflow/release.md`](docs/workflow/release.md) |
+| 工具归属 | [`docs/workflow/ownership.md`](docs/workflow/ownership.md)（T1 公共工具 / T2 单仓脚本 / T3 私有适配 / T4 项目脚本） |
 | 写入边界 | [`ownership-map.yaml`](ownership-map.yaml) |
-| 代码工程化 | [`docs/archived/optimization-plan.md`](docs/archived/optimization-plan.md) |
+| 代码工程化 | [`docs/workflow/delivery.md`](docs/workflow/delivery.md)；历史评审见 [`docs/reference/workflow-engineering-review.md`](docs/reference/workflow-engineering-review.md) |
 
 ## 3. 任务分类与路由
 
@@ -76,7 +76,7 @@ aix tool schema|hwif|reg|core ...
 1. **理解与分类**：明确目标、涉及仓、交付物与 Gate（§3）。
 2. **上下文最小化**：只读本任务所需文档与文件，不无差别扫描全部仓库。
 3. **规划与影响**：跨仓/接口/发布类任务先写 Change Plan（可落为 `changesets/` Change Bundle）。
-4. **契约先行**：改动前确认 Schema 所有权（[`docs/archived/schema-ownership.md`](docs/archived/schema-ownership.md)）与 VLNV/命名（`aixsilicon:*`）。
+4. **契约先行**：改动前确认 Schema 所有权（[`docs/workflow/ownership.md`](docs/workflow/ownership.md)）与 VLNV/命名（`aixsilicon:*`）。
 5. **确定性执行**：能用工具/脚本确定性生成的（CSR/HWIF/Core/Header/文档）就调用，不手工维护派生视图。
 6. **写入边界**：按 [`ownership-map.yaml`](ownership-map.yaml) 只写允许的 owner 仓与路径；私域（Skill/Foundry/PDK/商业 EDA）不写入公共仓。
 7. **证据与日志**：关键动作记录结构化结果/证据（run manifest、evidence index、run_log.md），可追溯。
@@ -111,10 +111,10 @@ aix tool schema|hwif|reg|core ...
 
 | 需求 | 文档 |
 |---|---|
-| 我是谁/在哪 | [`README.md`](README.md)、[`docs/index.md`](docs/index.md)、[`docs/archived/schema-ownership.md`](docs/archived/schema-ownership.md) |
-| 下一步该建什么 | [`docs/index.md`](docs/index.md)（各仓 plan/todo）、[`docs/archived/root/aixsilicon_build_todolist.md`](docs/archived/root/aixsilicon_build_todolist.md) |
-| 跨仓边界/命名/工具 | [`docs/archived/adr/README.md`](docs/archived/adr/README.md)、[`docs/archived/tool-placement.md`](docs/archived/tool-placement.md) |
-| 成熟度/门禁 | [`docs/archived/maturity-model.md`](docs/archived/maturity-model.md)、[`docs/workflow-repo-plan.md`](docs/workflow-repo-plan.md) §7 |
+| 我是谁/在哪 | [`README.md`](README.md)、[`docs/index.md`](docs/index.md)、[`docs/workflow/ownership.md`](docs/workflow/ownership.md) |
+| 下一步该建什么 | [`docs/roadmap.md`](docs/roadmap.md)、[`docs/progress.md`](docs/progress.md)、各仓 `todo.md` |
+| 跨仓边界/命名/工具 | [`docs/adr/README.md`](docs/adr/README.md)、[`docs/workflow/ownership.md`](docs/workflow/ownership.md) |
+| 成熟度/门禁 | [`docs/workflow/release.md`](docs/workflow/release.md)、[`docs/architecture/target-design.md`](docs/architecture/target-design.md) §8～9 |
 | 具体 IP 研发方法 | skill_repo `skills/ip-development-suite/`（SKILL.md + artifact-contract） |
 
 ## 10. 完成定义（Definition of Done）

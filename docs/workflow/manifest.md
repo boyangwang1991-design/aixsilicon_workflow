@@ -2,6 +2,8 @@
 
 Workspace Manifest 描述**期望工作区**，不记录本地瞬时状态。回答：当前工作区需要克隆哪些 Git 仓库、放在哪里、使用何种开发分支或版本策略。
 
+> 当前规范为 `aix.workspace/v1`：Profile 使用 `include_groups`，依赖使用无类型 `depends_on`。目标方案建议兼容增加显式仓库集合和有类型依赖；在 ADR-0007 接受并完成实现前，目标字段不得写入正式 Manifest。详见 [`../architecture/target-design.md`](../architecture/target-design.md) §4～5。
+
 ## 结构与字段
 
 完整示例见 [`manifests/default.yaml`](../../manifests/default.yaml)，Schema 见 [`schemas/workspace-manifest.schema.json`](../../schemas/workspace-manifest.schema.json)。
@@ -40,7 +42,7 @@ Manifest 描述**期望工作区**，回答：
 - `visibility`：`public / private`；`private + required:false` 的 Skill 仓无权限时显示 `OPTIONAL_UNAVAILABLE`；
 - `fusesoc_roots`：作为 FuseSoC core root 的目录。
 
-### Manifest 规则（root/plan §9.3）
+### Manifest 规则
 
 - `id` 在组织内稳定，路径可调整但需迁移说明；
 - `path` 必须位于配置的 `repos_root` 下，禁止绝对路径和 `..` 逃逸；
@@ -91,7 +93,7 @@ repositories:
 - 正式基线通过 `aix wf lock` 生成 Lockfile 固定 SHA；
 - 更新正式 `locks/baseline.lock.yaml` 必须经过完整跨仓资格验证 PR。
 
-### Lockfile 设计（root/plan §10）
+### Lockfile 设计
 
 Lockfile 是可复现性的核心，记录 Manifest 解析后的不可变状态：
 
@@ -115,3 +117,24 @@ Lockfile 是可复现性的核心，记录 Manifest 解析后的不可变状态�
 | `.aix/local.lock.yaml` | 否 | 开发者当前解析结果，可包含本地分支 |
 
 更新正式 Lockfile 必须经过完整跨仓资格验证，不能因为执行了一次 `sync` 就自动覆盖。完整示例见 [`locks/baseline.lock.yaml`](../../locks/baseline.lock.yaml)。
+
+## 目标 v2 兼容迁移
+
+建议新增而不是立即替换现有字段：
+
+```yaml
+repositories:
+  - id: ip
+    depends_on: [hwif, cbb]  # 过渡期兼容，等价 product
+    dependencies:
+      product: [hwif, cbb]
+      verification: [dv-common, vip]
+      tooling: [tools]
+      context: [skills, knowledge]
+
+profiles:
+  minimal:
+    include_repositories: [hwif, tools]
+```
+
+迁移顺序：Schema/解析器兼容 → exact-set/typed-closure 测试 → 默认 Manifest 迁移 → Lock 记录解析策略 → 两个发布周期后 deprecated。最终决策以 [ADR-0007](../adr/0007-typed-dependencies-and-explicit-profiles.md) 为准。

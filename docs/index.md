@@ -1,55 +1,75 @@
-# AIXSILICON Workflow / Repo 规划体系索引
+# AIXSILICON 文档中心
 
-> 本目录是 AIXSILICON 多仓工作区（`aixsilicon_workflow` 控制面 + 10 个资产仓）规划与建设的统一入口。
-> 每个 repo 及 workflow 均拥有**独立的 Plan 与 Todo**。
+本页是 Workflow 控制面与 10 个资产仓的唯一文档入口。材料按“根级治理 → architecture 稳定结构 → workflow 可执行契约 → repo 仓级执行 → reference 历史背景”分层；同一主题只设一个活动权威落点。
 
-## 1. 快速入口
+![AIXSILICON 文档五层结构：入口与状态、架构、Workflow 契约、仓级执行、历史参考](assets/documentation-map.png)
 
-| 文档 | 内容 |
+图示读法：入口与状态负责“从哪里读、现在如何”，Architecture 与 Workflow Contracts 分别解释稳定结构和可执行契约，Repo Execution 承接仓级实施；Reference 使用弱化样式，表示仅供历史追溯，不控制当前工作。
+
+## 1. 从这里开始
+
+| 需求 | 阅读入口 |
 |---|---|
-| [`getting-started.md`](getting-started.md) | **入门指南**：环境准备、初始化、开发与验证流程 |
-| [`workflow-repo-plan.md`](workflow-repo-plan.md) | **全局建设规划**：定位与责任链、仓库全景与依赖、两条主线、核心机制、治理契约、G0–G7、分阶段路线、风险与验收 |
-| [`adr/README.md`](adr/README.md) | **ADR 索引**：ADR-0001~0006（Manifest / 契约 / 命名 / CLI / 边界 / 工具归属） |
-| [`architecture/README.md`](architecture/README.md) | **架构总览**：六层架构、责任链、关系框图、被统筹仓库、Workflow 编排 |
-| [`COVERAGE.md`](COVERAGE.md) | **迁移覆盖**：`docs/archived/` → `docs/` 新材料迁移跟踪表（45 个源文件） |
+| 初次了解系统 | [`architecture/overview.md`](architecture/overview.md) → [`architecture/repos.md`](architecture/repos.md) → [`architecture/workflows.md`](architecture/workflows.md) |
+| 安装和使用 | [`getting-started.md`](getting-started.md) → [`workflow/troubleshooting.md`](workflow/troubleshooting.md) |
+| 审核目标方案 | [`architecture/target-design.md`](architecture/target-design.md) → [`roadmap.md`](roadmap.md) |
+| 查看当前状态 | [`progress.md`](progress.md) |
+| 查看审核缺陷与关闭条件 | [`findings.md`](findings.md) |
+| 修改 Workflow | [`workflow/README.md`](workflow/README.md) → [`workflow/delivery.md`](workflow/delivery.md) |
+| 查看 Repo 设计与交付 | [`repositories.md`](repositories.md) |
+| 判断 Owner/写入边界 | [`architecture/repos.md`](architecture/repos.md) → [`workflow/ownership.md`](workflow/ownership.md) → [`../ownership-map.yaml`](../ownership-map.yaml) |
+| 追溯旧需求和评审 | [`reference/README.md`](reference/README.md) |
 
-## 2. 各仓 Plan / Todo
+## 2. 根级：入口、治理与状态
 
-| 仓 | Plan | Todo | 类型 |
-|---|---|---|---|
-| workflow（控制面） | [`workflow/plan.md`](workflow/plan.md) | [`workflow/todo.md`](workflow/todo.md) | workflow |
-| hwif | [`hwif/plan.md`](hwif/plan.md) | [`hwif/todo.md`](hwif/todo.md) | hw-interface |
-| cbb | [`cbb/plan.md`](cbb/plan.md) | [`cbb/todo.md`](cbb/todo.md) | cbb |
-| ip | [`ip/plan.md`](ip/plan.md) | [`ip/todo.md`](ip/todo.md) | ip |
-| dv-common | [`dv-common/plan.md`](dv-common/plan.md) | [`dv-common/todo.md`](dv-common/todo.md) | dv-common |
-| vip | [`vip/plan.md`](vip/plan.md) | [`vip/todo.md`](vip/todo.md) | vip |
-| tools | [`tools/plan.md`](tools/plan.md) | [`tools/todo.md`](tools/todo.md) | tool |
-| catalog | [`catalog/plan.md`](catalog/plan.md) | [`catalog/todo.md`](catalog/todo.md) | catalog |
-| soc-integration | [`soc-integration/plan.md`](soc-integration/plan.md) | [`soc-integration/todo.md`](soc-integration/todo.md) | soc-integration |
-| skills | [`skills/plan.md`](skills/plan.md) | [`skills/todo.md`](skills/todo.md) | skill（私有） |
-| knowledge | [`knowledge/plan.md`](knowledge/plan.md) | [`knowledge/todo.md`](knowledge/todo.md) | other |
-
-## 3. 归档区（历史原文，仅供追溯）
-
-> `docs/archived/` 的内容已并入新结构，**历史原文仍完整保留**在 `docs/archived/` 供追溯，**清理留待后续**。
-
-| 归档原文 | 已并入新结构 |
+| 材料 | 唯一职责 |
 |---|---|
-| [`archived/README.md`](archived/README.md)（根级） | [`index.md`](index.md)（归档说明并入；索引） |
-| [`archived/adr/`](archived/adr/README.md)（README、_template、0001–0006） | [`adr/`](adr/README.md)（同名迁移，迁入新目录） |
-| [`archived/architecture/`](archived/architecture/README.md)（overview / plan / relationship / repos / workflows） | [`architecture/`](architecture/README.md)（overview / relationship / repos / workflows 迁入；plan 组织说明精简并入 README） |
-| [`archived/architecture/repo-plans/`](archived/architecture/repo-plans/README.md)（11 个仓计划） | 对应仓 [`plan.md` / `todo.md`](#2-各仓-plan--todo)（hwif/cbb/ip/dv-common/vip/tools/catalog/soc-integration/skills/knowledge） |
-| [`archived/plans/`](archived/plans/README.md)（跨仓架构评审 / 跨仓优化规划） | [`workflow/cross-repo-architecture-review.md`](workflow/cross-repo-architecture-review.md)、[`workflow/cross-repo-optimization-plan.md`](workflow/cross-repo-optimization-plan.md) |
-| [`archived/root/`](archived/root/README.md)（旧版 plan / todo / build_todolist） | [`workflow-repo-plan.md`](workflow-repo-plan.md)、[`workflow/plan.md`](workflow/plan.md)、[`workflow/todo.md`](workflow/todo.md) |
-| [`archived/`](archived/README.md)（治理参考：collaboration / manifest / maturity-model / optimization-plan / release / schema-ownership / tool-placement / troubleshooting / getting-started / quickstart / global-todolist / COVERAGE） | [`workflow/`](workflow/manifest.md) 各治理参考、[`getting-started.md`](getting-started.md)、[`workflow/todo.md`](workflow/todo.md)、[`COVERAGE.md`](COVERAGE.md) |
+| [`index.md`](index.md) | 导航和阅读路径 |
+| [`getting-started.md`](getting-started.md) | 安装、初始化和基本操作 |
+| [`governance.md`](governance.md) | 文档分层、状态规则和维护门禁 |
+| [`roadmap.md`](roadmap.md) | 唯一跨仓活动路线图、依赖顺序和验收出口 |
+| [`progress.md`](progress.md) | 唯一组合级状态、风险和阻塞台账 |
+| [`findings.md`](findings.md) | 方案/实现审核发现、处置和关闭证据 |
+| [`MIGRATION.md`](MIGRATION.md) | 45 份历史材料的覆盖与删除审计 |
+| [`repositories.md`](repositories.md) | 现有仓设计/交付入口与候选仓提案 |
 
-## 4. 快速阅读
+## 3. Architecture：稳定结构
 
-1. 全局：阅读 [`workflow-repo-plan.md`](workflow-repo-plan.md) 了解体系与路线；
-2. 入门：阅读 [`getting-started.md`](getting-started.md)；
-3. 单仓：进入对应 `docs/<repo>/` 查看 plan + todo；
-4. 回溯：历史决议与细节进入 [`archived/`](archived/README.md)。
+| 材料 | 唯一职责 |
+|---|---|
+| [`architecture/README.md`](architecture/README.md) | 架构材料关系和规范源 |
+| [`architecture/overview.md`](architecture/overview.md) | 系统定位、责任链、分层和不变量 |
+| [`architecture/repos.md`](architecture/repos.md) | 十仓职责、当前依赖和数据边界 |
+| [`architecture/workflows.md`](architecture/workflows.md) | Flow 执行模型、IP/SoC 主线和 Gate |
+| [`architecture/target-design.md`](architecture/target-design.md) | 现状评审、目标 Profile/依赖/Provider 模型和迁移 |
 
-## 5. 一句话
+架构决策记录统一进入 [`adr/`](adr/README.md)，架构正文不维护当前任务状态。
 
-> **Skill 理解辅助 → Workflow 顺序与 Gate → Tool 确定性执行 → 资产仓 SSOT/交付 → Catalog 发布/发现 → EDA 工程证据**；Manifest 驱动、独立 Clone、统一 CLI（`aix`）、FuseSoC 聚合、Change Bundle 协调。
+## 4. Workflow：可执行契约与仓级实施
+
+| 材料 | 唯一职责 |
+|---|---|
+| [`workflow/README.md`](workflow/README.md) | Workflow 文档入口和上下游边界 |
+| [`workflow/delivery.md`](workflow/delivery.md) | Workflow 唯一活动交付台账 |
+| [`workflow/manifest.md`](workflow/manifest.md) | Manifest、Profile、Lock 和 Override |
+| [`workflow/ownership.md`](workflow/ownership.md) | Schema、仓库和工具归属 |
+| [`workflow/collaboration.md`](workflow/collaboration.md) | Change Bundle、影响分析和联合 CI |
+| [`workflow/release.md`](workflow/release.md) | Gate、Evidence、成熟度、Baseline 和 Release |
+| [`workflow/troubleshooting.md`](workflow/troubleshooting.md) | 故障、安全和凭据处理 |
+
+## 5. Repo：设计与交付
+
+每个现有资产仓只保留两份活动材料：`README.md` 是唯一仓级设计契约，`delivery.md` 是唯一任务/里程碑/验收台账。`design-reference.md` 仅保存完整历史细节。全部入口和跨仓覆盖矩阵见 [`repositories.md`](repositories.md)。
+
+尚未建仓的方案放在 [`proposals/repositories/`](proposals/repositories/README.md)；提案不代表已排期，也不得进入 Manifest 或 required dependency。
+
+## 6. Reference：完整历史背景
+
+[`reference/`](reference/README.md) 保存旧总体需求、十仓全景、工程评审和跨仓优化原文。其旧 Todo、日期、比例、仓库状态和优先级不具执行效力；当前决策按 architecture/ADR，当前计划按 roadmap，当前状态按 progress。
+
+## 7. 图示约定
+
+- 项目图片统一保存在 [`assets/`](assets/README.md)；
+- 生成式图片用于建立整体心智模型，不替代正文、Mermaid、表格或机器可读配置；
+- 图片必须提供 alt 文本、文字解释和生成记录；
+- 精确依赖看 Manifest/`repos.md`，精确 Flow 看 `workflows/*.yaml`，当前状态只看 `progress.md`。

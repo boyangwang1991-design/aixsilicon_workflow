@@ -18,7 +18,7 @@
    - 阶段 B：tool_repo P0 五包（`aix-tool-core`/`aix-schema`/`aix-hwif-gen`/`aix-reg-tool`/`aix-core-tool`）落地，asset 仓切换到 `aix tool` 调用；
    - 阶段 C：asset 仓内旧工具标记 deprecated，一个 release 周期后移除或降级为自维护脚本；
 4. 迁移期间 hwif 仓内工具仍是可用的 fallback，公共确定性流程不因 tool_repo 未装而中断。
-5. **工具归属四类**（详见 [`docs/tool-placement.md`](../workflow/tool-placement.md)）：T1 跨仓公共工具 → tool_repo；T2 单仓自维护脚本 → 留资产仓 `tools/`；T3 私有/受控适配（商业 EDA/PDK/内部 Runner）→ **独立私有 overlay repo**（同一 Plugin API，不开源）；T4 项目专用脚本 → 留项目仓。
+5. **工具归属四类**（详见 [`ownership.md`](../workflow/ownership.md)）：T1 跨仓公共工具 → tool_repo；T2 单仓自维护脚本 → 留资产仓 `tools/`；T3 私有/受控适配（商业 EDA/PDK/内部 Runner）→ **独立私有 overlay repo**（同一 Plugin API，不开源）；T4 项目专用脚本 → 留项目仓。
 
 ## 备选方案
 

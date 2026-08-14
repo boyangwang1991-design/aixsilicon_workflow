@@ -28,4 +28,4 @@
 
 - 正向：单一入口 + 插件发现，tool_repo 独立演进不冲突；`aix tool` 在未安装时显式降级而非静默；
 - 负向：`aixsilicon.commands` 插件协议需要稳定版本化（`api_version`）；
-- 权衡：插件协议作为公共契约由 workflow 与 tool_repo 共同维护，见 `docs/schema-ownership.md`。
+- 权衡：插件协议作为公共契约由 workflow 与 tool_repo 共同维护，见 `docs/workflow/ownership.md`。

@@ -45,7 +45,7 @@ rules:
     enforcement: hard
 
   - id: dep-no-phantom-repo
-    description: 新 plan/文档不得引用未在 docs/schema-ownership.md 仓库注册表中登记的仓库（ADR-0005）
+    description: 新 plan/文档不得引用未在 docs/workflow/ownership.md 仓库注册表中登记的仓库（ADR-0005）
     enforcement: hard
 
   - id: dep-tool-delegation

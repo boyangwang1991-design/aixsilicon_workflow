@@ -28,6 +28,8 @@ alias aix=".venv/bin/aix"
 
 ## 3. 选择 Profile 并初始化
 
+> 当前命令仍使用 Manifest v1 的 `include_groups` 语义。现有 `minimal` 和各开发 Profile 启用范围偏大；优化目标与兼容迁移见 [`architecture/target-design.md`](architecture/target-design.md) §4 和 [ADR-0007](adr/0007-typed-dependencies-and-explicit-profiles.md)。在 ADR 落地前，下表描述的是当前运行行为，不代表目标闭包。
+
 各 Profile 覆盖不同的开发场景：
 
 | Profile | 用途 |

@@ -1,23 +1,33 @@
-# 体系架构总览
+# AIXSILICON 架构文档
 
-本目录汇总 `aixsilicon_workflow` 多仓工作区体系架构的**总体说明**，回答「整套体系整体怎么运转、边界在哪、Workflow 用什么机制统筹多个仓库」。
+本目录只描述系统结构和长期边界。开发顺序与状态分别由 [`../roadmap.md`](../roadmap.md) 和 [`../progress.md`](../progress.md) 管理，不在架构文档中重复维护。
 
-## 正文导航
+## 文档关系
 
-| 文档 | 用途 |
-|---|---|
-| [overview.md](overview.md) | **总体方案**：定位、责任链（Skill→Workflow→Tool→Asset→Catalog→EDA）、L0–L5 分层、核心对象、父仓目录结构、开源/私有边界 |
-| [repos.md](repos.md) | **被统筹对象**：10 个 repo 每仓一份材料（定位/职责/依赖/主线角色/Schema 所有权/工具归属）＋ 关系阐述（依赖 DAG、数据流、写入边界、Schema 所有权） |
-| [workflows.md](workflows.md) | **统筹方案（核心）**：Flow DAG + 注册 action + write_scope + Gate + Evidence 五要素；IP 设计验证与 SoC 集成验证两条主线；支撑流程定位；workflow × repo 统筹矩阵；Gate 卡点 |
-| [relationship-diagram.md](relationship-diagram.md) | **关系框图**：5 张 Mermaid 图（仓库依赖 DAG、责任链数据流、两条主线链路、L0–L5 分层）＋ 读法表 |
+```text
+overview ──定义系统模型与不变量
+   ├── repos ──定义仓库职责、当前依赖与写入边界
+   ├── workflows ──定义 Flow、Action、Gate 和端到端链路
+   └── target-design ──基于现状差距给出目标模型与迁移路径
+```
 
-## 文档组织方式
+| 文档 | 唯一职责 | 不包含 |
+|---|---|---|
+| [`overview.md`](overview.md) | 定位、责任链、L0～L5、核心对象和公共/私有边界 | 单仓任务、Flow 阶段明细 |
+| [`repos.md`](repos.md) | 仓库 Owner、拥有/不拥有的事实、当前依赖和写入边界 | 路线图、重复的仓级 Plan |
+| [`workflows.md`](workflows.md) | 执行模型、现有 Flow、IP/SoC 链路、Gate/Evidence | 仓库背景介绍、目标迁移细节 |
+| [`target-design.md`](target-design.md) | 现状差距、显式 Profile、有类型依赖、Capability Preflight 和迁移顺序 | 当前进度和任务状态 |
 
-本目录按「README 索引 → overview 总体方案 → repos 被统筹对象 → workflows 统筹方案 → relationship-diagram 关系框图」组织：overview 先给全局定位与分层，repos 为每个 repo 提供一份材料并单独成章阐述关系，workflows 是核心（两条主线 + 支撑流程 + 统筹矩阵 + Gate 卡点），relationship-diagram 用 5 张 Mermaid 图把整个体系可视化。
+## 阅读方式
 
-> 建议阅读顺序：先图（relationship-diagram）→ 总览（overview）→ repo 材料（repos）→ 统筹（workflows）→ 回图对照。
+- 初次了解：`overview → repos → workflows`；
+- 审核优化方案：`overview → target-design → roadmap`；
+- 判断改动归属：`repos → ownership-map.yaml → workflow/ownership.md`；
+- 排查流程能力：`workflows → target-design §6 → progress`。
 
-## 相关
+## 规范源
 
-- 架构决策记录（ADR）：[`docs/adr/`](../adr/README.md)
-- 规划索引与阅读地图：[`docs/index.md`](../index.md)
+- 仓库清单和当前无类型依赖：[`manifests/default.yaml`](../../manifests/default.yaml)；
+- 写入边界和 Schema Owner：[`ownership-map.yaml`](../../ownership-map.yaml)；
+- 可执行流程定义：[`workflows/`](../../workflows)；
+- 已接受/建议决策：[`../adr/README.md`](../adr/README.md)。
