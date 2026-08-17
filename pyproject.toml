@@ -73,6 +73,8 @@ markers = [
 line-length = 100
 target-version = "py311"
 src = [".roo/skills/aixsilicon-workspace-management/src"]
+# 缓存统一归置到根 cache/（避免 .ruff_cache 污染根目录；cache/ 已在 .gitignore 忽略）
+cache-dir = "cache/ruff"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W", "UP", "B"]

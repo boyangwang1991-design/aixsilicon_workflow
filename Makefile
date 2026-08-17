@@ -58,5 +58,5 @@ coverage: bootstrap
 	$(PYTHON) -m pytest $(SKILL_DIR)/tests --cov=aixworkflow --cov-report=term-missing --rootdir=$(SKILL_DIR)
 
 clean:
-	rm -rf build cache .pytest_cache .mypy_cache .ruff_cache
+	$(PYTHON) -c "import shutil; [shutil.rmtree(p) for p in ('build','cache','.pytest_cache','.mypy_cache','.ruff_cache') if __import__('os').path.exists(p)]"
 	$(PYTHON) bootstrap.py aix wf clean
