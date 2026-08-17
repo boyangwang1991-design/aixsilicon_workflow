@@ -1,7 +1,9 @@
 # ADR-0007：有类型依赖与显式 Profile
 
-- 状态：建议
+- 状态：已接受
 - 日期：2026-08-13
+- 接受日期：2026-08-17
+- 决策记录：见本文件末尾「决策记录」节
 
 ## 背景
 
@@ -30,3 +32,27 @@
 负向影响：需要升级 Schema、模型、Graph、FuseSoC 索引、Lock、测试和文档；过渡期存在双字段解析。
 
 迁移要求：先兼容读取、再迁移 Manifest、最后发出 deprecated 警告；至少保留两个发布周期。
+
+## 决策记录
+
+- 日期：2026-08-17
+- 决策：**接受**（WF-001），附以下修订点
+- 审批人：boyang wang
+- 决策证据：
+  - [`evidence/profile-diff.md`](../evidence/profile-diff.md)：现状 5 个开发 Profile 展开为完全相同 10 仓（F-010 量化）
+  - [`docs/architecture/target-design.md`](../architecture/target-design.md) §4–5：目标精确集合与 typed 依赖矩阵
+
+### 修订点
+
+1. **REV-1（精确集合语义）**：`include_repositories` 为 Profile 精确工作区集合；`include_groups` 退回展示/检索/策略标签，不再参与工作区选择。Skills 始终 `required: false` 并置于 `optional_repositories`；Knowledge 仅存在于 `knowledge-dev` 与 `all`。
+2. **REV-2（过渡期双字段解析）**：过渡期内：
+   - 仅 `include_groups` → 按旧逻辑（向后兼容）；
+   - 仅 `include_repositories` → 按精确集合；
+   - 两者都存在 → 以 `include_repositories` 为准并发出 deprecated 警告。
+   - `depends_on` ↔ `dependencies.product` 双解析，其余类型按 target-design §5.2 矩阵补全（`verification`/`tooling`/`discovery`/`context`）。
+
+### 验收与迁移
+
+- 迁移路径：兼容读取 → 迁移 Manifest（§4 建议集写入 7+1 个 Profile）→ deprecated 警告 → 两个发布周期后删除旧字段；
+- Product DAG 必须无环；其余类型分别校验；context 永不成为 required；
+- 关闭证据：M1 WF-002 的 exact-set、typed DAG/closure 测试（含负向：非 DAG、未知类型、缺失闭包）。
