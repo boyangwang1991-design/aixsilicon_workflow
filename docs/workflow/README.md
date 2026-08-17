@@ -23,7 +23,7 @@ Workflow 是 Manifest 驱动的多仓工作区控制面，负责 Workspace、Flo
 | [`release.md`](release.md) | Gate、Evidence、成熟度、Baseline 与 Release |
 | [`troubleshooting.md`](troubleshooting.md) | 故障、安全、凭据和恢复 |
 
-系统结构/Flow 关系见 [`../architecture/`](../architecture/README.md)，跨仓顺序见 [`../roadmap.md`](../roadmap.md)，当前状态见 [`../progress.md`](../progress.md)，未关闭缺陷见 [`../findings.md`](../findings.md)，完整旧需求与评审见 [`../reference/`](../reference/README.md)。
+系统结构/Flow 关系见 [`../architecture/`](../architecture/README.md)，跨仓顺序见 [`../roadmap.md`](../roadmap.md)，当前状态见 [`../progress.md`](../progress.md)，未关闭缺陷见 [`../findings.md`](../findings.md)。
 
 ## 稳定不变量
 

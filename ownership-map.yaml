@@ -7,8 +7,18 @@ schema_version: aix.ownership-map/v1
 map:
   - asset: Interface Contract
     owner_repo: aixsilicon_hwif_repo
-    skill_write: 生成草案可以，提交需人工确认
-    allowed_paths: [contracts, bindings, generated]
+    skill_write: 生成草案可以，提交需人工确认；契约/Profile/Binding 草案须人工复核；派生视图只允许工具写
+    allowed_paths:
+      - schema
+      - bindings
+      - profiles
+      - bus
+      - bus/*/contract
+      - bus/*/*/contract
+      - rtl
+      - generated
+      - metadata
+      - examples
 
   - asset: CBB 代码 / 属性 / PPA 配置
     owner_repo: aixsilicon_cbb_repo

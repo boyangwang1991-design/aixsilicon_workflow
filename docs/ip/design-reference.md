@@ -464,4 +464,4 @@ APB 切片达到 C4 Released 前，Bridge/PIC 只保留设计候选，不进入�
 - ipkg 负责仓内 stage/publish，Workflow 负责跨仓 Gate、协调和 Catalog；
 - 发布物需要 VLNV、SemVer、Tag、registry、可重建生成物和 clean/locked 环境。
 
-本次细化修正了旧文中“发布前 G0～G7”的歧义：Qualification 为 G0～G6，G7 只在人工批准后的 Release 流程判定。相关历史评审见 [`../reference/cross-repo-architecture-review.md`](../reference/cross-repo-architecture-review.md)，总体执行模型见 [`../architecture/workflows.md`](../architecture/workflows.md)。
+本次细化修正了旧文中"发布前 G0～G7"的歧义：Qualification 为 G0～G6，G7 只在人工批准后的 Release 流程判定。相关历史评审见 Git 历史 `docs/reference/cross-repo-architecture-review.md`（2026-08-17 已移除），总体执行模型见 [`../architecture/workflows.md`](../architecture/workflows.md)。

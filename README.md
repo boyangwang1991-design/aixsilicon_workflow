@@ -12,7 +12,7 @@
 > 统一材料入口见 [`docs/index.md`](docs/index.md)，跨仓路线图、统一任务台账与里程碑进度分别见 [`docs/roadmap.md`](docs/roadmap.md)、[`docs/todo.md`](docs/todo.md) 和 [`docs/progress.md`](docs/progress.md)。本文档覆盖框架结构、安装、快速开始与核心概念。
 > 优化后的目标架构见 [`docs/architecture/target-design.md`](docs/architecture/target-design.md)；当前运行配置仍遵循已接受的 v1 契约，待 ADR-0007/0008 审核后迁移。
 
-> **Skill 集中管理**：`aix` CLI 的 canonical 源码/测试/脚本由私有 skill `aixsilicon-workspace-management` 统一管理；本仓库通过 [`bootstrap.py`](bootstrap.py)（纯标准库引导器）下载 skill repo 并把 skills 物化到 `/.roo/skills/`（git 忽略）后运行。首次使用：`uv sync` + `uv run python bootstrap.py --ensure`，之后 `uv run aix <cmd>` 或 `uv run python bootstrap.py aix <cmd>`。
+> **Skill 集中管理**：`aix` CLI 的源码/测试/脚本由私有 skill `aixsilicon-workspace-management` 统一管理；本仓库通过 [`bootstrap.py`](bootstrap.py)（纯标准库引导器）下载 skill repo 并把 skills 物化到 `/.roo/skills/`（git 忽略）后运行。首次使用：`uv sync` + `uv run python bootstrap.py --ensure`，之后 `uv run aix <cmd>` 或 `uv run python bootstrap.py aix <cmd>`。
 
 ![AIXSILICON 项目全景：Workflow 控制面协调十个独立资产仓，并通过设计、生成、验证、证据、审批、发布和消费形成闭环](docs/assets/project-panorama.png)
 
@@ -49,8 +49,7 @@
 - **单一 CLI 入口 + 插件组 `aixsilicon.commands`**（[`ADR-0004`](docs/adr/0004-cli-entry-and-plugin-registry.md)）：`aix tool` 由 `aixsilicon_tool_repo` 插件提供，未安装时显式 `OPTIONAL_UNAVAILABLE`；
 - **跨仓边界映射**（[`ADR-0005`](docs/adr/0005-cross-repo-boundary-map.md)）、**工具归属与迁移**（[`ADR-0006`](docs/adr/0006-tool-ownership-and-migration.md)）；
 - **Schema、仓库与工具归属**：[`docs/workflow/ownership.md`](docs/workflow/ownership.md)；
-- **成熟度、Gate 与发布**：[`docs/workflow/release.md`](docs/workflow/release.md)；
-- 历史综合优化依据：[`docs/reference/cross-repo-optimization-plan.md`](docs/reference/cross-repo-optimization-plan.md)（不维护当前状态）。
+- **成熟度、Gate 与发布**：[`docs/workflow/release.md`](docs/workflow/release.md)。
 
 ## 快速开始
 
@@ -128,7 +127,6 @@ aixsilicon_workflow/
 ├── workflows/            # 跨仓 Flow 定义
 ├── changesets/           # Change Bundle 目录
 ├── policies/             # 依赖/兼容/分支/发布/证据/安全策略
-├── toolchains/           # 工具链 Profile 与容器定义
 ├── templates/            # 元数据、Bundle、Release、PR 模板
 ├── src/aixworkflow/      # aix Python CLI
 ├── tests/                # 单元 / 集成 / fixtures / golden
@@ -178,7 +176,6 @@ aixsilicon_workflow/
 - [故障处理](docs/workflow/troubleshooting.md)
 - [架构决策记录 ADR](docs/adr/README.md)
 - [路线图](docs/roadmap.md) / [进度台账](docs/progress.md)
-- [历史与设计参考](docs/reference/README.md)
 
 ## 许可证
 

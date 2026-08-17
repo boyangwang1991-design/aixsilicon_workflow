@@ -14,10 +14,9 @@
 | 仓级设计 | `docs/<repo>/README.md` | 单仓定位、边界、契约和验收 | 否 |
 | 仓级交付 | `docs/<repo>/delivery.md` | 稳定任务定义、依赖、验收条件和 Owner 角色 | 否 |
 | Workflow 契约 | [`workflow/`](workflow/README.md) | Manifest、所有权、协作、发布和运行支持 | 否 |
-| 设计参考 | `docs/<repo>/design-reference.md`、[`reference/`](reference/README.md) | 完整历史细节、旧需求和评审依据 | 否 |
+| 设计参考 | `docs/<repo>/design-reference.md` | 完整历史细节、旧需求和评审依据 | 否 |
 | 候选提案 | [`proposals/repositories/`](proposals/repositories/README.md) | 未建仓方案与激活门禁 | 否 |
 | 决策历史 | `docs/adr/` | 已接受的关键架构决策 | 仅新增/废止，不改写历史 |
-| 迁移审计 | [`MIGRATION.md`](MIGRATION.md) | 历史文件到新材料的逐项映射 | 迁移期间维护 |
 | 审核发现 | [`findings.md`](findings.md) | 方案/实现差距、处置决策和关闭证据 | 是 |
 
 旧 `docs/archived/` 已在完成 45/45 迁移、断链检查和人工批准后于 2026-08-13 删除。Git 历史承担原文追溯；活动材料不得重新建立对旧路径的依赖。
@@ -33,7 +32,7 @@
 - 任务定义、依赖、验收条件和 Accountable 角色：对应 `docs/<repo>/delivery.md`；Workflow 使用 `docs/workflow/delivery.md`。
 - 审核发现及关闭判据：`docs/findings.md`；Finding 必须映射到 `delivery.md` 中的任务定义，并由 `todo.md` 中的任务状态推进，不能代替任务。
 - 当前仓级设计：对应 `README.md`；完整历史细节在 `design-reference.md`，其中旧状态、日期和优先级不具有执行效力。
-- Workflow 契约：`docs/workflow/`；完整旧需求与评审仅在 `docs/reference/` 追溯。
+- Workflow 契约：`docs/workflow/`。
 
 如果实现与文档不一致，现状判断以可执行配置和代码事实为依据；目标方案以已批准 ADR/活动方案为依据。差距先登记 Finding，再由对应任务关闭，禁止把目标描述成已实现事实。
 
@@ -94,7 +93,7 @@ Workflow 的稳定设计按主题拆为 Manifest/Ownership/Collaboration/Release
 
 本次删除已按以下条件执行；未来进行类似清理时继续沿用：
 
-- [`MIGRATION.md`](MIGRATION.md) 覆盖 45/45 个历史文件；
+- 历史材料迁移审计曾覆盖 45/45 个历史文件（原文与逐项映射见 Git 历史）;
 - 每个历史长篇设计文件已有当前 `design-reference.md` 或等价正文；
 - 活动文档和根级说明中不存在指向 `docs/archived/` 的链接；
 - Markdown 本地链接检查通过；

@@ -1,8 +1,13 @@
 # HWIF 变更子流程
+# 本 flow 只引用 `aixworkflow.runner.default_registry()` 已注册的 action：
+#   - hwif.contract-validate / hwif.generate / hwif.impact / hwif.core / hwif.package
+#     （委托 hwif-development-suite 唯一入口 hwif_tool.py，P1–P4 收敛后的事实源）
+#   - hwif.compatibility-check（兼容判定）
+#   - fusesoc.target / evidence.index / release.package
+# tool.* / catalog.* / impact.* 为 F-004 有意保留的 action inventory gap，不在 flow 中使用。
 schema_version: aix.flow/v1
 name: hwif-change
 description: 接口契约变更 → Schema/语义检查 → 多视图生成 → SemVer 判定 → 下游影响验证
-
 inputs:
   - contract_path
   - change_type
@@ -13,25 +18,27 @@ preconditions:
 
 stages:
   - id: schema
-    uses: tool.schema-check
+    uses: hwif.contract-validate
     with:
       contract: <contract_path>
 
   - id: semantics
     needs: [schema]
-    uses: tool.contract-semantics
+    uses: hwif.contract-validate
+    with:
+      contract: <contract_path>
 
   - id: regenerate
     needs: [semantics]
-    uses: tool.hwif-gen
+    uses: hwif.generate
     write_scope:
-      - {repo: hwif, paths: [generated, sv, flat]}
+      - {repo: hwif, paths: [generated, rtl]}
 
   - id: semver-impact
     needs: [regenerate]
-    uses: tool.semver-impact
+    uses: hwif.impact
     with:
-      change_type: <change_type>
+      family: <family>
 
   - id: vip-build-test
     needs: [semver-impact]
@@ -47,13 +54,16 @@ stages:
 
   - id: soc-impact
     needs: [cbb-ip-test]
-    uses: impact.analyze
+    uses: hwif.impact
     with:
-      scope: soc-consumers
+      family: <family>
 
   - id: compat-matrix
     needs: [soc-impact]
-    uses: catalog.compatibility-update
+    uses: hwif.compatibility-check
+    with:
+      producer: <contract_path>
+      consumer: <consumer_contract_path>
 
   - id: evidence
     needs: [schema, semantics, regenerate, semver-impact, vip-build-test, cbb-ip-test, soc-impact]

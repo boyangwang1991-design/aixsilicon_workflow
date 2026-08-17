@@ -2194,7 +2194,7 @@ P0只建设以下12项：
 
 ## 48. 跨仓一致性修订（2026-08-13）
 
-> 依据历史 [`cross-repo-architecture-review.md`](../reference/cross-repo-architecture-review.md)（ADR-0004/0006）。
+> 依据历史评审（Git 历史 `docs/reference/cross-repo-architecture-review.md`，2026-08-17 已移除）与 ADR-0004/0006 修订。
 
 - **CLI 入口（ADR-0004）**：`aix` 为唯一总入口；本仓通过 **Entry Point 组 `aixsilicon.commands`** 注册 `tool` 插件（规划中的 `aix.tools`/`aix.report_adapters`/`aix.soc_generators` 等组名统一以 `aixsilicon.` 为前缀演进）；
 - **工具边界（R1/R7）**：资产仓 `tools/` 只保留自维护脚本；hwif 六件工具与本仓 `aix-hwif-gen` 等分阶段合并；ipkg 复用 `aix-core-tool`；

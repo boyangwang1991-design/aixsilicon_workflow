@@ -47,7 +47,7 @@ flowchart LR
 
 | 层 | 职责 | 规范源 | 输出 |
 |---|---|---|---|
-| L0 工作区 | clone、sync、status、缓存 | 物化 skill `/.roo/skills/aixsilicon-workspace-management/src/aixworkflow/workspace.py`（canonical 在私有 skill repo） | 一致的 `repos/` 工作区 |
+| L0 工作区 | clone、sync、status、缓存 | 物化 skill `/.roo/skills/aixsilicon-workspace-management/src/aixworkflow/workspace.py`（源码在 aixsilicon-skill-repo） | 一致的 `repos/` 工作区 |
 | L1 配置 | Manifest、Profile、Lock、Override | `manifests/`、`locks/`、`schemas/` | 可解析基线 |
 | L2 资产发现 | FuseSoC、VLNV、Catalog | generated index、catalog | 可构建资产集合 |
 | L3 流程编排 | Flow DAG、Action、write_scope | `workflows/*.yaml`、runner | 标准执行序列 |

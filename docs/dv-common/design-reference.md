@@ -1416,7 +1416,7 @@ DV Common应遵循以下最终原则：
 
 ## 28. 跨仓一致性修订（2026-08-13）
 
-> 依据历史 [`cross-repo-architecture-review.md`](../reference/cross-repo-architecture-review.md)（ADR-0003/0005/0006）。
+> 依据历史评审（Git 历史 `docs/reference/cross-repo-architecture-review.md`，2026-08-17 已移除）与 ADR-0003/0005/0006 修订。
 
 - 修正幽灵仓引用：`eda-flow`/`eda-rules`/`hw-models` 分别映射到 workflow（DAG/Gate）+ tool（Result adapter）、workflow `policies/`、techlib/model；本仓不建这三个仓；
 - 与 VIP 划界（R6）：协议/事务相关公共 → VIP `common/`；协议无关机制（log/status/scoreboard/clk_rst/result/manifest）→ 本仓；

@@ -784,7 +784,7 @@ PPA-aware CBB Platform
 
 ## 25. 跨仓一致性修订（2026-08-13）
 
-> 依据历史 [`cross-repo-architecture-review.md`](../reference/cross-repo-architecture-review.md)（ADR-0003/0005/0006）。
+> 依据历史评审（Git 历史 `docs/reference/cross-repo-architecture-review.md`，2026-08-17 已移除）与 ADR-0003/0005/0006 修订。
 
 - `cbb-catalog` → 统一 `aixsilicon_catalog_repo`；`cbb-tech-<node>` → 私有 overlay / 待建 `aixsilicon_techlib_repo`（A3/A4）；
 - VLNV 统一 `aixsilicon:cbb:*`（ADR-0003）；

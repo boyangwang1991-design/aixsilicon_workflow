@@ -19,7 +19,6 @@
 | 修改 Workflow | [`workflow/README.md`](workflow/README.md) → [`workflow/delivery.md`](workflow/delivery.md) |
 | 查看 Repo 设计与交付 | [`repositories.md`](repositories.md) |
 | 判断 Owner/写入边界 | [`architecture/repos.md`](architecture/repos.md) → [`workflow/ownership.md`](workflow/ownership.md) → [`../ownership-map.yaml`](../ownership-map.yaml) |
-| 追溯旧需求和评审 | [`reference/README.md`](reference/README.md) |
 
 ## 2. 根级：入口、治理与状态
 
@@ -32,7 +31,6 @@
 | [`todo.md`](todo.md) | 唯一任务状态、负责人、日期、Evidence、下一动作和阻塞台账 |
 | [`progress.md`](progress.md) | 组合级里程碑状态、风险和决策队列 |
 | [`findings.md`](findings.md) | 方案/实现审核发现、处置和关闭证据 |
-| [`MIGRATION.md`](MIGRATION.md) | 45 份历史材料的覆盖与删除审计 |
 | [`repositories.md`](repositories.md) | 现有仓设计/交付入口与候选仓提案 |
 
 ## 3. Architecture：稳定结构
@@ -65,11 +63,7 @@
 
 尚未建仓的方案放在 [`proposals/repositories/`](proposals/repositories/README.md)；提案不代表已排期，也不得进入 Manifest 或 required dependency。
 
-## 6. Reference：完整历史背景
-
-[`reference/`](reference/README.md) 保存旧总体需求、十仓全景、工程评审和跨仓优化原文。其旧 Todo、日期、比例、仓库状态和优先级不具执行效力；当前决策按 architecture/ADR，当前计划按 roadmap，任务状态按 todo，里程碑状态按 progress。
-
-## 7. 图示约定
+## 6. 图示约定
 
 - 项目图片统一保存在 [`assets/`](assets/README.md)；
 - 生成式图片用于建立整体心智模型，不替代正文、Mermaid、表格或机器可读配置；

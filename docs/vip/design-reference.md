@@ -841,7 +841,7 @@ VIP Repo一期完成不能只以“提交多少个Agent”衡量，应满足：
 
 ## 20. 跨仓一致性修订（2026-08-13）
 
-> 依据历史 [`cross-repo-architecture-review.md`](../reference/cross-repo-architecture-review.md)（ADR-0003/0005/0006）。
+> 依据历史评审（Git 历史 `docs/reference/cross-repo-architecture-review.md`，2026-08-17 已移除）与 ADR-0003/0005/0006 修订。
 
 - 修正幽灵仓引用：`eda-flow`/`eda-rules` → workflow（DAG/Gate）+ tool（Result adapter）、workflow `policies/`；`hw-models` → techlib/model；
 - 与 dv-common 划界（R6）：VIP `common/` 只保留协议/事务相关公共；log/scoreboard/clk_rst/result 等协议无关机制归 dv-common；

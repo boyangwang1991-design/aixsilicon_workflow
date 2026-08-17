@@ -18,7 +18,7 @@ cd aixsilicon_workflow
 
 ## 2. 安装 CLI（Skill 集中管理）
 
-`aix` CLI 的 canonical 源码由私有 skill `aixsilicon-workspace-management` 统一管理；
+`aix` CLI 的源码由私有 skill `aixsilicon-workspace-management` 统一管理；
 本仓库通过 [`bootstrap.py`](../bootstrap.py)（纯标准库引导器）下载 skill repo 并把 skills
 物化到 `/.roo/skills/`（git 忽略），直接从 `.roo/skills` 运行。
 

@@ -1,7 +1,7 @@
 # HWIF Development Suite（skill 设计）
 
 > 当前唯一：本文件描述 `hwif-development-suite` skill 的**现行设计**（2026-08-17 起有效）。
-> 落地实现位于 `aixsilicon_skill_repo/skills/hwif-development-suite/`（canonical 源码），
+> 落地实现位于 `aixsilicon_skill_repo/skills/hwif-development-suite/`（aixsilicon-skill-repo 源码），
 > 通过 `bootstrap.py --ensure` 物化到工作区 `.roo/skills/`。
 
 ## 1. 为什么把 HWIF 确定性能力放进 skill
@@ -15,7 +15,7 @@ HWIF 生成/校验/兼容/影响/打包属 **HWIF 领域专用方法与编排**�
 - 原 `aix-hwif-gen`（tool-repo）已标记 deprecated 并收敛（P4）；
 - hwif 仓不再保存 `tools/`、`tests/`（P3，只留 SSOT + 结果）。
 
-## 2. 套件结构（canonical）
+## 2. 套件结构（aixsilicon-skill-repo）
 
 ```text
 skills/hwif-development-suite/
@@ -32,7 +32,7 @@ skills/hwif-development-suite/
 │   └── hwif-release-package/    # Release 输入 + Catalog（G5）
 ├── scripts/
 │   ├── hwif_tool.py             # 唯一确定性入口（7 子命令，fail-closed 退出码）
-│   └── legacy/                  # 迁移自 hwif 仓 T2 的 6 脚本（frozen 快照）
+│   └── impl/                    # 迁移自 hwif 仓 T2 的 6 脚本
 ├── references/                  # contract-authoring / compatibility / generation-checklist
 ├── evals/                       # evals.json（端到端断言）+ trigger-query.json（触发回归）
 └── tests/                       # pytest（hwif_tool 冒烟 + golden 正负样例）

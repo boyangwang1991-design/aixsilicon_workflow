@@ -1162,9 +1162,9 @@ Proposal → Examples → Resource Plan → Skill Draft → Validation
 
 ---
 
-## 26. V1.1 现状对齐：ip-development-suite（canonical）
+## 26. V1.1 现状对齐：ip-development-suite（aixsilicon-skill-repo）
 
-> 2026-08-13 对齐。仓库的**典型/canonical skill suite** 已落地为
+> 2026-08-13 对齐。仓库的**典型/aixsilicon-skill-repo skill suite** 已落地为
 > [`skills/ip-development-suite/`](../../repos/aixsilicon_skill_repo/skills/ip-development-suite/README.md)（V1.0），
 > 由 `rtl-coding-suite` 与 `uvm-ip-verification-suite` 合并而成。本 plan 的通用 Suite 划分
 > 以此为准修订。
@@ -1211,7 +1211,7 @@ Proposal → Examples → Resource Plan → Skill Draft → Validation
 
 # AIXSILICON Skill Repo TODO
 
-> 依据 [`skills/ip-development-suite/README.md`](../../repos/aixsilicon_skill_repo/skills/ip-development-suite/README.md)（canonical suite）
+> 依据 [`skills/ip-development-suite/README.md`](../../repos/aixsilicon_skill_repo/skills/ip-development-suite/README.md)（aixsilicon-skill-repo suite）
 > 与 [`skill_repo_plan.md`](../../repos/aixsilicon_skill_repo/skill_repo_plan.md) 整理。
 > 状态：`[x]` 已完成 · `[-]` 进行中 · `[ ]` 待办。
 

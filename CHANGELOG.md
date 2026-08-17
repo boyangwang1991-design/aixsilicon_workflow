@@ -12,7 +12,6 @@
 - Manifest / Lock / Override / Flow / Tool-Profile / Evidence-Index 六类 Schema V0.1。
 - 全部 Profile Manifest：`minimal / default / ip-dev / cbb-dev / dv-dev / soc-integration / release`。
 - 六类组织策略（依赖、兼容性、分支、发布、证据、安全）。
-- 工具链 Profile（open-source / blue-zone / red-zone）与容器定义。
 - 七类跨仓 Flow YAML 定义。
 - `aix` Python CLI 骨架与 P0 命令：
   - `aix wf init / sync / status / doctor / lock / diff`
