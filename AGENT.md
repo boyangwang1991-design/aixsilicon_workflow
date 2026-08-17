@@ -69,7 +69,14 @@ aix tool schema|hwif|reg|core ...
 ```
 
 - 所有动作**优先走 `aix` CLI / 注册 action**，不手写一次性脚本替代已存在的确定性能力。
-- 用 `.venv/bin/python`（或 `uv run`）执行 Python；不要用系统 `python`/`pip`。
+- **Python 环境一律使用 `uv` 管理**（`uv run python` / `uv sync` / `uv add`），
+  禁止再创建新的虚拟环境（不要 `python -m venv`、不要在 `repos/*` 下放置 `.venv`）：
+  - 唯一环境：**workflow 仓库根目录** `.venv/`（由根 `pyproject.toml` + `uv.lock` 管理，
+    根 `.gitignore` 已忽略）；
+  - 各子仓（`repos/*`）的确定性脚本依赖**并入根 `pyproject.toml`**，不单独建环境；
+  - 子仓内如需在 CI/独立仓库运行，允许声明其自身 `pyproject.toml`（作为事实源），
+    但本地开发/回归统一起 workflow 根环境：`cd <workflow-root> && uv sync && uv run python <script>`；
+  - 禁止使用系统 `python`/`pip` 直接安装依赖。
 
 ## 5. 工作方法（Step-by-step）
 
