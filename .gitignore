@@ -4,6 +4,11 @@
 # Vendored third-party reference material (unified under root; never uploaded)
 /reference/
 /.roo/
+/.claude/
+/.opencode/
+/.cursor/
+/.codex/
+/.windsurf/
 # Generated workspace state
 /.aix/
 /build/

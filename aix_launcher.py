@@ -1,9 +1,10 @@
 """`aix` console entry point → bootstrap launcher.
 
 Kept at the workflow root (with bootstrap.py) so that `uv run aix ...` works
-after the canonical `src/` moved to the private skill repo. It materializes the
-skill to `/.roo/skills/` and delegates to `aixworkflow.cli:main` from
-`/.roo/skills/aixsilicon-workspace-management/src`.
+after `src/` moved to the private `aixsilicon_skill_repo`. It materializes the
+skill to `<agent-dir>/skills/` (default `.roo`; configurable via `--agent-dir`
+or `AIX_AGENT_DIR`) and delegates to `aixworkflow.cli:main` from
+`<agent-dir>/skills/aixsilicon-workspace-management/src`.
 """
 
 from __future__ import annotations
