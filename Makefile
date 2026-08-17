@@ -29,8 +29,8 @@ bootstrap:
 	$(BOOTSTRAP)
 
 install:
-	$(UV) venv .venv --python 3.12
-	$(UV) pip install --python $(PYTHON) -e ".[dev]"
+	$(UV) venv .venv --python 3.12 --allow-existing
+	$(UV) sync --extra dev
 
 # 物化 skill 位于 ./.roo/skills/aixsilicon-workspace-management；用 workflow 根环境 + PYTHONPATH 执行。
 export PYTHONPATH := $(SKILL_DIR)/src$(if $(findstring Windows,$(OS)),;,:)$(PYTHONPATH)
