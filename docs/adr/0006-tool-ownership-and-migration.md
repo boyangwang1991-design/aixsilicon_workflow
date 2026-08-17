@@ -5,7 +5,7 @@
 
 ## 背景
 
-[`aixsilicon_hwif_repo`](../../repos/aixsilicon_hwif_repo/todo.md:40) 已在仓内 `tools/` 建设 6 件确定性工具
+[`aixsilicon_hwif_repo`](../../repos/aixsilicon_hwif_repo/archived/todo.md:40) 已在仓内 `tools/` 建设 6 件确定性工具
 （`contract_validate` / `sv_consistency_check` / `view_generate` / `compatibility_check` / `impact_analysis` / `package_release`），
 与 [`aixsilicon_tool_repo`](../../repos/aixsilicon_tool_repo/tool_repo_plan.md:417) 规划的 `aix-hwif-gen` 等产品级工具重叠。
 

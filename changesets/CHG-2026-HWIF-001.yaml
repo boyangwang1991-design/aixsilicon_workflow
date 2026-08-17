@@ -1,0 +1,126 @@
+# HWIF Development Suite（全生命周期）+ 唯一入口收敛
+# 决策记录：repos/aixsilicon_hwif_repo/archived/docs/aix-hwif-gen-unified-plan.md
+# 决策：A) hwif 仓只保存 Contract SSOT 与生成结果（contracts/ + generated/），SV/RTL/.core 归属 hwif 仓；
+#      B) HWIF 全生命周期方法论（规格→契约→验证→生成→一致性→兼容→影响→FuseSoC→发布）统一落在
+#         aixsilicon_skill_repo 的 hwif-development-suite（内置 scripts/），不再由 tool-repo 承载 aix-hwif-gen。
+schema_version: aix.change-bundle/v1
+id: CHG-2026-HWIF-001
+title: HWIF 唯一入口收敛 + HWIF Development Suite（全生命周期）
+description: |
+  在 aixsilicon_skill_repo 建立 hwif-development-suite（9 子 skill，贴合 hwif 仓
+  bus/{apb,axi,axi_lite,axi_stream,ahb_lite,obi,tilelink_ul}、peripheral/、foundation/、
+  schema/、bindings/、profiles/、generated/ 现有结构）：
+  spec-author / contract-author / contract-validate / view-generate / sv-consistency /
+  compatibility-check / impact-analysis / fusesoc-pack / release-package，
+  内置确定性脚本（contract_validate / view_generate / sv_consistency_check /
+  compatibility_check / impact_analysis / core_gen / package_release）统一 uv run 入口。
+  hwif 仓保留 contract/profile/binding/schema（SSOT）+ generated/（幂等结果）；
+  SV/RTL/.core 属 hwif 仓资产，由 skill 生成 + 人工审。删除/弃用 hwif 仓 tools/
+  T2 重复实现与 tool-repo packages/aix-hwif-gen（ADR-0006 阶段 B/C）。
+  归属原则：tools-repo 只承载整块、独立、可复用的产品级工具（aix-reg-tool /
+  aix-schema / aix-address-map / aix-dvsim 等）；HWIF 领域生成/校验/兼容/影响/打包
+  统一归 hwif-development-suite；环境管理归 aixsilicon-workspace-management。
+owner: hw-platform
+status: draft
+
+repositories:
+  skills:
+    branch: feature/hwif-development-suite
+    base: main
+    pr: 0
+    merge_order: 1
+    depends_on: []
+  hwif:
+    branch: feature/hwif-contract-only
+    base: main
+    pr: 0
+    merge_order: 2
+    depends_on: [skills]
+  tools:
+    branch: feature/hwif-gen-sunset
+    base: main
+    pr: 0
+    merge_order: 3
+    depends_on: [skills]
+    notes: 现有 aix-hwif-gen 包（packages/aix-hwif-gen）按 ADR-0006 阶段 B/C 收敛：
+      功能并入 hwif-development-suite 内置 scripts，tool-repo 侧标记 deprecated
+      并指向唯一入口，保留 git 历史。
+
+# 计划实施分片（对应 repos/aixsilicon_hwif_repo/archived/docs/aix-hwif-gen-unified-plan.md §5）
+phases:
+  - id: P1-skill-gen
+    title: hwif-development-suite + 内置脚本 + eval
+    description: 建立 hwif-development-suite（9 子 skill + 内置 scripts + evals +
+      tests），迁移 hwif 仓 T2 能力并保留确定性输出/退出码；落地 evals/evals.json
+      与 evals/trigger-query.json（skill-creator 方法论）。
+    status: done
+    status_note: |
+      2026-08-17 P1 已落地。技能仓 skills/hwif-development-suite/
+      （SKILL.md 路由 + 9 子 skill + scripts/hwif_tool.py 唯一入口 + scripts/legacy/
+      迁移 self 6 个 T2 + references + evals + tests）。
+      校验：pytest 8/8、ruff 全绿（legacy 经 noqa 保留迁移原样）、
+      registry/evals JSON 结构校验通过、workflow make check + pre-commit 全绿、
+      真实 hwif 契约 validate smoke（57+ PASS / 3 HAC-IF profile FAIL，
+      发现 hac_p0/p1/p2.profile.yaml 历史缺口，待 P2 修复）。
+      迁移适配：legacy 脚本新增 HWIF_ROOT env 支持（package_release/impact_analysis）；
+      view_generate --views 翻译修正；exit code 统一 fail-closed。
+  - id: P2-contract-gates
+    title: 契约质量门禁
+    description: APB/常用契约正负样例、Schema 校验、drift/SV 一致性门禁接入 CI。
+    status: done
+    status_note: |
+      2026-08-17 P2 已落地。
+      样例：tests/schema/data 新增 apb_lite.positive / bad_capability_ref.negative /
+      bad_width_expr.negative，CASES 扩至 7 项，7/7 通过。
+      语义门禁：contract_validate 增加 semantic_check（capability 引用存在性 +
+      width 受限字符集），全仓契约仍全 PASS，两新负样例被稳定拒绝。
+      兼容判定增强：compatibility_check family 不同但同属 AMBA 可桥族
+      (axi/axi_lite/ahb_lite/apb/axi_stream) → ADAPTER_REQUIRED；AXI↔APB 实测 ADAPTER_REQUIRED。
+      CI：.github/workflows/ci.yml 新增 hwif-gates job（core CAPI=2+aix 命名空间、
+      package --dry-run、全视图 + --check-only drift）。
+      唯一入口验证：validate 全仓 PASS、generate 62 views 无漂移、consistency 62 PASS、
+      core 64 valid、package dry-run、compat ADAPTER、pytest 8/8、ruff 全绿。
+      修复：HAC-IF hac_p0/p1/p2.profile.yaml 缺字段补齐（gap I-2 关闭）。
+  - id: P3-hwif-only
+    title: hwif 仓收敛（删除 tools/ 与 tests/）
+    description: hwif 仓 tools/ 与 tests/ 直接删除（用户决策：不再保留过渡期双入口）；
+      只留 contract/profile/binding/schema + generated/ + SV/RTL/.core。
+    status: done
+    status_note: |
+      2026-08-17 P3 v2 落地（用户决策：tools/tests 直接删除）。
+      保留成果：tests/schema/data 7 个正负样例迁移至 skill tests/data +
+      test_schema_golden.py（skill pytest 15/15 通过）；semantic_check、
+      AMBA 桥 compat 规则已在 skill legacy 生效。
+      删除：hwif 仓 tools/（6 个 T2 脚本 + compile_smoke）与 tests/ 全部；
+      CI 重写为自含结构校验（YAML/profile 完整性 + .core CAPI/aix 命名空间），
+      并显式断言 tools/ 与 tests/ 不存在（防回填）。
+      资产验证：64 .core / 62 interface / 18 profile 完整保留；
+      skill 唯一入口全门禁可用（validate 全仓 PASS / core 64 valid /
+      generate 62 views 对齐新基线 + --check-only 无漂移）。
+  - id: P4-tool-sunset
+    title: tool-repo aix-hwif-gen 收敛
+    description: tool-repo packages/aix-hwif-gen 标记 deprecated（阶段 B/C），
+      功能由 hwif-development-suite 内置脚本承接，公共入口统一。
+    status: done
+    status_note: |
+      2026-08-17 P4 已落地。
+      packages/aix-hwif-gen/README.md 重写为 DEPRECATED（指向 hwif-development-suite
+      唯一入口 hwif_tool.py）；pyproject.toml 描述标注 deprecated + frozen；
+      aix-tool-core plugin.py 的 hwif 分派打印 deprecated 提示（阶段 B 保留调用）。
+      had frozen 快照 hac.py 加 ruff noqa（不重写历史 lint 债）。
+      校验：ruff 全绿、py_compile 通过；包自身 pytest 需在 tool-repo 独立环境
+      （uv sync --extra test）运行，不属 workflow 根环境。
+      后续阶段 C：公共入口统一后删除 packages/aix-hwif-gen（保留 git 历史）。
+
+validation:
+  profile: hwif-dev
+  flow: hwif-change
+  required_targets:
+    - aixsilicon:interface:apb:generate
+    - aixsilicon:interface:apb:lint
+    - aixsilicon:interface:apb:compatibility_test
+
+release_plan:
+  skills: 0.1.0
+  hwif: 0.1.0
+  tools: 0.2.0

@@ -1,6 +1,6 @@
 # AIXSILICON 统一 Todo 台账
 
-更新时间：2026-08-14。本文是全部活动任务状态、负责人、日期、Evidence、下一动作和阻塞的唯一事实源。任务定义、依赖和验收条件仍在各仓 `delivery.md`；跨仓顺序见 [`roadmap.md`](roadmap.md)，里程碑汇总见 [`progress.md`](progress.md)。
+更新时间：2026-08-17。本文是全部活动任务状态、负责人、日期、Evidence、下一动作和阻塞的唯一事实源。任务定义、依赖和验收条件仍在各仓 `delivery.md`；跨仓顺序见 [`roadmap.md`](roadmap.md)，里程碑汇总见 [`progress.md`](progress.md)。
 
 ## 1. 维护规则
 
@@ -57,8 +57,8 @@ WF-001～WF-007、WF-011/WF-012 及 TOOL-001/003/004 已全部实现（2026-08-1
 
 | ID | P | 任务 | 定义 | 状态 | 负责人 | Evidence | 下一动作 / 阻塞 |
 |---|---|---|---|---|---|---|---|
-| HWIF-001 | P0 | 冻结 APB Contract/Profile/Binding | [hwif](hwif/delivery.md) | `planned` | boyang wang | — | 选定 APB3/APB4 profile；提交正负样例 |
-| HWIF-002 | P0 | 生成三视图与 drift check | [hwif](hwif/delivery.md) | `planned` | boyang wang | — | 依赖 tools provider；冻结输入/输出 hash |
+| HWIF-001 | P0 | 冻结 APB Contract/Profile/Binding | [hwif](hwif/README.md) | `planned` | boyang wang | — | 选定 APB3/APB4 profile；提交正负样例 |
+| HWIF-002 | P0 | 生成三视图与 drift check | [hwif](hwif/README.md) | `planned` | boyang wang | — | 依赖 tools provider；冻结输入/输出 hash |
 | IP-001 | P0 | APB IP 规格、SystemRDL、验收矩阵 | [ip](ip/delivery.md) | `planned` | boyang wang | — | 依赖 HWIF-001；冻结 CSR/功能/负向范围 |
 | IP-002 | P0 | 生成 RTL/RAL/Header/Core | [ip](ip/delivery.md) | `planned` | boyang wang | — | 依赖 IP-001/TOOL-002；建立 drift 负向样例 |
 | DV-001 | P0 | Run/Test/Failure/Metric Schema | [dv-common](dv-common/delivery.md) | `planned` | boyang wang | — | 与 WF-006 对齐版本和退出语义 |
@@ -77,7 +77,7 @@ WF-001～WF-007、WF-011/WF-012 及 TOOL-001/003/004 已全部实现（2026-08-1
 
 | ID | P | 任务 | 定义 | 状态 | 负责人 | Evidence | 下一动作 / 阻塞 |
 |---|---|---|---|---|---|---|---|
-| HWIF-003 | P0 | APB VIP/IP/CBB 消费者联验 | [hwif](hwif/delivery.md) | `planned` | boyang wang | — | 固定各消费者 SHA 和兼容报告 |
+| HWIF-003 | P0 | APB VIP/IP/CBB 消费者联验 | [hwif](hwif/README.md) | `planned` | boyang wang | — | 固定各消费者 SHA 和兼容报告 |
 | IP-003 | P0 | APB lint/build/unit/regression | [ip](ip/delivery.md) | `planned` | boyang wang | — | 固定 Lock；完成 G0～G6 和全部负向场景 |
 | VIP-003 | P0 | APB VIP 达 V3 Qualified | [vip](vip/delivery.md) | `planned` | boyang wang | — | 在代表性 IP 上关闭回归/coverage/Evidence |
 | WF-008 | P0 | APB Flow action/Gate/write scope/Evidence | [workflow](workflow/delivery.md) | `planned` | boyang wang | — | M2 启动；完成故障注入且无 false green |
@@ -96,7 +96,7 @@ WF-001～WF-007、WF-011/WF-012 及 TOOL-001/003/004 已全部实现（2026-08-1
 | CAT-006 | P0 | Release→Catalog PR 闭环 | [catalog](catalog/delivery.md) | `planned` | boyang wang | — | 验证不直写 main、审批、幂等和恢复 |
 | IP-004 | P0 | APB IP 发布与 Catalog 登记 | [ip](ip/delivery.md) | `planned` | boyang wang | — | 生成 G7/Tag/Release/SBOM/RTM/Catalog PR |
 | IP-005 | P1 | ipkg/Core/Release 边界 | [ip](ip/delivery.md) | `planned` | boyang wang | — | 收敛 auto-push、legacy VLNV 和双事实源 |
-| HWIF-004 | P0 | 发布 APB 接口资产 | [hwif](hwif/delivery.md) | `planned` | boyang wang | — | 形成 SemVer/Tag/Release/Catalog/Evidence |
+| HWIF-004 | P0 | 发布 APB 接口资产 | [hwif](hwif/README.md) | `planned` | boyang wang | — | 形成 SemVer/Tag/Release/Catalog/Evidence |
 | VIP-004 | P1 | 发布 APB VIP | [vip](vip/delivery.md) | `planned` | boyang wang | — | 登记兼容/能力矩阵和已知限制 |
 
 ## 8. M5 — CBB 产品化（目标 2027-02-19）
@@ -111,7 +111,7 @@ WF-001～WF-007、WF-011/WF-012 及 TOOL-001/003/004 已全部实现（2026-08-1
 | CBB-006 | P1 | 三示范 Release/Catalog | [cbb](cbb/delivery.md) | `planned` | boyang wang | — | 至少一个达到 C4，三个均达到 C3 |
 | TOOL-005 | P1 | param-matrix/PPA provider | [tools](tools/delivery.md) | `deferred` | boyang wang | — | M4 出口后激活；支持三示范可重建 |
 | WF-013 | P1 | CBB development/qualification Flow | [workflow](workflow/delivery.md) | `deferred` | boyang wang | — | M4 出口+CBB-005 后激活 |
-| HWIF-005 | P1 | 按真实需求补 L0/L1 契约 | [hwif](hwif/delivery.md) | `deferred` | boyang wang | — | 有两个消费者或批准例外时激活 |
+| HWIF-005 | P1 | 按真实需求补 L0/L1 契约 | [hwif](hwif/README.md) | `deferred` | boyang wang | — | 有两个消费者或批准例外时激活 |
 | SKILL-005 | P2 | CBB Suite | [skills](skills/delivery.md) | `deferred` | boyang wang | — | WF-013 稳定后复审，不复制 Tool |
 
 ## 9. M6 — 最小 SoC（目标 2027-04-02）
@@ -141,7 +141,7 @@ WF-001～WF-007、WF-011/WF-012 及 TOOL-001/003/004 已全部实现（2026-08-1
 | KNOW-005 | P2 | MAC 完整案例 | [knowledge](knowledge/delivery.md) | `deferred` | boyang wang | — | Owner/工具环境和复现出口明确后启动 |
 | KNOW-006 | P2 | 季度知识审计 | [knowledge](knowledge/delivery.md) | `deferred` | boyang wang | — | KNOW-002/003 完成后建立 SLA |
 | KNOW-007 | P2 | 按需求扩卷 01～18 | [knowledge](knowledge/delivery.md) | `deferred` | boyang wang | — | 每批有真实问题、Reviewer 和质量出口 |
-| HWIF-006 | P2 | techlib 建仓门禁 | [hwif](hwif/delivery.md) | `deferred` | boyang wang | — | 两类适配、两个消费者后提交 ADR |
+| HWIF-006 | P2 | techlib 建仓门禁 | [hwif](hwif/README.md) | `deferred` | boyang wang | — | 两类适配、两个消费者后提交 ADR |
 | SOC-006 | P2 | sw 仓门禁 | [soc](soc-integration/delivery.md) | `deferred` | boyang wang | — | SoC C3 后评审独立生命周期/消费者 |
 | SOC-007 | P2 | reference-soc 建仓门禁 | [soc](soc-integration/delivery.md) | `deferred` | boyang wang | — | Golden 稳定并需独立 Release 后提交 ADR |
 

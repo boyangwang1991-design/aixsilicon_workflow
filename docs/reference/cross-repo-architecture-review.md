@@ -46,7 +46,7 @@
 | 仓 | 需更新的 plan/todo | 核心修订 |
 |---|---|---|
 | workflow | [`workflow-requirements.md`](workflow-requirements.md)（§36）、[`../workflow/delivery.md`](../workflow/delivery.md) | 记录本评审结论；补充 R4/R5 边界、A1/A2 治理 |
-| hwif | [`plan.md`](../../repos/aixsilicon_hwif_repo/plan.md)、[`todo.md`](../../repos/aixsilicon_hwif_repo/todo.md) | 工具边界（R1）、影响分析语义（R5）、package_release 与 workflow release 边界（R4）、reference/ 治理（A2）、techlib 统一（A4）、VLNV 迁移（C3） |
+| hwif | [`archived/plan.md`](../../repos/aixsilicon_hwif_repo/archived/plan.md)、[`archived/todo.md`](../../repos/aixsilicon_hwif_repo/archived/todo.md) | 工具边界（R1）、影响分析语义（R5）、package_release 与 workflow release 边界（R4）、reference/ 治理（A2）、techlib 统一（A4）、VLNV 迁移（C3） |
 | dv-common | [`plan.md`](../../repos/aixsilicon_dv_common/plan.md)、[`TODO.md`](../../repos/aixsilicon_dv_common/TODO.md) | 修正 ghost repo 引用（A3）、与 VIP common 划界（R6）、Result schema 对齐 tool_repo（C4） |
 | vip | [`plan.md`](../../repos/aixsilicon_vip_repo/plan.md) | 修正 ghost repo 引用（A3）、common 边界（R6）、reference/ 治理（A2）、VLNV 统一（C3） |
 | cbb | [`cbb_repo_plan.md`](../../repos/aixsilicon_cbb_repo/cbb_repo_plan.md) | cbb-catalog/tech 映射（A3/A4）、VLNV `aixsilicon:cbb`（C3）、验证依赖方向（C5） |

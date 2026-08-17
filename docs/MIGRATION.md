@@ -34,7 +34,7 @@
 | `architecture/repos.md` | `docs/architecture/repos.md`、`docs/architecture/target-design.md` | 当前职责正文 + 现状评审/目标方案 | absorbed |
 | `architecture/workflows.md` | `docs/architecture/workflows.md`、`roadmap.md` | 当前正文 + 执行顺序 | absorbed |
 | `architecture/repo-plans/README.md` | `docs/index.md` | 统一仓级入口 | absorbed |
-| `architecture/repo-plans/hwif.md` | `docs/hwif/design-reference.md`、`README.md`、`delivery.md` | 完整参考 + 活动拆分 | verbatim-reference |
+| `architecture/repo-plans/hwif.md` | `docs/hwif/design-reference.md`、`README.md`（2026-08-17 重构为 `repo-architecture.md`+`skill.md`，design-reference/delivery 归档 hwif-repo `archived/docs/`） | 完整参考 + 活动拆分 | verbatim-reference → archived |
 | `architecture/repo-plans/cbb.md` | `docs/cbb/design-reference.md`、`README.md`、`delivery.md` | 完整参考 + 活动拆分 | verbatim-reference |
 | `architecture/repo-plans/ip.md` | `docs/ip/design-reference.md`、`README.md`、`delivery.md` | 完整参考 + 活动拆分 | verbatim-reference |
 | `architecture/repo-plans/dv-common.md` | `docs/dv-common/design-reference.md`、`README.md`、`delivery.md` | 完整参考 + 活动拆分 | verbatim-reference |

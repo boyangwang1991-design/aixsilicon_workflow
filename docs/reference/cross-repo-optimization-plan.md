@@ -13,7 +13,7 @@
 | 仓库 | plan 状态 | 实际建设状态 | 关键问题 |
 |---|---|---|---|
 | [`aixsilicon_workflow`](workflow-requirements.md) | V0.1 总规划 | 阶段0/1 基本达成，阶段2 进行中 | runner 动作未实现，release/bundle 部分桩，workflows 占位 |
-| [`aixsilicon_hwif_repo`](../../repos/aixsilicon_hwif_repo/plan.md) | V1.0 | 57 接口族建成，工具链落地 | 6 件确定性工具仍在仓内 `tools/`，与 tool_repo 边界冲突 |
+| [`aixsilicon_hwif_repo`](../../repos/aixsilicon_hwif_repo/archived/plan.md) | V1.0 | 57 接口族建成，工具链落地 | 6 件确定性工具仍在仓内 `tools/`，与 tool_repo 边界冲突 |
 | [`aixsilicon_cbb_repo`](../../repos/aixsilicon_cbb_repo/cbb_repo_plan.md) | V1.0 + 清单 | 骨架就绪，内容续增 | VLNV 用 `company:cbb` 占位；引用独立 `cbb-catalog`/`cbb-tech` 仓 |
 | [`aixsilicon_ip_repo`](../../repos/aixsilicon_ip_repo/README.md) | 无 plan | 用 `ipkg` 建仓，registry 就绪 | VLNV 用 `boyangwang1991-design:ip`；发布机制与 workflow `aix release` 未对齐 |
 | [`aixsilicon_dv_common`](../../repos/aixsilicon_dv_common/plan.md) | V1.0 | P0 底座完成，12/12 测试通过 | 仓名缺 `_repo` 后缀；引用已否决的 `eda-flow`/`eda-rules` 仓 |

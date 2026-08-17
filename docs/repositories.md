@@ -6,7 +6,7 @@
 
 | 仓 | Owner | 设计契约 | 活动交付 | 历史细节 | 近期出口 |
 |---|---|---|---|---|---|
-| hwif | hw-platform | [`hwif/README.md`](hwif/README.md) | [`hwif/delivery.md`](hwif/delivery.md) | [`hwif/design-reference.md`](hwif/design-reference.md) | APB 契约与消费者联验 |
+| hwif | hw-platform | [`hwif/README.md`](hwif/README.md) | [`hwif/repo-architecture.md`](hwif/repo-architecture.md) | [`hwif/skill.md`](hwif/skill.md) | APB 契约与消费者联验（task 定义见 `../todo.md`） |
 | cbb | hw-platform | [`cbb/README.md`](cbb/README.md) | [`cbb/delivery.md`](cbb/delivery.md) | [`cbb/design-reference.md`](cbb/design-reference.md) | 3 个参数/PPA 示范闭环 |
 | ip | ip-platform | [`ip/README.md`](ip/README.md) | [`ip/delivery.md`](ip/delivery.md) | [`ip/design-reference.md`](ip/design-reference.md) | APB G0～G6 + Release G7/Catalog |
 | dv-common | dv-platform | [`dv-common/README.md`](dv-common/README.md) | [`dv-common/delivery.md`](dv-common/delivery.md) | [`dv-common/design-reference.md`](dv-common/design-reference.md) | RAL/CSR/Result 公共底座 |
