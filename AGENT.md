@@ -70,7 +70,17 @@ aix release publish  --asset <vlnv> --version <v> --lock <lock>   # 需 G7 guard
 aix tool schema|hwif|reg|core ...
 ```
 
-- 所有动作**优先走 `aix` CLI / 注册 action**，不手写一次性脚本替代已存在的确定性能力。
+- **确定性执行门禁（强制）**：所有已有 `aix` 确定性能力覆盖的动作**必须走 `aix` CLI / 注册 action**，
+  禁止手写一次性 git/python 命令替代：
+  - **子仓 git 操作唯一入口**：`aix repo status|diff|shell|branch|commit|push <repo_id>`；
+    禁止在 `repos/*` 内直接 `git add/commit/push`。注意：`aix repo commit` 只执行
+    `git commit -m`（不会自动 `git add`），提交前需先在子仓内 `git add <files>`；
+    git 层的 pre-commit hook 会在 commit 时自动运行。
+  - 父仓（workflow 控制面）提交允许普通 git，但**推荐** `aix repo` 保持统一审计；
+    父仓提交顺序：`make check` 全绿 → `pre-commit run --all-files` 全绿 → `git add <files>` → `git commit` → `git push`。
+  - **违规示例（Do NOT）**：`git -C repos/xxx commit -m ...`、`git -C repos/xxx push origin main`、
+    用 `git status`/`git diff` 代替 `aix repo status`/`aix repo diff` 作为子仓状态证据来源。
+  - 唯一豁免：`aix` CLI 未提供且无法注册 action 的临时性诊断（需在 run_log 注明原因）。
 - **Python 环境一律使用 `uv` 管理**（`uv run python` / `uv sync` / `uv add`），
   禁止再创建新的虚拟环境（不要 `python -m venv`、不要在 `repos/*` 下放置 `.venv`）：
   - 唯一环境：**workflow 仓库根目录** `.venv/`（由根 `pyproject.toml` + `uv.lock` 管理，
