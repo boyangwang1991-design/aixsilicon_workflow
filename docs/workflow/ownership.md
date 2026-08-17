@@ -33,7 +33,7 @@ Breaking Schema 变更必须升 major、提供迁移路径并更新消费者兼�
 | ip | `aixsilicon_ip_repo` | ip | public |
 | dv-common | `aixsilicon_dv_common` | dv-common | public |
 | vip | `aixsilicon_vip_repo` | vip | public |
-| tools | `aixsilicon_tool_repo` | tool | public |
+| tools | `aixsilicon_tool_repo` | tool | private |
 | catalog | `aixsilicon_catalog_repo` | catalog | public |
 | soc-integration | `aixsilicon_soc_integration` | soc-integration | public |
 | skills | `aixsilicon_skill_repo` | skill | private/optional |
@@ -45,7 +45,7 @@ Breaking Schema 变更必须升 major、提供迁移路径并更新消费者兼�
 
 | 类别 | 归属 | 典型内容 | 约束 |
 |---|---|---|---|
-| T1 跨仓公共确定性工具 | `aixsilicon_tool_repo` | HWIF/CSR/Core/Schema 生成与检查 | 稳定 I/O Schema、独立 SemVer、插件暴露、版本锁 |
+| T1 跨仓确定性工具（私有） | `aixsilicon_tool_repo` | HWIF/CSR/Core/Schema 生成与检查 | 稳定 I/O Schema、独立 SemVer、插件暴露、版本锁；源码不直接开源，生成物写入公开资产仓 |
 | T2 单仓脚手架 | 对应资产仓 `tools/` | 单仓测试、CI、文档和本地检查 | 不形成跨仓公共契约 |
 | T3 私有/受控适配 | 私有 overlay repo | 商业 EDA、PDK/Memory、内部 Runner/Parser | 实现公共 Plugin/Result 契约；公共 Flow 不硬编码路径 |
 | T4 项目专用脚本 | 项目仓 | waiver、胶水、迁移和具体项目规则 | 绑定项目事实；成熟复用后再提炼 |
@@ -53,8 +53,8 @@ Breaking Schema 变更必须升 major、提供迁移路径并更新消费者兼�
 判定顺序：
 
 ```text
-跨仓复用、可公开且契约稳定？ → T1
-否则跨仓复用但敏感/受控？   → T3
+跨仓复用且契约稳定？         → T1（私有能力仓，交付件开源）
+跨仓复用但敏感/受控？       → T3
 否则绑定具体项目？           → T4
 否则                         → T2
 ```

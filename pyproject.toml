@@ -51,13 +51,14 @@ doc-enhance = [
 ]
 
 [project.scripts]
-aix = "aixworkflow.cli:main"
+# `aix` 通过引导器委托：物化 canonical runtime（私有 skill repo）后运行。
+aix = "aix_launcher:main"
+
+[tool.setuptools]
+py-modules = ["aix_launcher", "bootstrap"]
 
 [tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.setuptools.package-data]
-aixworkflow = ["py.typed"]
+where = ["."]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -71,7 +72,7 @@ markers = [
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-src = ["src", "tests"]
+src = [".roo/skills/aixsilicon-workspace-management/src"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W", "UP", "B"]
@@ -79,5 +80,5 @@ ignore = ["E501"]
 
 [tool.mypy]
 python_version = "3.11"
-files = ["src/aixworkflow"]
+files = [".roo/skills/aixsilicon-workspace-management/src/aixworkflow"]
 strict = true

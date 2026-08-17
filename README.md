@@ -12,6 +12,8 @@
 > 统一材料入口见 [`docs/index.md`](docs/index.md)，跨仓路线图、统一任务台账与里程碑进度分别见 [`docs/roadmap.md`](docs/roadmap.md)、[`docs/todo.md`](docs/todo.md) 和 [`docs/progress.md`](docs/progress.md)。本文档覆盖框架结构、安装、快速开始与核心概念。
 > 优化后的目标架构见 [`docs/architecture/target-design.md`](docs/architecture/target-design.md)；当前运行配置仍遵循已接受的 v1 契约，待 ADR-0007/0008 审核后迁移。
 
+> **Skill 集中管理**：`aix` CLI 的 canonical 源码/测试/脚本由私有 skill `aixsilicon-workspace-management` 统一管理；本仓库通过 [`bootstrap.py`](bootstrap.py)（纯标准库引导器）下载 skill repo 并把 skills 物化到 `/.roo/skills/`（git 忽略）后运行。首次使用：`uv sync` + `uv run python bootstrap.py --ensure`，之后 `uv run aix <cmd>` 或 `uv run python bootstrap.py aix <cmd>`。
+
 ![AIXSILICON 项目全景：Workflow 控制面协调十个独立资产仓，并通过设计、生成、验证、证据、审批、发布和消费形成闭环](docs/assets/project-panorama.png)
 
 全景图将项目分为控制面、十个平级资产仓和工程交付闭环：Workflow 通过 Manifest/Lock、Change Bundle 与 Flow/Gates 组织协作；EDA 只作为验证阶段的外部 Provider；Evidence 经人工审批后进入 Release 与 Catalog，并由消费反馈驱动下一轮工作。图中的连线用于解释职责和生命周期，不代替 [`manifests/default.yaml`](manifests/default.yaml)、[`ownership-map.yaml`](ownership-map.yaml) 或 [`workflows/`](workflows/) 中的精确依赖、所有权与执行定义。
@@ -31,13 +33,13 @@
 | ip | [`aixsilicon_ip_repo`](https://github.com/boyangwang1991-design/aixsilicon_ip_repo) | 可独立集成和发布的完整 IP | 开源 |
 | dv-common | [`aixsilicon_dv_common`](https://github.com/boyangwang1991-design/aixsilicon_dv_common) | 协议无关验证公共底座 | 开源 |
 | vip | [`aixsilicon_vip_repo`](https://github.com/boyangwang1991-design/aixsilicon_vip_repo) | 协议与系统验证组件 | 开源 |
-| tools | [`aixsilicon_tool_repo`](https://github.com/boyangwang1991-design/aixsilicon_tool_repo) | 确定性生成、检查、转换、打包工具 | 开源 |
+| tools | [`aixsilicon_tool_repo`](https://github.com/boyangwang1991-design/aixsilicon_tool_repo) | 确定性生成、检查、转换、打包工具（私有；交付件随公开资产仓开源） | **私有** |
 | catalog | [`aixsilicon_catalog_repo`](https://github.com/boyangwang1991-design/aixsilicon_catalog_repo) | 已发布资产索引、兼容矩阵和成熟度 | 开源 |
 | soc-integration | [`aixsilicon_soc_integration`](https://github.com/boyangwang1991-design/aixsilicon_soc_integration) | 通用 SoC 集成 Schema、模板、规则 | 开源 |
 | skills | [`aixsilicon_skill_repo`](https://github.com/boyangwang1991-design/aixsilicon_skill_repo) | AI 辅助研发 Skill Suite（私有） | **私有** |
 | knowledge | [`aixsilicon_chipknowledge`](https://github.com/boyangwang1991-design/aixsilicon_chipknowledge) | 芯片研发知识库（方法论/术语/参考索引） | 开源 |
 
-> 完整仓库清单与状态见 [`gitlist.md`](gitlist.md)；仓库布局与分支策略见 [`manifests/default.yaml`](manifests/default.yaml)。
+> 仓库布局与分支策略见 [`manifests/default.yaml`](manifests/default.yaml)；工作区环境引导（uv/git/仓库清单/skills 物化）由私有 skill `workspace-bootstrap` 统一管理。
 
 ## 治理与命名规范（V0.2）
 

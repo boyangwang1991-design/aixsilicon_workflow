@@ -108,6 +108,7 @@ repository_registry:
   - id: tools
     repo: aixsilicon_tool_repo
     type: tool
+    visibility: private
   - id: catalog
     repo: aixsilicon_catalog_repo
     type: catalog

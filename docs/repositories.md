@@ -11,7 +11,7 @@
 | ip | ip-platform | [`ip/README.md`](ip/README.md) | [`ip/delivery.md`](ip/delivery.md) | [`ip/design-reference.md`](ip/design-reference.md) | APB G0～G6 + Release G7/Catalog |
 | dv-common | dv-platform | [`dv-common/README.md`](dv-common/README.md) | [`dv-common/delivery.md`](dv-common/delivery.md) | [`dv-common/design-reference.md`](dv-common/design-reference.md) | RAL/CSR/Result 公共底座 |
 | vip | dv-platform | [`vip/README.md`](vip/README.md) | [`vip/delivery.md`](vip/delivery.md) | [`vip/design-reference.md`](vip/design-reference.md) | APB VIP V3 Qualified |
-| tools | engineering-platform | [`tools/README.md`](tools/README.md) | [`tools/delivery.md`](tools/delivery.md) | [`tools/design-reference.md`](tools/design-reference.md) | provider/preflight/APB 实跑 |
+| tools（私有） | engineering-platform | [`tools/README.md`](tools/README.md) | [`tools/delivery.md`](tools/delivery.md) | [`tools/design-reference.md`](tools/design-reference.md) | provider/preflight/APB 实跑 |
 | catalog | release-platform | [`catalog/README.md`](catalog/README.md) | [`catalog/delivery.md`](catalog/delivery.md) | [`catalog/design-reference.md`](catalog/design-reference.md) | 发布索引与 Catalog PR |
 | soc-integration | soc-platform | [`soc-integration/README.md`](soc-integration/README.md) | [`soc-integration/delivery.md`](soc-integration/delivery.md) | [`soc-integration/design-reference.md`](soc-integration/design-reference.md) | 最小 Golden/boot smoke |
 | skills（私有） | ai-engineering | [`skills/README.md`](skills/README.md) | [`skills/delivery.md`](skills/delivery.md) | [`skills/design-reference.md`](skills/design-reference.md) | APB Author/Verifier Eval |

@@ -106,6 +106,7 @@ repositories:
     revision:
       branch: main
     groups: [base, tools]
+    visibility: private
     required: true
     owner: engineering-platform
 

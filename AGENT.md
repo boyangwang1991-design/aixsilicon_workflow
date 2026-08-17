@@ -8,6 +8,7 @@
 ## 1. 定位
 
 - 本仓是 **Manifest 驱动的多仓工作区控制面**，不是源码汇总仓；子仓统一克隆到 `repos/`（父仓 `.gitignore` 完整忽略）。
+- **Skill 集中管理**：`aix` CLI 的 canonical 源码/测试/脚本由私有 skill `aixsilicon-workspace-management`（`repos/aixsilicon_skill_repo/skills/aixsilicon-workspace-management/`）统一管理；本仓通过 [`bootstrap.py`](bootstrap.py)（纯标准库引导器）下载 skill repo 并把 skills 物化到 `/.roo/skills/`（git 忽略）后运行。首次使用先 `uv run python bootstrap.py --ensure`。
 - 责任链：**Skill 决定“如何理解与辅助”→ Workflow 决定“顺序与 Gate”→ Tool 负责“确定性执行”→ 资产仓保存 SSOT/交付 → Catalog 发布合格资产 → EDA 提供工程证据**。
 - 统一命名：VLNV 一律 `aixsilicon:*`（[`ADR-0003`](docs/adr/0003-unified-vlnv-namespace.md)）；CLI 单入口 `aix`（[`ADR-0004`](docs/adr/0004-cli-entry-and-plugin-registry.md)）。
 

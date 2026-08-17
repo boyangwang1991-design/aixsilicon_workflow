@@ -6,7 +6,7 @@
 
 - Workflow 是控制面：解析工作区、编排 Flow、执行 Gate、汇总 Evidence、协调跨仓变更和发布；不保存资产源码。
 - 资产仓是事实面：每类资产只有一个 Owner，正式事实、源码和交付物写回 Owner 仓。
-- Tools 是确定性能力面，Skills 是可选辅助面；两者都不能取代资产事实或 Gate 证据。
+- Tools 是私有确定性能力面，Skills 是私有可选辅助面；两者**不直接开源**，其生成的**交付件**写入各自公开资产仓并随资产仓开源。
 - Catalog 只登记已发布资产，Manifest/Lock 分别描述期望工作区和实际版本，三者不可互相替代。
 - 具体芯片配置、商业 EDA、PDK 和 Memory 适配属于私有项目或 Overlay，不进入公共仓硬编码。
 
@@ -19,10 +19,10 @@
 | `ip` / [`aixsilicon_ip_repo`](../../repos/aixsilicon_ip_repo) | 可独立集成和发布的完整 IP 交付 | SoC Top 和通用集成规则 | 消费 hwif/cbb，向 SoC 和 Catalog 交付 |
 | `dv-common` / [`aixsilicon_dv_common`](../../repos/aixsilicon_dv_common) | 协议无关的 DV runtime、RAL 公共机制和结果模型 | 具体协议 VIP 与产品 DUT | 向 vip、IP/SoC 验证提供公共底座 |
 | `vip` / [`aixsilicon_vip_repo`](../../repos/aixsilicon_vip_repo) | 协议 driver/monitor/checker/coverage 等验证组件 | 协议无关 runtime 和产品验证环境 | 消费 hwif/dv-common，供 IP/SoC 验证复用 |
-| `tools` / [`aixsilicon_tool_repo`](../../repos/aixsilicon_tool_repo) | 跨仓确定性生成、检查、转换和打包工具 | Flow 编排、资产 SSOT、私有 EDA/PDK 路径 | 通过注册 action/provider 被 Workflow 调用 |
+| `tools` / [`aixsilicon_tool_repo`](../../repos/aixsilicon_tool_repo)（私有） | 跨仓确定性生成、检查、转换和打包工具 | Flow 编排、资产 SSOT、私有 EDA/PDK 路径 | 通过注册 action/provider 被 Workflow 调用；生成物写入公开资产仓 |
 | `catalog` / [`aixsilicon_catalog_repo`](../../repos/aixsilicon_catalog_repo) | 已发布资产、版本、兼容性和成熟度索引 | 源码、开发分支和本地工作区选择 | 接收发布 PR，供 SoC 选型和版本发现 |
 | `soc-integration` / [`aixsilicon_soc_integration`](../../repos/aixsilicon_soc_integration) | 通用 SoC Schema、模板、规则和示例 | 具体芯片配置、产品 Top 和生成器实现 | 聚合资产规则；生成器仍归 tools |
-| `skills` / [`aixsilicon_skill_repo`](../../repos/aixsilicon_skill_repo) | 私有、可选的 AI 研发方法和辅助编排 | 确定性最低结果、事实源和 Gate 判定 | 可增强 Workflow，缺失不得阻塞公共最低流程 |
+| `skills` / [`aixsilicon_skill_repo`](../../repos/aixsilicon_skill_repo)（私有） | 私有、可选的 AI 研发方法和辅助编排 | 确定性最低结果、事实源和 Gate 判定 | 可增强 Workflow，缺失不得阻塞公共最低流程；产出文档/资产写入公开仓 |
 | `knowledge` / [`aixsilicon_chipknowledge`](../../repos/aixsilicon_chipknowledge) | 方法论、术语、参考资料和知识索引 | 接口、版本、状态或 Gate 的事实来源 | 供人和 Skill 引用，不进入资产依赖闭包 |
 
 当前不增加 `techlib`、`model`、`sw`、`reference-soc` 公共仓。只有出现至少两个真实消费者、独立生命周期、明确 Owner/Schema 且首个 PR 可带最小资产和 CI 时，才通过 ADR 建仓。
@@ -69,6 +69,8 @@ Schema、仓库与工具的唯一归属见 [`../workflow/ownership.md`](../workf
 3. 跨仓改动创建 Change Bundle，各仓独立 PR、审查和合入；
 4. Evidence 记录仓 SHA、provider 版本和产物 hash；
 5. 发布后才通过 Catalog PR 暴露可消费版本。
+
+可见性边界：`tools` 与 `skills` 为私有仓，**源码不直接开源**；其确定性生成/检查与 AI 辅助产出的交付件（HWIF/CBB/IP/DV Common/VIP 契约与资产、生成 RTL/Header/Core、Catalog 条目、文档）写入对应公开资产仓（`hwif`/`cbb`/`ip`/`dv-common`/`vip`/`catalog`/`soc-integration`/`knowledge`）随资产仓开源。Workflow 按已发布 Action/Provider 契约调用工具，不依赖其私有源码。
 
 仓名以 Manifest 的 `id` 和真实路径为 canonical。`dv-common`、`soc-integration` 没有 `_repo` 后缀是现状，不在普通整理中重命名；如需改名，必须单独 ADR 并验证 URL、CI、Lock 和消费者兼容性。
 

@@ -47,7 +47,7 @@ flowchart LR
 
 | 层 | 职责 | 规范源 | 输出 |
 |---|---|---|---|
-| L0 工作区 | clone、sync、status、缓存 | `src/aixworkflow/workspace.py` | 一致的 `repos/` 工作区 |
+| L0 工作区 | clone、sync、status、缓存 | 物化 skill `/.roo/skills/aixsilicon-workspace-management/src/aixworkflow/workspace.py`（canonical 在私有 skill repo） | 一致的 `repos/` 工作区 |
 | L1 配置 | Manifest、Profile、Lock、Override | `manifests/`、`locks/`、`schemas/` | 可解析基线 |
 | L2 资产发现 | FuseSoC、VLNV、Catalog | generated index、catalog | 可构建资产集合 |
 | L3 流程编排 | Flow DAG、Action、write_scope | `workflows/*.yaml`、runner | 标准执行序列 |
@@ -85,12 +85,12 @@ Workflow 只能通过注册 Action 读写数据面，并受 `write_scope` 和 [`
 
 | 默认公共 | 默认私有/受控 |
 |---|---|
-| Workflow、Tools、Catalog、通用 SoC Integration | 商业芯片项目仓 |
-| HWIF、CBB、公共 IP、DV Common、VIP | Skill 核心方法和 Agent 编排 |
+| Workflow、Catalog、通用 SoC Integration | **Tools（确定性生成/检查能力）**、商业芯片项目仓 |
+| HWIF、CBB、公共 IP、DV Common、VIP | **Skill 核心方法和 Agent 编排** |
 | 通用 Schema、Flow、Evidence 契约 | Foundry/PDK/Memory 适配 |
 | Generic/FPGA 可复用基础能力 | 商业 EDA License、内部路径、客户数据 |
 
-公共确定性流程必须在缺少私有 Skill 时继续运行；私有能力缺失应显式报告 `OPTIONAL_UNAVAILABLE`，不能静默改变最低验证结果。
+Tools 与 Skill 均为私有能力仓：Tools 提供跨仓确定性生成/检查能力，Skill 提供 AI 研发方法辅助；两者**不直接开源源码**。Tools/Skill 生成的**交付件**（HWIF/CBB/IP/DV Common/VIP 契约与资产、Catalog 条目、生成 RTL/Header/Core、文档）写入各自公开资产仓，随资产仓一并开源。公共确定性流程必须在缺少私有 Skill/Tools 源码访问时仍能按已发布契约运行；私有能力缺失应显式报告 `OPTIONAL_UNAVAILABLE`，不能静默改变最低验证结果。
 
 ## 7. 架构不变量
 

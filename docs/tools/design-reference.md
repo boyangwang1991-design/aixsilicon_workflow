@@ -22,7 +22,7 @@
 
 ## 1. 建设结论
 
-`aixsilicon_tool_repo`应建设为一个开源的“芯片研发确定性工具Monorepo”，统一承载可重复执行、可测试、可版本化、可被Agent与Workflow调用的生成、校验、转换、分析和打包能力。
+`aixsilicon_tool_repo`应建设为一个**私有的**“芯片研发确定性工具Monorepo”，统一承载可重复执行、可测试、可版本化、可被Agent与Workflow调用的生成、校验、转换、分析和打包能力。工具源码不直接开源；其确定性生成/检查产出的**交付件**写入对应公开资产仓（hwif/cbb/ip/dv-common/vip/catalog/soc-integration/knowledge）随资产仓开源。
 
 它不是脚本汇总仓，也不是EDA Flow仓，更不是AI Skill仓。核心分工为：
 

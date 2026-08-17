@@ -16,15 +16,27 @@ git clone git@github.com:boyangwang1991-design/aixsilicon_workflow.git
 cd aixsilicon_workflow
 ```
 
-## 2. 安装 CLI
+## 2. 安装 CLI（Skill 集中管理）
+
+`aix` CLI 的 canonical 源码由私有 skill `aixsilicon-workspace-management` 统一管理；
+本仓库通过 [`bootstrap.py`](../bootstrap.py)（纯标准库引导器）下载 skill repo 并把 skills
+物化到 `/.roo/skills/`（git 忽略），直接从 `.roo/skills` 运行。
 
 ```bash
+# 1) 安装依赖（Python 一律经 uv，唯一环境为根 .venv）
 uv venv .venv --python 3.12
-uv pip install --python .venv/bin/python -e ".[dev]"
-alias aix=".venv/bin/aix"
+uv sync
+
+# 2) 物化 skills（下载/更新 repos/aixsilicon_skill_repo + 物化到 .roo/skills）
+uv run python bootstrap.py --ensure
+
+# 3) 使用 aix（引导器从 .roo/skills/aixsilicon-workspace-management/src 委托）
+uv run python bootstrap.py aix wf init --profile ip-dev
+# 等价：安装后可 `uv run aix ...`（pyproject 将 aix 指向 aix_launcher）
 ```
 
-> 若使用系统 `python`/`pip`，也可执行 `python -m pip install -e ".[dev]"`，但推荐统一用 `uv` 管理的 `.venv`。
+> 私有 skill 仓无权限时，`aix` 会提示先 clone skill repo（`OPTIONAL_UNAVAILABLE`），
+> 公共确定性流程仍可继续。
 
 ## 3. 选择 Profile 并初始化
 
