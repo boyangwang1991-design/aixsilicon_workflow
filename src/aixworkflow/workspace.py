@@ -262,6 +262,7 @@ def generate_lock_for_profile(
     fetch_first: bool = True,
 ) -> ResolutionResult:
     toolchain = {"profile": "unset", "python": python_version()}
+    tools = _detect_tools()
     return generate_lock(
         manifest,
         profile_name,
@@ -269,8 +270,41 @@ def generate_lock_for_profile(
         workspace_root=workspace_root,
         mode=mode,
         toolchain=toolchain,
+        tools=tools,
         fetch_first=fetch_first,
     )
+
+
+def _detect_tools() -> dict[str, dict[str, str]]:
+    """Snapshot available deterministic tooling versions for the lock `tools` segment."""
+    import shutil
+    import subprocess
+
+    tools: dict[str, dict[str, str]] = {}
+    candidates = {
+        "git": ["--version"],
+        "fusesoc": ["--version"],
+        "verilator": ["--version"],
+        "iverilog": ["-V"],
+    }
+    for name, args in candidates.items():
+        exe = shutil.which(name)
+        if not exe:
+            continue
+        try:
+            proc = subprocess.run(
+                [exe, *args],
+                capture_output=True,
+                text=True,
+                timeout=10,
+                check=False,
+            )
+            raw = (proc.stdout or proc.stderr or "").strip()
+            version = raw.splitlines()[0] if raw else "unknown"
+        except (subprocess.TimeoutExpired, OSError):
+            version = "unknown"
+        tools[name] = {"version": version, "source": "system"}
+    return tools
 
 
 def write_fusesoc_configs(

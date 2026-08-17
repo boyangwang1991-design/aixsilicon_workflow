@@ -48,16 +48,26 @@
     },
     "profiles": {
       "type": "object",
-      "description": "Profile -> 启用的 groups 列表。",
+      "description": "Profile -> 精确仓库集合（ADR-0007）。include_repositories 为精确集合；optional_repositories 为可选附加；include_groups 为 legacy 兼容。",
       "patternProperties": {
         "^[a-zA-Z0-9_-]+$": {
           "type": "object",
-          "required": ["include_groups"],
           "additionalProperties": false,
           "properties": {
             "include_groups": {
               "type": "array",
-              "items": { "type": "string" }
+              "items": { "type": "string" },
+              "description": "legacy：按 group 交集选择。include_repositories 存在时忽略。"
+            },
+            "include_repositories": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "精确仓库 ID 集合；优先于 include_groups。"
+            },
+            "optional_repositories": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "可选附加仓库 ID，不视为 required。"
             }
           }
         }
@@ -102,8 +112,40 @@
         "depends_on": {
           "type": "array",
           "items": { "type": "string" },
-          "description": "仓库级依赖 ID，必须形成有向无环图",
+          "description": "legacy：仓库级 product 依赖 ID，等价 dependencies.product（ADR-0007 REV-2），必须形成有向无环图",
           "default": []
+        },
+        "dependencies": {
+          "type": "object",
+          "description": "typed dependencies（ADR-0007）：按操作类型计算闭包。",
+          "additionalProperties": false,
+          "properties": {
+            "product": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "产品组成/编译资产依赖；必须形成 DAG"
+            },
+            "verification": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "testbench/VIP/模型与资格验证依赖"
+            },
+            "tooling": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "确定性生成/检查 provider 依赖"
+            },
+            "discovery": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "已发布资产发现和版本解析依赖"
+            },
+            "context": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "可选 Skill/Knowledge；永不成为 required"
+            }
+          }
         },
         "fusesoc_roots": {
           "type": "array",

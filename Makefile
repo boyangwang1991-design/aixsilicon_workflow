@@ -1,7 +1,10 @@
 # AIXSILICON Workflow — 统一任务入口
 # 用法: make <target>
+#
+# 跨平台入口（F-013 / WF-011）：Python 一律经 uv 解析到根环境，
+# 兼容 Windows(cmd) 与 POSIX，无需依赖 .venv/bin 绝对路径。
 
-PYTHON ?= .venv/bin/python
+PYTHON ?= uv run python
 UV     ?= uv
 
 .PHONY: install test lint format check coverage schema clean help

@@ -19,6 +19,11 @@
     "workspace_lock": { "type": "string", "description": "引用 resolved lock 文件路径" },
     "manifest_digest": { "type": "string" },
     "random_seed": { "type": "string" },
+    "environment": {
+      "type": "object",
+      "description": "运行环境快照（平台、Python、工具路径）用于可重建证据（F-008）。",
+      "additionalProperties": { "type": "string" }
+    },
     "stages": {
       "type": "object",
       "description": "key 为 stage id。",
@@ -33,6 +38,9 @@
             "finished_at": { "type": "string", "format": "date-time" },
             "exit_code": { "type": "integer" },
             "tool": { "type": "string" },
+            "provider": { "type": "string" },
+            "tool_version": { "type": "string" },
+            "tool_hash": { "type": "string" },
             "log": { "type": "string" },
             "failure_signature": { "type": "string" }
           }

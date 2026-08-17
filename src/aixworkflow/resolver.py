@@ -42,10 +42,15 @@ class ResolutionResult:
     profile: str
     repositories: list[ResolvedRepository] = field(default_factory=list)
     toolchain: dict[str, object] = field(default_factory=dict)
+    tools: dict[str, dict[str, str]] = field(default_factory=dict)
 
-    def to_lock_doc(self, manifest: Manifest, toolchain: dict[str, object]) -> dict[str, object]:
+    def to_lock_doc(
+        self,
+        manifest: Manifest,
+        toolchain: dict[str, object],
+    ) -> dict[str, object]:
         repo_doc = {r.id: r.to_lock_entry() for r in self.repositories}
-        return {
+        doc: dict[str, object] = {
             "schema_version": "aix.workspace-lock/v1",
             "workspace": manifest.workspace.name,
             "profile": self.profile,
@@ -56,6 +61,9 @@ class ResolutionResult:
             "repositories": repo_doc,
             "toolchain": toolchain,
         }
+        if self.tools:
+            doc["tools"] = self.tools
+        return doc
 
 
 def _resolve_local(repo: Repository, revision: dict[str, str], path: Path) -> tuple[str, str]:
@@ -164,6 +172,7 @@ def generate_lock(
     workspace_root: Path,
     mode: str,
     toolchain: dict[str, object] | None = None,
+    tools: dict[str, dict[str, str]] | None = None,
     fetch_first: bool = True,
 ) -> ResolutionResult:
     """Resolve all enabled repositories and produce a lock result.
@@ -189,6 +198,7 @@ def generate_lock(
     if toolchain is None:
         toolchain = {"profile": "unset", "python": "unknown"}
     result.toolchain = dict(toolchain)
+    result.tools = dict(tools or {})
     return result
 
 

@@ -38,6 +38,12 @@ repositories:
       branch: main
     groups: [base, design, cbb, ip, soc]
     depends_on: [hwif]
+    dependencies:
+      product: [hwif]
+      verification: [dv-common]
+      tooling: [tools]
+      discovery: [catalog]
+      context: [skills, knowledge]
     required: true
     owner: hw-platform
     fusesoc_roots: [.]
@@ -51,6 +57,12 @@ repositories:
       branch: main
     groups: [base, ip, soc]
     depends_on: [hwif, cbb]
+    dependencies:
+      product: [hwif, cbb]
+      verification: [dv-common, vip]
+      tooling: [tools]
+      discovery: [catalog]
+      context: [skills, knowledge]
     required: true
     owner: ip-platform
     fusesoc_roots: [.]
@@ -76,6 +88,12 @@ repositories:
       branch: main
     groups: [base, dv, ip, soc]
     depends_on: [hwif, dv-common]
+    dependencies:
+      product: [hwif]
+      verification: [dv-common]
+      tooling: [tools]
+      discovery: [catalog]
+      context: [skills, knowledge]
     required: true
     owner: dv-platform
     fusesoc_roots: [.]
@@ -111,6 +129,12 @@ repositories:
       branch: main
     groups: [base, soc]
     depends_on: [hwif, cbb, ip, catalog, tools]
+    dependencies:
+      product: [hwif, cbb, ip]
+      verification: [dv-common, vip]
+      tooling: [tools]
+      discovery: [catalog]
+      context: [skills, knowledge]
     required: true
     owner: soc-platform
 
@@ -138,18 +162,29 @@ repositories:
     owner: engineering-platform
     exports: [chip-knowledge]
 
+# ADR-0007 exact Profile：include_repositories 为精确集合（优先），
+# optional_repositories 为可选附加（不视为 required）。
+# 旧 include_groups 已迁移为精确集合（target-design §4 目标）。
 profiles:
   minimal:
-    include_groups: [base]
+    include_repositories: [hwif, tools]
   ip-dev:
-    include_groups: [base, design, cbb, ip, dv, tools, catalog, skills]
+    include_repositories: [hwif, cbb, ip, dv-common, vip, tools]
+    optional_repositories: [catalog, skills]
   cbb-dev:
-    include_groups: [base, design, cbb, dv, tools, catalog, skills]
+    include_repositories: [hwif, cbb, dv-common, tools]
+    optional_repositories: [vip, catalog, skills]
   dv-dev:
-    include_groups: [base, dv, tools, catalog, skills]
+    include_repositories: [hwif, dv-common, vip, tools]
+    optional_repositories: [skills]
   soc-integration:
-    include_groups: [base, design, cbb, dv, ip, soc, tools, catalog, skills]
+    include_repositories: [hwif, cbb, ip, dv-common, vip, tools, catalog, soc-integration]
+    optional_repositories: [skills]
   release:
-    include_groups: [base, design, cbb, dv, ip, soc, tools, catalog]
+    include_repositories: [hwif, cbb, ip, dv-common, vip, tools, catalog, soc-integration]
+  knowledge-dev:
+    include_repositories: [knowledge]
+    optional_repositories: [skills]
   all:
-    include_groups: ['*']
+    include_repositories: [hwif, cbb, ip, dv-common, vip, tools, catalog, soc-integration, knowledge]
+    optional_repositories: [skills]

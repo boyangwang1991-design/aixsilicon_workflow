@@ -82,7 +82,8 @@ def test_run_flow_success(tmp_path):
     registry.register("fusesoc.target", lambda s: None)
     registry.register("eda.regression", lambda s: None)
     registry.register("evidence.index", lambda s: None)
-    result = run_flow(flow, registry=registry)
+    # flow declares lock_required; provide the lock so G1 passes (F-002).
+    result = run_flow(flow, registry=registry, lock_present=True)
     assert result.status == "passed"
 
 
@@ -96,8 +97,22 @@ def test_run_flow_failure_collects_evidence(tmp_path):
         "fusesoc.target", lambda s: (_ for _ in ()).throw(RuntimeError("lint failed"))
     )
     with pytest.raises(DesignError) as excinfo:
-        run_flow(flow, registry=registry)
+        run_flow(flow, registry=registry, lock_present=True)
     assert "lint" in str(excinfo.value)
+
+
+def test_run_flow_blocked_when_lock_missing(tmp_path):
+    """F-002: lock_required with no lock must block the flow, not pass."""
+    from aixworkflow.runner import BlockedPrecondition
+
+    path = tmp_path / "flow.yaml"
+    path.write_text(dump_yaml(_FLOW_DOC), encoding="utf-8")
+    flow = load_flow(path)
+    registry = ActionRegistry()
+    registry.register("workspace.resolve", lambda s: None)
+    with pytest.raises(BlockedPrecondition) as excinfo:
+        run_flow(flow, registry=registry)
+    assert excinfo.value.gate == "G1"
 
 
 # ---------------- bundle ----------------
@@ -178,12 +193,13 @@ def test_schema_parity(tmp_path):
     """Package-embedded schemas must match the repo-level schemas (drift guard)."""
     import json
 
+    # Explicit UTF-8 keeps parity checks locale-independent on Windows (F-013).
     repo_schemas = sorted((Path("schemas").resolve()).glob("*.json"))
     assert repo_schemas, "repo schemas directory missing"
     pkg_dir = Path("src/aixworkflow/schemas")
     for repo_schema in repo_schemas:
         pkg_schema = pkg_dir / repo_schema.name
         assert pkg_schema.is_file(), f"missing packaged schema {pkg_schema}"
-        assert json.loads(repo_schema.read_text()) == json.loads(
-            pkg_schema.read_text()
+        assert json.loads(repo_schema.read_text(encoding="utf-8")) == json.loads(
+            pkg_schema.read_text(encoding="utf-8")
         ), f"schema drift: {repo_schema.name}"

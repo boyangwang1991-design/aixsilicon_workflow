@@ -53,6 +53,9 @@ class EvidenceCollector:
         *,
         exit_code: int = 0,
         tool: str = "",
+        provider: str = "",
+        tool_version: str = "",
+        tool_hash: str = "",
         log: str = "",
         failure_signature: str = "",
     ) -> None:
@@ -62,6 +65,9 @@ class EvidenceCollector:
             "finished_at": _now(),
             "exit_code": exit_code,
             "tool": tool,
+            "provider": provider,
+            "tool_version": tool_version,
+            "tool_hash": tool_hash,
             "log": log,
             "failure_signature": failure_signature,
         }
@@ -80,10 +86,26 @@ class EvidenceCollector:
             {"path": str(path), "sha256": sha256_of_file(path), "storage_ref": storage_ref}
         )
 
+    def environment_snapshot(self) -> dict[str, str]:
+        """Record toolchain/environment facts for reproducible evidence (F-008)."""
+        import platform
+        import shutil
+        import sys
+
+        snap: dict[str, str] = {
+            "platform": f"{platform.system()}-{platform.machine()}",
+            "python": sys.version.split()[0],
+        }
+        for tool in ("git", "fusesoc", "verilator", "iverilog"):
+            path = shutil.which(tool)
+            snap[tool] = path or "not-found"
+        return snap
+
     def write(self, reports_dir: Path) -> Path:
         """Write run_manifest.yaml, evidence_index.yaml and status.json; returns reports dir."""
         reports_dir.mkdir(parents=True, exist_ok=True)
 
+        environment = self.environment_snapshot()
         run_manifest = {
             "schema_version": RUN_MANIFEST_SCHEMA_VERSION,
             "run_id": self.run_id,
@@ -92,6 +114,7 @@ class EvidenceCollector:
             "workspace_lock": self.workspace_lock,
             "manifest_digest": self.manifest_digest,
             "random_seed": self.random_seed,
+            "environment": environment,
             "stages": self.stages,
             "gates": self.gates,
             "artifacts": self.artifacts,
@@ -105,6 +128,7 @@ class EvidenceCollector:
             "workspace_lock": self.workspace_lock,
             "manifest_digest": self.manifest_digest,
             "random_seed": self.random_seed,
+            "environment": environment,
             "stages": self.stages,
             "gates": self.gates,
             "artifacts": self.artifacts,

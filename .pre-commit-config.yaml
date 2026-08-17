@@ -13,11 +13,12 @@ repos:
       - id: mixed-line-ending
 
   # Guard: refuse staged paths from runtime/generated directories.
+  # 跨平台入口（F-013 / WF-011）：`uv run python` 在 Windows/POSIX 均可解析到根环境。
   - repo: local
     hooks:
       - id: aix-guard-runtime-paths
         name: aix-guard-runtime-paths
-        entry: .venv/bin/python scripts/hooks/guard_runtime_paths.py
+        entry: uv run python scripts/hooks/guard_runtime_paths.py
         language: system
         pass_filenames: false
         always_run: true
@@ -25,7 +26,7 @@ repos:
 
       - id: aix-check-vlnv-namespace
         name: aix-check-vlnv-namespace
-        entry: .venv/bin/python scripts/hooks/check_vlnv_namespace.py
+        entry: uv run python scripts/hooks/check_vlnv_namespace.py
         language: system
         pass_filenames: false
         always_run: true

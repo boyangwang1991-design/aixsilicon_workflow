@@ -108,7 +108,10 @@ def load_manifest(
     repositories = [Repository.from_dict(r) for r in doc.get("repositories", [])]
     profiles = {
         str(k): Profile(
-            name=str(k), include_groups=tuple(str(g) for g in v.get("include_groups", []))
+            name=str(k),
+            include_groups=tuple(str(g) for g in v.get("include_groups", [])),
+            include_repositories=tuple(str(r) for r in v.get("include_repositories", [])),
+            optional_repositories=tuple(str(r) for r in v.get("optional_repositories", [])),
         )
         for k, v in doc.get("profiles", {}).items()
     }

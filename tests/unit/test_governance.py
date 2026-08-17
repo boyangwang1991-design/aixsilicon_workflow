@@ -79,7 +79,8 @@ def _flow(stages: list[FlowStage]) -> Flow:
     )
 
 
-def test_runner_skips_unavailable_action_and_continues(tmp_path, monkeypatch) -> None:
+def test_runner_blocks_required_unavailable_action(tmp_path, monkeypatch) -> None:
+    """F-001 fail-closed: a required action that cannot run must block the flow."""
     from aixworkflow.actions import fusesoc_target
 
     monkeypatch.chdir(tmp_path)
@@ -95,9 +96,35 @@ def test_runner_skips_unavailable_action_and_continues(tmp_path, monkeypatch) ->
             FlowStage("s2", "evidence.index", ["s1"], {}, [], None, 0),
         ]
     )
+    # fusesoc.target is required and its environment is missing -> blocked/failed.
+    result = run_flow(flow, registry=reg)
+    assert result.status == "failed"
+    assert result.failed_stage == "s1"
+    assert result.stage_results["s1"] == "skipped"
+
+
+def test_runner_skips_optional_action_and_continues(tmp_path, monkeypatch) -> None:
+    """Optional (skill.*) actions degrade to skipped without failing the flow."""
+    from aixworkflow.actions import ActionSkipped
+
+    def _skill_skip(_stage) -> None:
+        raise ActionSkipped("skill provider unavailable (OPTIONAL_UNAVAILABLE)")
+
+    monkeypatch.chdir(tmp_path)
+
+    reg = ActionRegistry()
+    reg.register("skill.ip.spec", _skill_skip)
+    reg.register("evidence.index", lambda stage: None)
+
+    flow = _flow(
+        [
+            FlowStage("s1", "skill.ip.spec", [], {}, [], None, 0),
+            FlowStage("s2", "evidence.index", ["s1"], {}, [], None, 0),
+        ]
+    )
     result = run_flow(flow, registry=reg)
     assert result.status == "passed"
-    assert result.stage_results["s1"] == "skipped"  # OPTIONAL_UNAVAILABLE, not a failure
+    assert result.stage_results["s1"] == "skipped"
     assert result.stage_results["s2"] == "passed"
 
 

@@ -193,11 +193,27 @@ def _cmd_wf_clean(args: argparse.Namespace) -> None:
 
 @command("wf", "run")
 def _cmd_wf_run(args: argparse.Namespace) -> None:
-    """Execute a standard flow DAG with the standard action set (plan.md §15)."""
+    """Execute a standard flow DAG with the standard action set (plan.md §15).
+
+    Runs preflight first: a required action that is not `available` blocks the
+    flow before any stage executes (ADR-0008 / WF-004).
+    """
     flow_path = Path("workflows") / f"{args.flow}.yaml"
     if not flow_path.is_file():
         raise InfraError(f"flow not found: {flow_path}")
     flow = load_flow(flow_path)
+
+    from aixworkflow.capability import default_registry as capability_registry
+
+    pre = capability_registry().preflight(flow)
+    if not pre.ok:
+        print(f"preflight blocked: flow '{flow.name}' (required capability missing)")
+        for entry in pre.entries:
+            mark = "x" if entry.state != "available" else "."
+            print(f"  [{mark}] {entry.stage:<22} {entry.action:<30} {entry.state}")
+        raise InfraError(
+            "preflight blocked: required stage(s) missing capability: " + ", ".join(pre.blocked)
+        )
 
     registry = default_registry()
     evidence = EvidenceCollector(flow=flow.name)
@@ -213,10 +229,32 @@ def _cmd_wf_run(args: argparse.Namespace) -> None:
     if blocked:
         print(
             f"note: {len(blocked)} stage(s) blocked (provider unavailable / not yet "
-            f"implemented): {blocked}\n"
-            f"      blocked != failed; evidence recorded. Gate enforcement is separate (G0-G7)."
+            f"implemented): {blocked}"
         )
     print(f"evidence under reports/{evidence.run_id}")
+
+
+@command("wf", "preflight")
+def _cmd_wf_preflight(args: argparse.Namespace) -> None:
+    """Print the capability matrix for a flow without executing it (WF-004)."""
+    flow_path = Path("workflows") / f"{args.flow}.yaml"
+    if not flow_path.is_file():
+        raise InfraError(f"flow not found: {flow_path}")
+    flow = load_flow(flow_path)
+
+    from aixworkflow.capability import default_registry
+
+    result = default_registry().preflight(flow)
+    print(f"flow={flow.name}  stages={len(result.entries)}")
+    for entry in result.entries:
+        print(
+            f"  {entry.stage:<22} {entry.action:<30} {entry.state:<22} "
+            f"{entry.provider:<16} {entry.version}"
+        )
+    if result.blocked:
+        print(f"BLOCKED required stages: {', '.join(result.blocked)}")
+        raise InfraError(f"preflight failed for required stages: {', '.join(result.blocked)}")
+    print("preflight: all required capabilities available")
 
 
 @command("wf", "test")

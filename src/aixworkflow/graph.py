@@ -9,17 +9,39 @@ from aixworkflow.models import Repository
 
 
 class DependencyGraph:
-    """Directed graph over repository logical ids."""
+    """Directed graph over repository logical ids.
 
-    def __init__(self, repositories: list[Repository]) -> None:
+    By default edges are built from the product dependency category
+    (`Repository.depends_on`), which is the legacy alias. Pass `dep_type` to
+    build the graph for a different typed category (ADR-0007).
+    """
+
+    def __init__(
+        self,
+        repositories: list[Repository],
+        *,
+        dep_type: str = "product",
+    ) -> None:
         self.nodes: set[str] = {r.id for r in repositories}
-        # edges: depends_on -> depends (dependent is downstream of its dependency)
+        # edges: dependency -> dependent (downstream of its dependency)
         self.edges: dict[str, set[str]] = defaultdict(set)
         for repo in repositories:
-            for dep in repo.depends_on:
+            deps = repo.depends_on if dep_type == "product" else repo.dependencies.get(dep_type, ())
+            for dep in deps:
                 if dep not in self.nodes:
-                    raise ManifestError(f"repository '{repo.id}' depends on unknown id '{dep}'")
+                    raise ManifestError(
+                        f"repository '{repo.id}' has {dep_type} dependency on unknown id '{dep}'"
+                    )
                 self.edges[dep].add(repo.id)
+
+    @classmethod
+    def typed(
+        cls,
+        repositories: list[Repository],
+        dep_type: str,
+    ) -> DependencyGraph:
+        """Build a graph for a single typed dependency category."""
+        return cls(repositories, dep_type=dep_type)
 
     def adjacency(self) -> dict[str, list[str]]:
         """dependency -> [dependents] sorted, for stable output."""
