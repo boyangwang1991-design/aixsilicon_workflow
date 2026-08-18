@@ -48,8 +48,8 @@
 
 ```bash
 # 工作区
-aix wf init --profile <profile>          # 初始化（minimal/ip-dev/cbb-dev/dv-dev/soc-integration/release）
-aix wf sync                              # clone/fetch/checkout
+aix wf init --profile <profile>          # 初始化（minimal/ip-dev/cbb-dev/dv-dev/soc-integration/release/knowledge-dev/all）
+aix wf sync                              # clone/fetch/checkout（按当前 profile 同步仓库）
 aix wf status / aix wf doctor            # 状态 / 诊断
 aix wf lock                              # 生成 resolved lock（正式基线用 --mode release）
 aix wf diff --against locks/baseline.lock.yaml
@@ -81,6 +81,10 @@ aix tool schema|hwif|reg|core ...
   - **违规示例（Do NOT）**：`git -C repos/xxx commit -m ...`、`git -C repos/xxx push origin main`、
     用 `git status`/`git diff` 代替 `aix repo status`/`aix repo diff` 作为子仓状态证据来源。
   - 唯一豁免：`aix` CLI 未提供且无法注册 action 的临时性诊断（需在 run_log 注明原因）。
+- **Profile 切换注意事项**：`aix wf init --profile <profile>` 会更新 `.aix/state.json`，
+  但 `aix wf sync` 可能仍使用旧 profile。若需同步所有仓库，建议：
+  1. 确认 `.aix/state.json` 中 `profile` 字段已更新；
+  2. 若 sync 未同步预期仓库，手动 `git clone` 缺失仓库到 `repos/` 目录。
 - **Python 环境一律使用 `uv` 管理**（`uv run python` / `uv sync` / `uv add`），
   禁止再创建新的虚拟环境（不要 `python -m venv`、不要在 `repos/*` 下放置 `.venv`）：
   - 唯一环境：**workflow 仓库根目录** `.venv/`（由根 `pyproject.toml` + `uv.lock` 管理，
@@ -89,6 +93,29 @@ aix tool schema|hwif|reg|core ...
   - 子仓内如需在 CI/独立仓库运行，允许声明其自身 `pyproject.toml`（作为事实源），
     但本地开发/回归统一起 workflow 根环境：`cd <workflow-root> && uv sync && uv run python <script>`；
   - 禁止使用系统 `python`/`pip` 直接安装依赖。
+
+## 4.1 环境初始化（首次使用）
+
+```bash
+# 1. 下载 skill repo + 物化 skills（首次必须）
+uv run python bootstrap.py --ensure
+
+# 2. 初始化工作区（选择 profile）
+uv run python bootstrap.py aix wf init --profile ip-dev    # IP 开发（默认）
+# 或
+uv run python bootstrap.py aix wf init --profile all       # 完整工作区（所有仓库）
+
+# 3. 同步仓库
+uv run python bootstrap.py aix wf sync
+
+# 4. 验证状态
+uv run python bootstrap.py aix wf status
+```
+
+**注意**：若 `sync` 后仍有仓库 MISSING，需手动 `git clone` 缺失仓库：
+```bash
+git clone git@github.com:boyangwang1991-design/aixsilicon_<repo>.git repos/aixsilicon_<repo>
+```
 
 ## 5. 工作方法（Step-by-step）
 
