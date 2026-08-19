@@ -10,5 +10,7 @@
 | SKILL-004 | P1 | M3/M4 | 用 APB Golden Path 验证 Author/Verifier 双角色 | WF-008、IP-003 | 候选变更经独立验证和 G0～G6 | boyang wang |
 | SKILL-005 | P2 | M5 | 评审 CBB Suite | WF-013 稳定 | 不复制 Tool；首个真实 CBB Eval | boyang wang |
 | SKILL-006 | P2 | M6 | 添加 SoC Integration Suite | WF-014 稳定 | 16 个子 skill + 配置指纹 + drawio 图生成 | boyang wang |
+| SKILL-007 | P2 | M6 | 添加 Chipdraw Skill Suite | drawio-skill 派生 | 5 个子 skill + 公共库 + 芯片图形语义模型 | boyang wang |
+| SKILL-008 | P3 | M7 | 添加 Skill Creator | - | Skill 创建/评测/优化工具链 | boyang wang |
 
 Skills 始终是可选增强，不加入公共流程 required closure。
