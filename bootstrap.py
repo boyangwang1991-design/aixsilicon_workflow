@@ -93,8 +93,12 @@ def _ensure_skill_repo(force: bool = False) -> Path | None:
     return path
 
 
-def _materialize_skills(skill_repo: Path, agent_dir: str) -> bool:
-    """Delegate materialization to aixsilicon_skill_repo bootstrap_env.py (single source of truth)."""
+def _materialize_skills(skill_repo: Path, agent_dir: str, force: bool = False) -> bool:
+    """Delegate materialization to aixsilicon_skill_repo bootstrap_env.py (single source of truth).
+
+    The delegated script keeps a fingerprint cache and skips the full copy when
+    the skill repo HEAD (and working tree) is unchanged; `force=True` bypasses it.
+    """
     script = WORKFLOW_ROOT / ENV_SCRIPT_REL
     if not script.is_file():
         print(f"ERROR: aixsilicon_skill_repo bootstrap_env.py not found: {script}", file=sys.stderr)
@@ -113,19 +117,30 @@ def _materialize_skills(skill_repo: Path, agent_dir: str) -> bool:
         "--target",
         str(target),
     ]
+    if force:
+        cmd.append("--force")
     proc = subprocess.run(cmd, check=False, text=True)
     if proc.returncode != 0:
         return False
-    print(f"bootstrap: materialized skills from {skill_repo / 'skills'} -> {target}")
     return True
 
 
-def _ensure(force: bool = False, agent_dir: str = DEFAULT_AGENT_DIR) -> bool:
-    """Ensure skill repo present (clone/update) + materialize skills. True on success."""
+def _ensure(
+    force: bool = False,
+    agent_dir: str = DEFAULT_AGENT_DIR,
+    skip_materialize: bool = False,
+) -> bool:
+    """Ensure skill repo present (clone/update) + materialize skills. True on success.
+
+    `skip_materialize=True` keeps using already-materialized skills (offline /
+    repeated-invocation mode) as long as the delegated aix entry exists.
+    """
     skill_repo = _ensure_skill_repo(force=force)
     if skill_repo is None:
         return False
-    return _materialize_skills(skill_repo, agent_dir)
+    if skip_materialize and (_skills_target(agent_dir) / SKILL_NAME).is_dir():
+        return True
+    return _materialize_skills(skill_repo, agent_dir, force=force)
 
 
 def _run_hook(hook_name: str, agent_dir: str) -> int:
@@ -168,7 +183,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--force",
         action="store_true",
-        help="also fast-forward skill repo, then materialize skills",
+        help="also fast-forward skill repo, then force full re-materialization",
+    )
+    parser.add_argument(
+        "--skip-materialize",
+        action="store_true",
+        help=(
+            "skip materialization and reuse <agent-dir>/skills as-is "
+            "(for repeated aix invocations; falls back to materialize when missing)"
+        ),
     )
     parser.add_argument(
         "--run-hook",
@@ -189,11 +212,11 @@ def main(argv: list[str] | None = None) -> int:
     agent_dir = resolve_agent_dir(args.agent_dir)
 
     if args.run_hook:
-        if not _ensure(force=False, agent_dir=agent_dir):
+        if not _ensure(force=False, agent_dir=agent_dir, skip_materialize=args.skip_materialize):
             return 1
         return _run_hook(args.run_hook, agent_dir)
 
-    if not _ensure(force=args.force, agent_dir=agent_dir):
+    if not _ensure(force=args.force, agent_dir=agent_dir, skip_materialize=args.skip_materialize):
         return 1
     if args.ensure or args.force:
         return 0

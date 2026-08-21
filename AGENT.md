@@ -9,6 +9,9 @@
 
 - 本仓是 **Manifest 驱动的多仓工作区控制面**，不是源码汇总仓；子仓统一克隆到 `repos/`（父仓 `.gitignore` 完整忽略）。
 - **Skill 集中管理**：`aix` CLI 的源码/测试/脚本由私有 skill `aixsilicon-workspace-management`（`repos/aixsilicon_skill_repo/skills/aixsilicon-workspace-management/`）统一管理；本仓通过 [`bootstrap.py`](bootstrap.py)（纯标准库引导器）下载 skill repo 并把 skills 物化到 `/.roo/skills/`（git 忽略）后运行。首次使用先 `uv run python bootstrap.py --ensure`。
+  - **skill repo 的 manifest id 是 `skills`**（目录名为 `repos/aixsilicon_skill_repo`）；子仓 git 操作用 `aix repo <cmd> skills`（id 不是目录名）。
+  - **物化带指纹缓存**：skill repo 工作树指纹（`git describe --always --dirty`）未变化时自动跳过全量复制；强制重物化用 `--force`，离线/反复调用 aix 用 `--skip-materialize`。
+  - **uv.lock 防漂移**：本机 `uv run` 可能把 lock 中的镜像源 URL 重写（如 tsinghua -> aliyun，仅 URL/size 字段、无版本变化）；提交前 `git diff uv.lock` 若属此类改动，`git checkout -- uv.lock` 还原；环境一致性校验用 `uv run --locked ...`。
 - **Skill 修改原则（aixsilicon-skill-repo 优先 + 重新物化）**：需要更新任何经物化到工作区的 Skill 内容（如 `.roo/skills/*/SKILL.md` 及其配套脚本/模板）时，必须先修改 aixsilicon-skill-repo 源仓 `repos/aixsilicon_skill_repo/skills/<skill-name>/` 下的对应文件，再执行 `uv run python bootstrap.py --ensure` 重新物化到工作区主目录；**禁止直接编辑 `.roo/skills/` 下的物化副本**（该目录被 git 忽略且每次 `--ensure` 会覆盖，直接改动会丢失且无法追踪）。
 - 责任链：**Skill 决定“如何理解与辅助”→ Workflow 决定“顺序与 Gate”→ Tool 负责“确定性执行”→ 资产仓保存 SSOT/交付 → Catalog 发布合格资产 → EDA 提供工程证据**。
 - 统一命名：VLNV 一律 `aixsilicon:*`（[`ADR-0003`](docs/adr/0003-unified-vlnv-namespace.md)）；CLI 单入口 `aix`（[`ADR-0004`](docs/adr/0004-cli-entry-and-plugin-registry.md)）。
