@@ -8,8 +8,10 @@ on:
         type: choice
         options: [minimal, ip-dev, cbb-dev, dv-dev, soc-integration, release]
         default: ip-dev
-  schedule:
-    - cron: '17 2 * * *'   # nightly drift detection (no auto-baseline changes)
+  # nightly drift detection disabled (2026-08): local-first workflow; restore
+  # the schedule trigger below to re-enable (no auto-baseline changes).
+  # schedule:
+  #   - cron: '17 2 * * *'
 
 permissions:
   contents: read

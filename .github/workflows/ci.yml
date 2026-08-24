@@ -2,10 +2,11 @@
 # and the repo-hygiene guard (no sub-repo source / nested .git / EDA artifacts).
 name: CI
 
+# CI disabled (2026-08): re-enable by restoring push/pull_request triggers.
+# Reason: local-first workflow -- aix source/scripts moved to the private
+# skill repo; make check + pre-commit run locally before every push.
 on:
-  pull_request:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
