@@ -100,7 +100,7 @@ aix tool schema|hwif|reg|core ...
 ## 4.1 环境初始化（首次使用）
 
 ```bash
-# 1. 下载 skill repo + 物化 skills（首次必须）
+# 1. 下载 skill repo + 物化 skills（首次必须；指纹缓存命中时自动跳过复制）
 uv run python bootstrap.py --ensure
 
 # 2. 初始化工作区（选择 profile）
@@ -113,6 +113,13 @@ uv run python bootstrap.py aix wf sync
 
 # 4. 验证状态
 uv run python bootstrap.py aix wf status
+```
+
+日常反复调用 `aix`（如脚本/回归内嵌多条命令）时可加 `--skip-materialize`
+复用已物化 skills、跳过物化子进程：
+
+```bash
+uv run python bootstrap.py --skip-materialize aix repo status skills
 ```
 
 **注意**：若 `sync` 后仍有仓库 MISSING，需手动 `git clone` 缺失仓库：
