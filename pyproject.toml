@@ -42,6 +42,7 @@ dev = [
     "mypy>=1.8",
     "pre-commit>=3.7",
 ]
+
 # 文档转换格式增强解析器（P2/P3 按需启用）
 doc-enhance = [
     "python-docx>=1.1",   # Word 深层结构：修订/批注/题注补充路径
@@ -49,6 +50,9 @@ doc-enhance = [
     "pandas>=2.0",        # Excel 规则数据区识别
     "markitdown",         # 快速路径与基准对照
 ]
+
+# PyPI 镜像源统一托管在项目级 `uv.toml`（index-url = 清华源），
+# 不在 pyproject 声明 [[tool.uv.index]]，避免与 uv.toml 冲突被忽略。
 
 [project.scripts]
 # `aix` 通过引导器委托：物化 canonical runtime（私有 skill repo）后运行。

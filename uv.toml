@@ -1,0 +1,4 @@
+# 项目级 uv 配置（git 跟踪，防止本机全局 uv.toml 的备用镜像把 lock 源改写）
+# 统一 PyPI 镜像源为清华源。index-url 直接替换默认源（优先级高于用户级
+# 全局配置），使 uv.lock 中的 registry URL 稳定为清华、不再按本机全局漂移。
+index-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
