@@ -16,6 +16,8 @@ description: CBB 设计：workflow 提供仓库管理（解析/临时场地/证�
 inputs:
   - cbb_vlnv
   - tool_profile
+  # tool_profile 用于声明可用工具链；skill 侧会先实测原生 EDA（vcs/dc_shell/formality/spyglass）
+  # 再判定 OPTIONAL_UNAVAILABLE——aix tool action 未注册 ≠ EDA 不可用。
 
 preconditions:
   lock_required: true
