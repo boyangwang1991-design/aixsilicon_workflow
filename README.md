@@ -1,28 +1,26 @@
 # AIXSILICON Workflow
 
-`aixsilicon_workflow` 是 AIXSILICON 硬件工程资产体系的 **多仓工作区控制面**。它不是新的源码汇总仓、镜像仓或最终 SoC 工程仓，而是统一解决以下六类问题：
+`aixsilicon_workflow` 是 AIXSILICON 硬件工程资产体系的 **多仓工作区控制面**。它的职责刻意保持轻量，只做三件事：
 
-1. 按清单把多个 Git 仓库下载到固定目录；
-2. 让每个子仓保持独立 Git 历史、分支、PR、Tag 和 Release；
-3. 用 Manifest 与 Lockfile 描述“需要哪些仓库”和“本次实际用了哪个提交”；
-4. 自动生成 FuseSoC libraries、工具配置与开发态本地覆盖；
-5. 执行跨仓依赖检查、影响分析、联合验证与发布协调；
-6. 为 Skill Suite 提供统一、可发现、可复现、可留证的执行环境。
+1. **维护 GitHub 仓库**：按清单下载各资产仓、保持独立 Git 历史、提供 `aix repo` / `aix wf sync` 等仓库管理入口；
+2. **提供工作空间**：通过 Manifest/Profile 定义开发场景，`bootstrap.py` 物化 skills，`uv` 管理统一 Python 环境；
+3. **提供工作原则与指导**：`AGENT.md`（Agent 工作方法）、`README.md`、`docs/`、`policies/`、`ownership-map.yaml` 固化工作原则与写入边界。
 
-> 统一材料入口见 [`docs/index.md`](docs/index.md)，跨仓路线图、统一任务台账与里程碑进度分别见 [`docs/roadmap.md`](docs/roadmap.md)、[`docs/todo.md`](docs/todo.md) 和 [`docs/progress.md`](docs/progress.md)。本文档覆盖框架结构、安装、快速开始与核心概念。
-> 优化后的目标架构见 [`docs/architecture/target-design.md`](docs/architecture/target-design.md)；当前运行配置仍遵循已接受的 v1 契约，待 ADR-0007/0008 审核后迁移。
+**领域研发方法由各 Skill 负责**：IP / CBB / SoC / HWIF 的设计、验证、门禁由对应 Skill（ip-development-suite / cbb-development-suite / soc-integration-suite / hwif-development-suite）约束；Workflow 只提供仓库管理与临时场地，不在本仓维护领域流程细节。
 
+> 统一材料入口见 [`docs/index.md`](docs/index.md)，安装与初始化见 [`docs/getting-started.md`](docs/getting-started.md)。
+>
 > **Skill 集中管理**：`aix` CLI 的源码/测试/脚本由私有 skill `aixsilicon-workspace-management` 统一管理；本仓库通过 [`bootstrap.py`](bootstrap.py)（纯标准库引导器）下载 skill repo 并把 skills 物化到 `/.roo/skills/`（git 忽略）后运行。首次使用：`uv sync` + `uv run python bootstrap.py --ensure`，之后 `uv run aix <cmd>` 或 `uv run python bootstrap.py aix <cmd>`。
 
 ![AIXSILICON 项目全景：Workflow 控制面协调十个独立资产仓，并通过设计、生成、验证、证据、审批、发布和消费形成闭环](docs/assets/project-panorama.png)
 
-全景图将项目分为控制面、十个平级资产仓和工程交付闭环：Workflow 通过 Manifest/Lock、Change Bundle 与 Flow/Gates 组织协作；EDA 只作为验证阶段的外部 Provider；Evidence 经人工审批后进入 Release 与 Catalog，并由消费反馈驱动下一轮工作。图中的连线用于解释职责和生命周期，不代替 [`manifests/default.yaml`](manifests/default.yaml)、[`ownership-map.yaml`](ownership-map.yaml) 或 [`workflows/`](workflows/) 中的精确依赖、所有权与执行定义。
+全景图将项目分为控制面、十个平级资产仓和工程交付闭环：Workflow 通过 Manifest/Lock 与 Flow 组织仓库协作；各资产仓保存 SSOT 与交付物；Skill 负责领域方法。图中的连线用于解释职责和生命周期，不代替 [`manifests/default.yaml`](manifests/default.yaml)、[`ownership-map.yaml`](ownership-map.yaml) 或 [`workflows/`](workflows/) 中的精确依赖、所有权与执行定义。
 
-## 推荐技术形态
+## 技术形态
 
-> **Manifest 驱动的多仓工作区 + 独立 Git Clone + 统一 Python CLI + FuseSoC 聚合配置 + Change Bundle + GitHub Actions 协调层**
+> **Manifest 驱动的多仓工作区 + 独立 Git Clone + 统一 Python CLI + FuseSoC 聚合配置 + GitHub Actions 协调层**
 
-默认不采用 Git Submodule。子仓统一克隆到 `repos/`，而 `repos/` 被父仓 `.gitignore` 完整忽略；父仓只版本化 Manifest、Lockfile、Schema、流程定义、公共 CI、脚本和文档。
+默认不采用 Git Submodule。子仓统一克隆到 `repos/`，而 `repos/` 被父仓 `.gitignore` 完整忽略；父仓只版本化 Manifest、Schema、流程定义、公共 CI、脚本、政策与文档。
 
 ## 仓库生态
 
@@ -39,104 +37,41 @@
 | skills | [`aixsilicon_skill_repo`](https://github.com/boyangwang1991-design/aixsilicon_skill_repo) | AI 辅助研发 Skill Suite（私有） | **私有** |
 | knowledge | [`aixsilicon_chipknowledge`](https://github.com/boyangwang1991-design/aixsilicon_chipknowledge) | 芯片研发知识库（方法论/术语/参考索引） | 开源 |
 
-> 仓库布局与分支策略见 [`manifests/default.yaml`](manifests/default.yaml)；工作区环境引导（uv/git/仓库清单/skills 物化）由私有 skill `workspace-bootstrap` 统一管理。
+> 仓库布局与分支策略见 [`manifests/default.yaml`](manifests/default.yaml)；工作区环境引导（uv/git/仓库清单/skills 物化）由私有 skill `aixsilicon-workspace-management` 统一管理。
 
-## 治理与命名规范（V0.2）
+## 治理与命名规范
 
-跨仓契约统一决议见 ADR 与配套规范（2026-08-13）：
-
-- **VLNV 统一 `aixsilicon:*`**（[`ADR-0003`](docs/adr/0003-unified-vlnv-namespace.md)）；CLI 二进制名保持 `aix`；
-- **单一 CLI 入口 + 插件组 `aixsilicon.commands`**（[`ADR-0004`](docs/adr/0004-cli-entry-and-plugin-registry.md)）：`aix tool` 由 `aixsilicon_tool_repo` 插件提供，未安装时显式 `OPTIONAL_UNAVAILABLE`；
-- **跨仓边界映射**（[`ADR-0005`](docs/adr/0005-cross-repo-boundary-map.md)）、**工具归属与迁移**（[`ADR-0006`](docs/adr/0006-tool-ownership-and-migration.md)）；
-- **Schema、仓库与工具归属**：[`docs/workflow/ownership.md`](docs/workflow/ownership.md)；
-- **成熟度、Gate 与发布**：[`docs/workflow/release.md`](docs/workflow/release.md)。
+- **VLNV 统一 `aixsilicon:*`**：由 pre-commit guard [`check_vlnv_namespace.py`](.roo/skills/aixsilicon-workspace-management/scripts/hooks/check_vlnv_namespace.py) 强制，policy [`dependency-policy.yaml`](policies/dependency-policy.yaml) 固化；CLI 二进制名保持 `aix`；
+- **单一 CLI 入口 + 插件组 `aixsilicon.commands`**：由 [`cli/registry.py`](.roo/skills/aixsilicon-workspace-management/src/aixworkflow/cli/registry.py) 插件发现实现，`aix tool` 由 `aixsilicon_tool_repo` 插件提供，未安装时显式 `OPTIONAL_UNAVAILABLE`；
+- **跨仓边界映射**：policy [`dependency-policy.yaml`](policies/dependency-policy.yaml) `dep-no-phantom-repo` 固化；**工具归属四类**见 [`docs/workflow/ownership.md`](docs/workflow/ownership.md)；
+- **Schema、仓库与工具归属**：[`docs/workflow/ownership.md`](docs/workflow/ownership.md)。
 
 ## 快速开始
 
-### 前置条件
-
-- Python 3.11+
-- Git 2.30+
-- 可选的 [FuseSoC](https://fusesoc.readthedocs.io/)（用于构建设计依赖）
-
-### 安装 CLI
+详见 [`docs/getting-started.md`](docs/getting-started.md)，核心命令：
 
 ```bash
-# 使用可编辑安装以在开发过程中生效
-python -m pip install -e ".[dev]"
+uv sync                                    # 安装依赖（唯一环境根 .venv）
+uv run python bootstrap.py --ensure        # 物化 skills
+uv run aix wf init --profile ip-dev        # 初始化工作区
+uv run aix wf sync                         # clone / fetch / checkout 全部所需仓库
+uv run aix wf status                       # 查看各仓状态
 
-# 或直接使用模块入口
-python -m aixworkflow --help
+# 单仓 Git 操作（子仓 repos/<id> 与父仓 workflow）
+uv run aix repo commit vip -m "feat: ..."  # 提交前先 git add
+uv run aix repo push vip
 ```
-
-### 初始化工作区并按 Profile 同步
-
-```bash
-# 初始化（首次执行自动创建 repos/ 与本地状态目录）
-aix wf init --profile ip-dev
-
-# 同步全部所需仓库（clone / fetch / checkout）
-aix wf sync
-
-# 只同步某个仓库
-aix wf sync --repo hwif
-
-# 切换到 SoC 集成 Profile 并重新同步
-aix wf sync --profile soc-integration
-
-# 按正式 Lockfile 重建
-aix wf sync --lock locks/releases/aix-bundle-1.0.0.lock.yaml
-```
-
-### 查看状态与诊断
-
-```bash
-aix wf status          # 汇总各仓状态（branch / HEAD / baseline / dirty / remote）
-aix wf status --dirty  # 只显示 dirty 的仓库
-aix wf doctor          # 环境与依赖诊断
-aix wf graph           # 输出依赖图
-aix wf diff --against locks/baseline.lock.yaml
-```
-
-### 生成解析锁
-
-```bash
-aix wf lock --output .aix/local.lock.yaml
-```
-
-### 单仓 Git 操作
-
-```bash
-# 子仓（repos/<id>，对应 manifest 中的仓库）
-aix repo status vip
-aix repo branch vip feature/apb-wait-state
-aix repo commit vip -m "feat(apb): support wait-state coverage"
-aix repo push vip
-aix repo shell vip
-
-# 父仓（workflow 控制面根目录，repo_id=workflow）
-aix repo status workflow
-aix repo commit workflow -m "feat(manifest): update profile"
-aix repo push workflow
-```
-
-`aix repo` 是安全的路径定位和检查包装，commit 只作用于指定仓。子仓 commit 不会让父 Workflow Repo 产生待提交内容；`aix repo commit` 不会自动 `git add`，提交前需先在目标仓内 `git add <files>`（父仓同理）。父仓建议顺序：`make check` 全绿 → `pre-commit run --all-files` 全绿 → `git add` → `aix repo commit workflow` → `aix repo push workflow`。
 
 ## 目录结构
 
 ```text
 aixsilicon_workflow/
-├── manifests/            # 各 Profile 工作区清单
-├── locks/                # baseline 与 release 锁文件
+├── manifests/            # 各 Profile 工作区清单（维护仓库/工作空间核心）
+├── workflows/            # Flow 定义（仓库管理/临时场地编排，薄流程）
+├── schemas/              # Manifest/Lock/Flow/Profile/Evidence JSON Schema
+├── policies/             # 依赖/兼容/分支/发布/证据/安全原则
 ├── overrides/            # 本地覆盖（local.yaml 被忽略）
-├── schemas/              # Manifest/Lock/Bundle/Flow/Profile/Evidence JSON Schema
-├── workflows/            # 跨仓 Flow 定义
-├── changesets/           # Change Bundle 目录
-├── policies/             # 依赖/兼容/分支/发布/证据/安全策略
-├── templates/            # 元数据、Bundle、Release、PR 模板
-├── src/aixworkflow/      # aix Python CLI
-├── tests/                # 单元 / 集成 / fixtures / golden
-├── docs/                 # 文档与 ADR
+├── docs/                 # Workflow 自身文档（index/getting-started/governance/ownership）
 ├── .github/              # Reusable workflows 与 actions
 │
 ├── repos/                # 运行时克隆的独立 Git 仓（完整忽略）
@@ -150,38 +85,18 @@ aixsilicon_workflow/
 
 | 对象 | 回答的问题 |
 |---|---|
-| [Workspace Manifest](docs/workflow/manifest.md) | 当前工作区需要克隆哪些 Git 仓库，放在哪里，使用何种开发分支或版本策略 |
-| Workspace Lockfile | 本次实际解析到了哪些 Git SHA、VLNV、工具版本和生成器版本 |
-| Local Override | 开发者本地临时替换（VIP 依赖未合入的 HWIF 分支等） |
-| Change Bundle | 本次跨仓变更由哪些分支/PR 组成，验证和合并顺序是什么 |
-| Flow | 每条流程的输入、Stage、Gate 和输出（DAG） |
-| Evidence | 任何结论如何被版本、工具、日志和报告重建 |
-
-## 质量 Gate（G0～G7）
-
-| Gate | 名称 | 内容 |
-|---|---|---|
-| G0 | Repository Hygiene | Schema 通过、路径无逃逸、无子仓源码、无 Secret/大文件 |
-| G1 | Workspace Resolution | required 仓可访问、remote 一致、SHA 可达 |
-| G2 | Dependency Integrity | DAG 无环、VLNV 无冲突、Catalog 一致 |
-| G3 | Contract Compatibility | HWIF Schema、Profile 兼容、无禁用行为 |
-| G4 | Build and Unit | Lint、编译、Unit Test、生成物可复现 |
-| G5 | Cross-repo Qualification | 代表性联合测试、影响分析无缺失 |
-| G6 | Evidence Completeness | Run Manifest、Log、Report、Hash 完整 |
-| G7 | Release Readiness | SemVer、CHANGELOG、SBOM、clean、批准完成 |
+| [Workspace Manifest](manifests/default.yaml) | 当前工作区需要克隆哪些 Git 仓库，放在哪里，使用何种开发分支或版本策略 |
+| Profile | 哪个开发场景启用哪些仓（`ip-dev` / `cbb-dev` / `soc-integration` / `minimal` / `all`） |
+| Local Override | 开发者本地临时替换（`overrides/local.yaml`，被忽略） |
+| Flow | 每条流程的输入、Stage、write_scope 和输出（仓库管理/临时场地编排） |
+| Skill | 领域研发方法与流程（ip/cbb/soc/hwif suite，私有、可选） |
 
 ## 文档
 
 - [统一文档中心](docs/index.md)
-- [架构文档](docs/architecture/README.md)
-- [Workflow 契约与实施材料](docs/workflow/README.md)
 - [Getting Started](docs/getting-started.md)
-- [Manifest 设计](docs/workflow/manifest.md)
-- [跨仓协作与 Change Bundle](docs/workflow/collaboration.md)
-- [发布与基线治理](docs/workflow/release.md)
-- [故障处理](docs/workflow/troubleshooting.md)
-- [架构决策记录 ADR](docs/adr/README.md)
-- [路线图](docs/roadmap.md) / [进度台账](docs/progress.md)
+- [文档与工作区治理](docs/governance.md)
+- [归属与写入边界](docs/workflow/ownership.md)
 
 ## 许可证
 

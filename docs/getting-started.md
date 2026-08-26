@@ -1,6 +1,6 @@
 # Getting Started
 
-本文档面向新成员，说明如何一次获得完整、正确的 AIXSILICON 开发环境。
+本文档面向新成员，说明如何获得 AIXSILICON 开发环境。Workflow 只负责三件事：**维护 GitHub 仓库、提供工作空间、提供工作原则与指导**。
 
 ## 前置条件
 
@@ -36,22 +36,19 @@ uv run python bootstrap.py aix wf init --profile ip-dev
 ```
 
 > 私有 skill 仓无权限时，`aix` 会提示先 clone skill repo（`OPTIONAL_UNAVAILABLE`），
-> 公共确定性流程仍可继续。
+> 公共仓库管理流程仍可继续。
 
 ## 3. 选择 Profile 并初始化
 
-> Profile 使用 ADR-0007 的 `include_repositories` 精确集合语义（`optional_repositories` 为可选附加，`aix wf sync` 也会同步它们）。各 Profile 的精确仓集与 typed 依赖见 [`architecture/target-design.md`](architecture/target-design.md) §4–5 和 [ADR-0007](adr/0007-typed-dependencies-and-explicit-profiles.md)。
-
-各 Profile 覆盖不同的开发场景：
+Profile 使用 `include_repositories` 精确集合语义（`optional_repositories` 为可选附加，`aix wf sync` 也会同步它们）。
 
 | Profile | 用途 |
 |---|---|
 | `minimal` | 最小编译所需（base 组） |
-| `ip-dev` | IP 设计验证开发 |
-| `cbb-dev` | CBB 设计验证开发 |
-| `dv-dev` | 验证环境开发 |
-| `soc-integration` | SoC 集成 |
-| `release` | 正式发布基线 |
+| `ip-dev` | IP 设计验证开发（流程由 ip-development-suite 约束） |
+| `cbb-dev` | CBB 设计验证开发（流程由 cbb-development-suite 约束） |
+| `soc-integration` | SoC 集成（流程由 soc-integration-suite 约束） |
+| `all` | 管理/审计，不作为普通开发环境 |
 
 ```bash
 aix wf init --profile ip-dev      # IP 设计验证开发
@@ -60,7 +57,7 @@ aix wf status                     # 查看各仓状态
 ```
 
 > `ip-dev` 会启用：HWIF、CBB、IP、DV Common、VIP、Tools、Catalog、Skills。
-> 若没有私有 Skill 仓库权限，会显示 `OPTIONAL_UNAVAILABLE`，公共确定性流程继续运行。
+> 若没有私有 Skill 仓库权限，会显示 `OPTIONAL_UNAVAILABLE`，公共仓库管理流程继续运行。
 
 ## 4. 单仓独立开发
 
@@ -80,11 +77,10 @@ aix repo push workflow
 - `aix repo commit` 只执行 `git commit -m`，不自动 `git add`，提交前需先在目标仓内 `git add <files>`（父仓同理）。
 - 父仓建议顺序：`make check` 全绿 → `pre-commit run --all-files` 全绿 → `git add` → `aix repo commit workflow` → `aix repo push workflow`。
 
-## 5. 生成 FuseSoC 配置与锁
+## 5. 生成 FuseSoC 配置
 
 ```bash
 aix wf fusesoc --generate
-aix wf lock -o .aix/local.lock.yaml
 # 生成：
 #   .aix/generated/fusesoc.conf
 #   .aix/generated/core-roots.txt
@@ -92,19 +88,7 @@ aix wf lock -o .aix/local.lock.yaml
 #   .aix/generated/dependency-graph.json
 ```
 
-## 6. 建立跨仓 Change Bundle
-
-一个功能跨多个仓库（如 HWIF/VIP/IP）时，用 Change Bundle 建立变更关系与合并顺序：
-
-```bash
-aix bundle create --from templates/change-bundle.yaml
-aix bundle validate CHG-2026-XXXX
-aix bundle status CHG-2026-XXXX
-```
-
-详见 [collaboration](workflow/collaboration.md)。
-
-## 7. 环境诊断
+## 6. 环境诊断
 
 ```bash
 aix wf doctor
@@ -117,9 +101,5 @@ aix wf doctor
 | `not cloned` | 先执行 `aix wf sync` |
 | `remote does not match manifest` | 检查该仓 remote 是否指向 approved URL |
 | `revision not reachable` | 确认分支/tag/commit 存在且已 fetch |
-| `dirty in release mode` | 先提交或清理再进入 release |
 | `OPTIONAL_UNAVAILABLE` | 私有 Skill 仓无权限，公共流程继续 |
 | override 显示 `NON-BASELINE` | 检查 `overrides/local.yaml` 与 `aix wf status` |
-| 发布被拒 | 确认 clean、无 local override、已固定 Lock |
-
-详见 [troubleshooting](workflow/troubleshooting.md)。

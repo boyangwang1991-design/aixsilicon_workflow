@@ -6,7 +6,7 @@ on:
     inputs:
       profile:
         type: choice
-        options: [minimal, ip-dev, cbb-dev, dv-dev, soc-integration, release]
+        options: [minimal, ip-dev, cbb-dev, soc-integration, all]
         default: ip-dev
   # nightly drift detection disabled (2026-08): local-first workflow; restore
   # the schedule trigger below to re-enable (no auto-baseline changes).
@@ -28,10 +28,10 @@ jobs:
         run: |
           pip install -e ".[dev]"
           pip install "fusesoc==2.4.*"
-      - name: Init + sync (baseline lock)
+      - name: Init + sync
         run: |
           aix wf init --profile "${{ inputs.profile || 'ip-dev' }}"
-          aix wf sync --lock locks/baseline.lock.yaml
+          aix wf sync
       - name: Doctor
         run: aix wf doctor
       - name: Generate FuseSoC config
@@ -41,8 +41,3 @@ jobs:
           set -euo pipefail
           fusesoc --cores-root repos core list > /dev/null
           echo "cores discovered under repos/"
-      - name: Report drift vs baseline lock
-        run: |
-          set +e
-          aix wf diff --against locks/baseline.lock.yaml
-          echo "NOTE: drift is reported, never auto-changed (plan.md §19.3)"

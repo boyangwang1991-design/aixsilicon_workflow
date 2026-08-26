@@ -17,19 +17,19 @@
     其他源 URL，`git checkout -- uv.lock` 还原并检查全局 uv.toml；环境一致性校验用
     `uv run --locked ...`。
 - **Skill 修改原则（aixsilicon-skill-repo 优先 + 重新物化）**：需要更新任何经物化到工作区的 Skill 内容（如 `.roo/skills/*/SKILL.md` 及其配套脚本/模板）时，必须先修改 aixsilicon-skill-repo 源仓 `repos/aixsilicon_skill_repo/skills/<skill-name>/` 下的对应文件，再执行 `uv run python bootstrap.py --ensure` 重新物化到工作区主目录；**禁止直接编辑 `.roo/skills/` 下的物化副本**（该目录被 git 忽略且每次 `--ensure` 会覆盖，直接改动会丢失且无法追踪）。
-- 责任链：**Skill 决定“如何理解与辅助”→ Workflow 决定“顺序与 Gate”→ Tool 负责“确定性执行”→ 资产仓保存 SSOT/交付 → Catalog 发布合格资产 → EDA 提供工程证据**。
-- 统一命名：VLNV 一律 `aixsilicon:*`（[`ADR-0003`](docs/adr/0003-unified-vlnv-namespace.md)）；CLI 单入口 `aix`（[`ADR-0004`](docs/adr/0004-cli-entry-and-plugin-registry.md)）。
+- 责任链：**Skill 决定“领域研发方法与流程”→ Workflow 决定“仓库生命周期/临时场地”→ Tool 负责“确定性执行”→ 资产仓保存 SSOT/交付 → Catalog 发布合格资产 → EDA 提供工程证据**。
+- 统一命名：VLNV 一律 `aixsilicon:*`（pre-commit guard [`check_vlnv_namespace.py`](.roo/skills/aixsilicon-workspace-management/scripts/hooks/check_vlnv_namespace.py) 强制）；CLI 单入口 `aix`（[`cli/registry.py`](.roo/skills/aixsilicon-workspace-management/src/aixworkflow/cli/registry.py) 插件发现）。
 
 ## 2. 开工前必读（按需渐进加载）
 
 | 场景 | 必读 |
 |---|---|
 | 任何任务前（快速） | [`README.md`](README.md)、[`docs/index.md`](docs/index.md)（统一入口） |
-| 规划/排期 | [`docs/roadmap.md`](docs/roadmap.md)、[`docs/todo.md`](docs/todo.md)、[`docs/progress.md`](docs/progress.md)、对应仓 `delivery.md` |
-| 跨仓契约/命名 | [`docs/adr/README.md`](docs/adr/README.md)、[`docs/workflow/ownership.md`](docs/workflow/ownership.md)、[`docs/workflow/release.md`](docs/workflow/release.md) |
+| 规划/排期 | 各 repo `delivery.md`（任务定义由各仓自行维护） |
+| 跨仓契约/命名 | [`docs/workflow/ownership.md`](docs/workflow/ownership.md)、[`policies/dependency-policy.yaml`](policies/dependency-policy.yaml) |
 | 工具归属 | [`docs/workflow/ownership.md`](docs/workflow/ownership.md)（T1 公共工具 / T2 单仓脚本 / T3 私有适配 / T4 项目脚本） |
 | 写入边界 | [`ownership-map.yaml`](ownership-map.yaml) |
-| 代码工程化 | [`docs/workflow/delivery.md`](docs/workflow/delivery.md) |
+| 工作原则 | [`docs/governance.md`](docs/governance.md)、[`policies/`](policies/) |
 
 ## 3. 任务分类与路由
 
@@ -37,7 +37,7 @@
 
 | 任务意图 | 主域 | 主落点 |
 |---|---|---|
-| 工作区/多仓同步/流程/发布协调 | workflow | 本仓（`manifests/ workflows/ policies/ changesets/`） |
+| 工作区/多仓同步/仓库管理 | workflow | 本仓（`manifests/ workflows/ policies/`） |
 | 接口契约/多视图 | HWIF | `repos/aixsilicon_hwif_repo` |
 | 可复用构件/PPA | CBB | `repos/aixsilicon_cbb_repo` |
 | IP 规格/SystemRDL/RTL/验证 | IP | `repos/aixsilicon_ip_repo` |
@@ -55,11 +55,10 @@
 
 ```bash
 # 工作区
-aix wf init --profile <profile>          # 初始化（minimal/ip-dev/cbb-dev/dv-dev/soc-integration/release/knowledge-dev/all）
+aix wf init --profile <profile>          # 初始化（minimal/ip-dev/cbb-dev/soc-integration/all）
 aix wf sync                              # clone/fetch/checkout（按当前 profile 同步仓库）
 aix wf status / aix wf doctor            # 状态 / 诊断
-aix wf lock                              # 生成 resolved lock（正式基线用 --mode release）
-aix wf diff --against locks/baseline.lock.yaml
+aix wf lock -o .aix/local.lock.yaml      # 本地解析锁（可选）
 aix wf graph                             # 依赖 DAG
 aix wf fusesoc --generate                # 生成 FuseSoC 聚合配置 + VLNV 索引
 aix wf run <flow>                        # 执行标准 flow（标准 action 集）
@@ -68,10 +67,9 @@ aix wf test --affected --repo <id>       # 影响分析
 # 单仓
 aix repo status <id> / diff / shell / branch / commit / push
 
-# 跨仓
-aix bundle create|validate|status <bundle>
+# 发布协调（workflow 职责；跨仓联合验证由 Skill 在临时场地完成）
 aix release prepare --asset <vlnv> --version <v>
-aix release publish  --asset <vlnv> --version <v> --lock <lock>   # 需 G7 guard + 人工批准
+aix release publish  --asset <vlnv> --version <v>   # 需人工批准
 
 # 确定性工具（由 aixsilicon_tool_repo 插件提供；未装时显式 OPTIONAL_UNAVAILABLE）
 aix tool schema|hwif|reg|core ...
@@ -135,20 +133,19 @@ git clone git@github.com:boyangwang1991-design/aixsilicon_<repo>.git repos/aixsi
 
 1. **理解与分类**：明确目标、涉及仓、交付物与 Gate（§3）。
 2. **上下文最小化**：只读本任务所需文档与文件，不无差别扫描全部仓库。
-3. **规划与影响**：跨仓/接口/发布类任务先写 Change Plan（可落为 `changesets/` Change Bundle）。
+3. **规划与影响**：跨仓/接口/发布类任务先明确各仓独立 PR 与联合验证场地，不静默扩大/缩小范围。
 4. **契约先行**：改动前确认 Schema 所有权（[`docs/workflow/ownership.md`](docs/workflow/ownership.md)）与 VLNV/命名（`aixsilicon:*`）。
 5. **确定性执行**：能用工具/脚本确定性生成的（CSR/HWIF/Core/Header/文档）就调用，不手工维护派生视图。
 6. **写入边界**：按 [`ownership-map.yaml`](ownership-map.yaml) 只写允许的 owner 仓与路径；私域（Skill/Foundry/PDK/商业 EDA）不写入公共仓。
 7. **证据与日志**：关键动作记录结构化结果/证据（run manifest、evidence index、run_log.md），可追溯。
-8. **门禁**：改动完成后对照 Gate（workflow G0–G7；skill suite G0–G5）验证，不凭摘要自证通过。
+8. **门禁**：改动完成后对照对应 Skill 的领域门禁（如 ip-development-suite G0–G5）与 workflow 仓库卫生（G0/G1）验证，不凭摘要自证通过。
 9. **回归验证**：收尾前跑 `make check` + `pre-commit run --all-files`，确保全绿。
 
-## 6. 跨仓协作（Change Bundle / Release）
+## 6. 跨仓协作（各仓独立 PR + 联合验证）
 
-- 跨多仓功能 → 建立 Change Bundle（`aix bundle create` → 填 repositories/merge_order → `validate`）。
-- 影响分析 → `aix wf test --affected`；依赖图不完整时**扩大测试范围**，不静默缩小。
-- 发布 → `aix release prepare`（G7 guard：dirty/override 阻断）→ 人工批准 → `publish`（幂等）。
-- 事件/CI 防递归：携带 `correlation_id` + `depth`（[`src/aixworkflow/github.py`](src/aixworkflow/github.py)）。
+- 跨多仓功能 → 各仓独立 PR，联合验证由对应 Skill 在临时场地完成；
+- 影响分析 → `aix wf test --affected`；依赖图不完整时**扩大测试范围**，不静默缩小；
+- 事件/CI 防递归：携带 `correlation_id` + `depth`（[`src/aixworkflow/github.py`](.roo/skills/aixsilicon-workspace-management/src/aixworkflow/github.py)）。
 
 ## 7. 质量与证据纪律
 
@@ -172,9 +169,9 @@ git clone git@github.com:boyangwang1991-design/aixsilicon_<repo>.git repos/aixsi
 | 需求 | 文档 |
 |---|---|
 | 我是谁/在哪 | [`README.md`](README.md)、[`docs/index.md`](docs/index.md)、[`docs/workflow/ownership.md`](docs/workflow/ownership.md) |
-| 下一步该建什么 | [`docs/roadmap.md`](docs/roadmap.md)、[`docs/todo.md`](docs/todo.md)、[`docs/progress.md`](docs/progress.md)、对应仓 `delivery.md` |
-| 跨仓边界/命名/工具 | [`docs/adr/README.md`](docs/adr/README.md)、[`docs/workflow/ownership.md`](docs/workflow/ownership.md) |
-| 成熟度/门禁 | [`docs/workflow/release.md`](docs/workflow/release.md)、[`docs/architecture/target-design.md`](docs/architecture/target-design.md) §8～9 |
+| 下一步该建什么 | 各 repo `delivery.md`（任务定义由各仓自行维护） |
+| 跨仓边界/命名/工具 | [`docs/workflow/ownership.md`](docs/workflow/ownership.md)、[`policies/dependency-policy.yaml`](policies/dependency-policy.yaml) |
+| 领域门禁/方法 | 对应 Skill（ip/cbb/soc/hwif suite，`repos/aixsilicon_skill_repo/skills/`） |
 | 具体 IP 研发方法 | skill_repo `skills/ip-development-suite/`（SKILL.md + artifact-contract） |
 
 ## 10. 完成定义（Definition of Done）
@@ -182,7 +179,7 @@ git clone git@github.com:boyangwang1991-design/aixsilicon_<repo>.git repos/aixsi
 - [ ] 变更落在正确的 owner 仓与路径，未越权写入；
 - [ ] VLNV/命名/Schema 符合统一契约（`aixsilicon:*`、单一 Owner）；
 - [ ] 需要确定性生成的产物由工具/脚本生成，未手工维护派生视图；
-- [ ] 跨仓变更已建立 Change Bundle 并校验 merge_order；
+- [ ] 跨仓变更按各仓独立 Review/merge，联合验证由对应 Skill 在临时场地完成；
 - [ ] 关键动作有结构化证据（run manifest / evidence / run_log）；
 - [ ] `make check` 与 `pre-commit run --all-files` 全绿；
-- [ ] 文档/plan/todo 与实现保持一致（发现不一致时同步修订）。
+- [ ] 文档与实现保持一致（发现不一致时同步修订）。

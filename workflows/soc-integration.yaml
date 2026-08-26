@@ -1,7 +1,18 @@
-# SoC 集成 Workflow
+# SoC 集成 Workflow（仓库管理 + 临时场地）
+#
+# 设计原则：SoC 集成的全部规范/流程/门禁由 soc-integration-suite skill 约束，
+# 由 skill 在临时工作区完成（资产选型 → 实例配置 → 地址/中断/CRG/Power → Top
+# 生成 → 软件派生 → 集成验证），并将交付件打包回 chip-<project>-soc 私有仓；
+# 本 workflow 只负责：
+#   1) 解析工作区（Manifest/Lock/Profile）；
+#   2) 提供 SoC 集成的临时场地（临时工作区校验/分配）；
+#   3) 委托 soc-integration-suite 在临时场地完成集成并提交
+#      （skill.* 为可选 action，未物化/未注册时 skipped 不阻断）；
+#   4) 汇总工作区证据索引。
+# 本 flow 不展开 asset-selection/topgen/connectivity-check 等 skill 内部 stage。
 schema_version: aix.flow/v1
 name: soc-integration
-description: SoC 集成主线：资产选型 → 实例配置 → 地址/中断/CRG/Power → Top 生成 → 软件派生 → 集成验证
+description: SoC 集成：workflow 提供仓库管理（解析/临时场地/证据），集成规范与流程由 soc-integration-suite 全部约束
 
 inputs:
   - soc_project
@@ -14,77 +25,32 @@ stages:
   - id: resolve
     uses: workspace.resolve
 
-  - id: asset-selection
+  # 准备并校验 SoC 集成的临时场地（工作区 clean/lock/profile）。
+  - id: workspace-prepare
     needs: [resolve]
-    uses: catalog.resolve
+    uses: workspace.resolve
     with:
-      project: <soc_project>
-
-  - id: instance-config
-    needs: [asset-selection]
-    uses: soc.schema-check
+      profile: <profile>
+      check_clean: true
     write_scope:
-      - {repo: chip-<soc_project>-soc, paths: [config, instances]}
+      - {repo: '*', paths: ['.aix']}
 
-  - id: address-space
-    needs: [instance-config]
-    uses: tool.address-gen
-
-  - id: interrupt
-    needs: [instance-config]
-    uses: tool.irq-gen
-
-  - id: clock-reset
-    needs: [instance-config]
-    uses: tool.crg-gen
-
-  - id: power-safety
-    needs: [instance-config]
-    uses: tool.power-check
-
-  - id: topgen
-    needs: [address-space, interrupt, clock-reset, power-safety]
-    uses: tool.top-gen
+  # 委托 soc-integration-suite 在临时场地完成集成并打包回 chip-<project>-soc 私有仓。
+  # skill.* 为可选 action：未物化时按 skipped 处理（不阻断），符合 ADR-0008。
+  - id: soc-integrate
+    needs: [workspace-prepare]
+    uses: skill.soc.integration
+    with:
+      soc_project: <soc_project>
+      suite: soc-integration-suite
+      mode: <full-flow|partial-task|review-only>
     write_scope:
-      - {repo: chip-<soc_project>-soc, paths: [generated]}
-
-  - id: sw-derive
-    needs: [topgen]
-    uses: tool.sw-gen
-    write_scope:
-      - {repo: sw, paths: [bsp, headers, dts]}
-
-  - id: connectivity-check
-    needs: [topgen]
-    uses: tool.connect-check
-
-  - id: build-sim
-    needs: [connectivity-check]
-    uses: fusesoc.target
-    with:
-      target: soc_top_sim
-
-  - id: boot-smoke
-    needs: [build-sim]
-    uses: eda.regression
-    with:
-      scope: boot-smoke
-
-  - id: baseline
-    needs: [boot-smoke]
-    uses: soc.baseline
-    with:
-      lock: <candidate.lock.yaml>
+      - {repo: '*', paths: ['.aix/generated', 'repos']}
 
   - id: evidence
-    needs: [topgen, connectivity-check, build-sim, boot-smoke, baseline]
+    needs: [soc-integrate]
     uses: evidence.index
 
 gates:
   - G0
   - G1
-  - G2
-  - G3
-  - G4
-  - G5
-  - G6

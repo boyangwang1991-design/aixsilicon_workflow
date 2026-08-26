@@ -9,7 +9,6 @@
 | `reusable-schema-check.yml` | YAML 事实 Schema 校验 |
 | `reusable-release-gate.yml` | G7 发布就绪 Gate |
 | `integration-baseline.yml` | 多仓 checkout + 兼容性 + 代表性回归 |
-| `change-bundle.yml` | Change Bundle PR heads 联合验证 |
 
 ## 使用方式（资产仓薄入口）
 

@@ -63,7 +63,7 @@ map:
   - asset: Manifest / Flow / Policy
     owner_repo: aixsilicon_workflow
     skill_write: 仅 Workflow 维护流程可写
-    allowed_paths: [manifests, workflows, policies, schemas, changesets]
+    allowed_paths: [manifests, workflows, policies, schemas]
 
   - asset: Catalog 资产条目
     owner_repo: aixsilicon_catalog_repo
@@ -72,7 +72,7 @@ map:
 
 # Schema 所有权（详见 docs/workflow/ownership.md）—— 每个事实域只有一个 Owner 仓
 schema_ownership:
-  - domain: workspace-manifest / lock / flow / change-bundle / tool-profile / evidence
+  - domain: workspace-manifest / lock / flow / tool-profile
     owner_repo: aixsilicon_workflow
   - domain: interface-contract / profile / binding / compatibility
     owner_repo: aixsilicon_hwif_repo

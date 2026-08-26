@@ -1,7 +1,17 @@
-# IP 设计验证 Workflow
+# IP 设计 Workflow（仓库管理 + 临时场地）
+#
+# 设计原则：IP 设计的全部规范/流程约束在 ip-development-suite skill
+# （00→18 子 skill + G0–G5 门禁），由 skill 在临时工作区完成设计，
+# 并将交付件打包回 IP 仓、提交 GitHub；本 workflow 只负责：
+#   1) 解析工作区（Manifest/Lock/Profile）；
+#   2) 提供 IP 设计的临时场地（临时工作区校验/分配）；
+#   3) 委托 ip-development-suite 在临时场地完成设计并提交
+#      （skill.* 为可选 action，未物化/未注册时 skipped 不阻断）；
+#   4) 汇总工作区证据索引。
+# 本 flow 不再展开 spec/csr/rtl/lint/regression/ppa 等 skill 内部 stage。
 schema_version: aix.flow/v1
-name: ip-design
-description: IP 开发主线：规格 → 接口/CSR → RTL → 静态检查 → 验证 → 实现评估
+name: ip-development
+description: IP 设计：workflow 提供仓库管理（解析/临时场地/证据），设计规范与流程由 ip-development-suite 全部约束
 
 inputs:
   - ip_name
@@ -14,58 +24,33 @@ stages:
   - id: resolve
     uses: workspace.resolve
 
-  - id: spec
+  # 准备并校验 IP 设计的临时场地（工作区 clean/lock/profile），
+  # workflow 只负责场地，不展开任何设计阶段。
+  - id: workspace-prepare
     needs: [resolve]
-    uses: skill.ip.spec
-    write_scope:
-      - {repo: ip, paths: [metadata, docs, testplan]}
-
-  - id: contract
-    needs: [spec]
-    uses: hwif.compatibility-check
-
-  - id: csr
-    needs: [spec]
-    uses: tool.reg-gen
-    write_scope:
-      - {repo: ip, paths: [csr, rtl, dv]}
-
-  - id: rtl
-    needs: [contract, csr]
-    uses: skill.ip.rtl
-    write_scope:
-      - {repo: ip, paths: [rtl]}
-
-  - id: lint
-    needs: [rtl]
-    uses: fusesoc.target
+    uses: workspace.resolve
     with:
-      target: lint
+      profile: <profile>
+      check_clean: true
+    write_scope:
+      - {repo: '*', paths: ['.aix']}
 
-  - id: unit
-    needs: [lint]
-    uses: fusesoc.target
+  # 委托 ip-development-suite 在临时场地完成设计并打包回 IP 仓、提交 GitHub。
+  # skill.* 为可选 action：未物化时按 skipped 处理（不阻断），符合 ADR-0008。
+  - id: ip-design
+    needs: [workspace-prepare]
+    uses: skill.ip.design
     with:
-      target: unit_sim
-
-  - id: regression
-    needs: [unit]
-    uses: eda.regression
-
-  - id: ppa
-    needs: [regression]
-    uses: eda.synthesis
-    with:
-      profile: <tech-profile>
+      ip: <ip_name>
+      suite: ip-development-suite
+      mode: <full-flow|partial-task|review-only>
+    write_scope:
+      - {repo: '*', paths: ['.aix/generated', 'repos']}
 
   - id: evidence
-    needs: [lint, unit, regression, ppa]
+    needs: [ip-design]
     uses: evidence.index
 
 gates:
   - G0
   - G1
-  - G2
-  - G3
-  - G4
-  - G6

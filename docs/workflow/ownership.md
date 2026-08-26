@@ -8,7 +8,7 @@
 
 | 事实域 | Owner |
 |---|---|
-| Workspace Manifest/Lock、Flow、Change Bundle、Tool Profile、Evidence | `aixsilicon_workflow` |
+| Workspace Manifest/Lock、Flow、Tool Profile | `aixsilicon_workflow` |
 | 接口 Contract/Profile/Binding/Compatibility | `aixsilicon_hwif_repo` |
 | CBB 元数据、参数和结果 | `aixsilicon_cbb_repo` |
 | 完整 IP 交付内部契约 | `aixsilicon_ip_repo` |
@@ -39,7 +39,7 @@ Breaking Schema 变更必须升 major、提供迁移路径并更新消费者兼�
 | skills | `aixsilicon_skill_repo` | skill | private/optional |
 | knowledge | `aixsilicon_chipknowledge` | knowledge | public |
 
-候选 `techlib/model/sw/reference-soc` 不属于当前基线；达到 [`../architecture/repos.md`](../architecture/repos.md) 的建仓条件后，通过 ADR、Manifest 和 ownership map 一次性登记。
+候选 `techlib/model/sw/reference-soc` 不属于当前基线；达到建仓条件后，通过 Manifest 和 ownership map 一次性登记（仓库清单以 [`../../manifests/default.yaml`](../../manifests/default.yaml) 为准）。
 
 ## 3. 工具四类归属
 
@@ -66,5 +66,5 @@ Breaking Schema 变更必须升 major、提供迁移路径并更新消费者兼�
 1. Flow 用 `write_scope` 声明计划写入范围；
 2. ownership map 验证 Owner 与路径；
 3. action/provider 返回结构化结果，版本/hash 进入 Lock/Evidence；
-4. 跨仓修改走 Change Bundle 和独立 PR；
-5. 新事实域、新仓或工具类别变化需同步 ADR、Manifest、ownership map 和本文。
+4. 跨仓修改各仓走独立 PR，联合验证由对应 Skill 在临时场地完成；
+5. 新事实域、新仓或工具类别变化需同步 Manifest、ownership map 和本文。

@@ -165,7 +165,10 @@ repositories:
 
 # ADR-0007 exact Profile：include_repositories 为精确集合（优先），
 # optional_repositories 为可选附加（不视为 required）。
-# 旧 include_groups 已迁移为精确集合（target-design §4 目标）。
+# 设计原则：IP/CBB/SoC 的具体流程与门禁由对应 Skill（ip-development-suite /
+# cbb-development-suite / soc-integration-suite）负责；Workflow 只提供仓库管理与
+# 临时场地，故只保留开发场景 Profile（ip-dev / cbb-dev / soc-integration）及
+# 运维基线（minimal / all）。
 profiles:
   minimal:
     include_repositories: [hwif, tools]
@@ -175,19 +178,8 @@ profiles:
   cbb-dev:
     include_repositories: [hwif, cbb, dv-common, tools]
     optional_repositories: [vip, catalog, skills]
-  dv-dev:
-    include_repositories: [hwif, dv-common, vip, tools]
-    # vip-development workflow 的 representative-regression / system-spotcheck
-    # 引用 cbb/ip（representative-cbb-ip / soc-system-spotcheck），故作为可选
-    # 附加仓库纳入 sync 更新，不改变必需闭包（ADR-0007 REV-1）。
-    optional_repositories: [cbb, ip, skills]
   soc-integration:
     include_repositories: [hwif, cbb, ip, dv-common, vip, tools, catalog, soc-integration]
-    optional_repositories: [skills]
-  release:
-    include_repositories: [hwif, cbb, ip, dv-common, vip, tools, catalog, soc-integration]
-  knowledge-dev:
-    include_repositories: [knowledge]
     optional_repositories: [skills]
   all:
     include_repositories: [hwif, cbb, ip, dv-common, vip, tools, catalog, soc-integration, knowledge]

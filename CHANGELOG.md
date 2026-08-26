@@ -36,5 +36,4 @@
 ### 计划（后续阶段）
 
 - [ ] Flow action 真实实现（fusesoc.target / eda.regression / hwif.compatibility-check 等）。
-- [ ] Change Bundle PR refs 联合 checkout。
 - [ ] 发布协调、SBOM、签名与 Catalog 更新 PR。

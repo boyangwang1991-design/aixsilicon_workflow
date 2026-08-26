@@ -7,8 +7,8 @@
 | 文件 | 用途 | 插入位置 | 尺寸 |
 |---|---|---|---|
 | [`documentation-map.png`](documentation-map.png) | 解释文档五层结构与阅读关系 | `docs/index.md` | 1672×941 |
-| [`control-plane-ecosystem.png`](control-plane-ecosystem.png) | 解释 Workflow、Tools、独立资产仓、EDA、Evidence 与 Catalog 的关系 | `docs/architecture/overview.md` | 1672×941 |
-| [`evidence-release-lifecycle.png`](evidence-release-lifecycle.png) | 解释从 Manifest/Lock 到 Gate/Evidence/人工批准/发布的闭环 | `docs/workflow/release.md` | 1672×941 |
+| [`control-plane-ecosystem.png`](control-plane-ecosystem.png) | 解释 Workflow、Tools、独立资产仓、EDA、Evidence 与 Catalog 的关系 | 根 `README.md` | 1672×941 |
+| [`evidence-release-lifecycle.png`](evidence-release-lifecycle.png) | 解释从 Manifest/Lock 到 Gate/Evidence/人工批准/发布的闭环 | 根 `README.md` | 1672×941 |
 | [`project-panorama.png`](project-panorama.png) | 解释 Workflow 控制面、十个独立资产仓与端到端交付闭环 | 根 `README.md` | 1672×941 |
 
 ## 生成记录

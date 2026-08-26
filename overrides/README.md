@@ -8,7 +8,7 @@ Local Override 让开发者临时覆盖某个仓库的分支，例如“VIP 暂�
 - CLI 状态页必须显著显示 `NON-BASELINE / OVERRIDDEN`；
 - Evidence 和 Run Manifest 必须记录实际 SHA，不能只记录分支名；
 - Release Gate 默认拒绝存在 local override；
-- 需要团队共享的跨仓变更改用 **Change Bundle**，而不是提交个人 override。
+- 需要团队共享的跨仓变更在各仓走独立 PR，不提交个人 override。
 
 ## 示例
 

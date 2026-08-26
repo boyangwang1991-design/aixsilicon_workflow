@@ -1,0 +1,55 @@
+# CBB 设计 Workflow（仓库管理 + 临时场地）
+#
+# 设计原则：CBB 设计的全部规范/流程/门禁由 cbb-development-suite skill 约束，
+# 由 skill 在临时工作区完成设计/验证（参数空间、Formal/Simulation、PPA Sweep、
+# Qualification），并将交付件打包回 CBB 仓、提交 GitHub；本 workflow 只负责：
+#   1) 解析工作区（Manifest/Lock/Profile）；
+#   2) 提供 CBB 设计的临时场地（临时工作区校验/分配）；
+#   3) 委托 cbb skill 在临时场地完成设计并提交
+#      （skill.* 为可选 action，未物化/未注册时 skipped 不阻断）；
+#   4) 汇总工作区证据索引。
+# 本 flow 不展开参数矩阵/PPA 等 skill 内部 stage。
+schema_version: aix.flow/v1
+name: cbb-development
+description: CBB 设计：workflow 提供仓库管理（解析/临时场地/证据），设计规范与流程由 cbb-development-suite 全部约束
+
+inputs:
+  - cbb_vlnv
+  - tool_profile
+
+preconditions:
+  lock_required: true
+
+stages:
+  - id: resolve
+    uses: workspace.resolve
+
+  # 准备并校验 CBB 设计的临时场地（工作区 clean/lock/profile）。
+  - id: workspace-prepare
+    needs: [resolve]
+    uses: workspace.resolve
+    with:
+      profile: <profile>
+      check_clean: true
+    write_scope:
+      - {repo: '*', paths: ['.aix']}
+
+  # 委托 cbb-development-suite 在临时场地完成设计/验证并打包回 CBB 仓、提交 GitHub。
+  # skill.* 为可选 action：未物化时按 skipped 处理（不阻断），符合 ADR-0008。
+  - id: cbb-design
+    needs: [workspace-prepare]
+    uses: skill.cbb.design
+    with:
+      cbb_vlnv: <cbb_vlnv>
+      suite: cbb-development-suite
+      mode: <full-flow|partial-task|review-only>
+    write_scope:
+      - {repo: '*', paths: ['.aix/generated', 'repos']}
+
+  - id: evidence
+    needs: [cbb-design]
+    uses: evidence.index
+
+gates:
+  - G0
+  - G1
