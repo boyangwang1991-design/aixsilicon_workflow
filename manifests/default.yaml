@@ -177,7 +177,10 @@ profiles:
     optional_repositories: [vip, catalog, skills]
   dv-dev:
     include_repositories: [hwif, dv-common, vip, tools]
-    optional_repositories: [skills]
+    # vip-development workflow 的 representative-regression / system-spotcheck
+    # 引用 cbb/ip（representative-cbb-ip / soc-system-spotcheck），故作为可选
+    # 附加仓库纳入 sync 更新，不改变必需闭包（ADR-0007 REV-1）。
+    optional_repositories: [cbb, ip, skills]
   soc-integration:
     include_repositories: [hwif, cbb, ip, dv-common, vip, tools, catalog, soc-integration]
     optional_repositories: [skills]
