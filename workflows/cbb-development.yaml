@@ -16,8 +16,14 @@ description: CBB 设计：workflow 提供仓库管理（解析/临时场地/证�
 inputs:
   - cbb_vlnv
   - tool_profile
-  # tool_profile 用于声明可用工具链；skill 侧会先实测原生 EDA（vcs/dc_shell/formality/spyglass）
-  # 再判定 OPTIONAL_UNAVAILABLE——aix tool action 未注册 ≠ EDA 不可用。
+  # tool_profile 声明可用工具链（如 vcs/dc_shell/formality/spyglass/verilator）。
+  # 可用性判定契约（workflow × skill）：
+  #   - skill 侧【先实测原生 EDA】（command -v/PATH 探测），再判定 OPTIONAL_UNAVAILABLE；
+  #   - aix tool action 未注册 ≠ EDA 不可用（action 是 workflow 确定性插件，非工具本体）；
+  #   - 原生工具确认缺失 → 该阶段 OPTIONAL_UNAVAILABLE（不伪造通过），其它阶段继续；
+  #   - 判定结果写入 run_log（--status blocked + 根因），供 evidence/gates 汇总。
+  # Loop 选择：workflow 依据 cbb_class+risk+change_type 选 fast/standard/qualification；
+  #           skill 可上调，不无依据下调（见 cbb-development-suite SKILL.md）。
 
 preconditions:
   lock_required: true
@@ -52,6 +58,52 @@ stages:
     needs: [cbb-design]
     uses: evidence.index
 
+# 门禁（G0-G8，与 cbb-development-suite 生命周期对齐）。
+# 快速拦截映射：workflow 仅做门禁结果汇总与传导，不替代 skill 内部判定；
+# 每个 gate 对应 skill 阶段产物/证据（见 cbb-development-suite SKILL.md 生命周期 Gate 表）。
 gates:
-  - G0
-  - G1
+  - id: G0
+    name: intake
+    requires: [cbb-design]        # skill.design 返回 intake 结论
+    fails_when: [边界未判定, 无消费者, 未查重]
+  - id: G1
+    name: contract
+    requires: [cbb-design]        # cbb.yaml/behavior.yaml/rtm
+    fails_when: [check 非 0, rtm 非法, 约束求值失败]
+  - id: G2
+    name: architecture
+    requires: [cbb-design]        # design.md/profiles.yaml
+    fails_when: [profile 无 Use Case, 多实现契约不一致]
+  - id: G3
+    name: rtl_static
+    requires: [cbb-design]        # compile/elab/lint 证据（evidence/g3_static）
+    fails_when: [编译失败, lint 0 已 fail, 生成物不一致]
+    optional: true                # 原生 EDA 缺失时由 skill 决定继续/降级
+  - id: G4
+    name: functional
+    requires: [cbb-design]        # 仿真/Formal/负向/变异证据（evidence/g4_functional）
+    fails_when: [必选参数点未过, 断言变异无效, 未解释失败]
+  - id: G5
+    name: config_space
+    requires: [cbb-design]        # configs/（mandatory/boundary/pairwise/negative）
+    fails_when: [配置集缺失, 非法组合未拦截]
+  - id: G6
+    name: ppa
+    requires: [cbb-design]        # characterization/plan.yaml + evidence/ppa（如有）
+    fails_when: [无上下文绑定却宣称 E2+, 回归退化]
+    optional: true                # 无标准单元库/PDK → OPTIONAL_UNAVAILABLE（E0），不阻断 G7 汇总
+  - id: G7
+    name: qualification
+    requires: [cbb-design]
+    fails_when: [支持矩阵与验证矩阵不一致, waiver 无失效条件]
+  - id: G8
+    name: release
+    requires: [cbb-design]
+    fails_when: [SemVer 缺失, artifact hash 未固化]
+    optional: true                # release 建议由 skill 输出，正式发布需人工批准
+
+# blocked 传导契约：
+#   仅"上游行为依赖"的 gate 会阻断下游（如 G0 未过 → 不进入 C1；G1 未过 → 不进入 C2）。
+#   资源缺失类（G3/G6 OPTIONAL_UNAVAILABLE）**不阻断**功能证据阶段（G4/G5），
+#   而是在 G7 Qualification 以 waiver 汇总（owner/范围/替代证据/失效条件），
+#   并禁止把缺失项自封 verified/qualified（skill 最多返回 needs_verification）。
