@@ -107,14 +107,20 @@ aix wf lock --output .aix/local.lock.yaml
 ### 单仓 Git 操作
 
 ```bash
+# 子仓（repos/<id>，对应 manifest 中的仓库）
 aix repo status vip
 aix repo branch vip feature/apb-wait-state
 aix repo commit vip -m "feat(apb): support wait-state coverage"
 aix repo push vip
 aix repo shell vip
+
+# 父仓（workflow 控制面根目录，repo_id=workflow）
+aix repo status workflow
+aix repo commit workflow -m "feat(manifest): update profile"
+aix repo push workflow
 ```
 
-`aix repo` 只是安全的路径定位和检查包装；commit 只作用于指定子仓，父 Workflow Repo 不会因子仓 commit 产生待提交内容。
+`aix repo` 是安全的路径定位和检查包装，commit 只作用于指定仓。子仓 commit 不会让父 Workflow Repo 产生待提交内容；`aix repo commit` 不会自动 `git add`，提交前需先在目标仓内 `git add <files>`（父仓同理）。父仓建议顺序：`make check` 全绿 → `pre-commit run --all-files` 全绿 → `git add` → `aix repo commit workflow` → `aix repo push workflow`。
 
 ## 目录结构
 

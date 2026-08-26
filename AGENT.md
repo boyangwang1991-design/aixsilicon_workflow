@@ -83,8 +83,8 @@ aix tool schema|hwif|reg|core ...
     禁止在 `repos/*` 内直接 `git add/commit/push`。注意：`aix repo commit` 只执行
     `git commit -m`（不会自动 `git add`），提交前需先在子仓内 `git add <files>`；
     git 层的 pre-commit hook 会在 commit 时自动运行。
-  - 父仓（workflow 控制面）提交允许普通 git，但**推荐** `aix repo` 保持统一审计；
-    父仓提交顺序：`make check` 全绿 → `pre-commit run --all-files` 全绿 → `git add <files>` → `git commit` → `git push`。
+  - 父仓（workflow 控制面）git 操作统一入口：`aix repo status|diff|branch|commit|push workflow`（`repo_id=workflow` 映射到工作区根）。父仓提交顺序：`make check` 全绿 → `pre-commit run --all-files` 全绿 → `git add <files>` → `aix repo commit workflow -m "..."` → `aix repo push workflow`。
+    注：父仓的 `git add` 仍需普通 git 执行（`aix repo commit` 不自动 add）；临时诊断可走普通 git，需在 run_log 注明。
   - **违规示例（Do NOT）**：`git -C repos/xxx commit -m ...`、`git -C repos/xxx push origin main`、
     用 `git status`/`git diff` 代替 `aix repo status`/`aix repo diff` 作为子仓状态证据来源。
   - 唯一豁免：`aix` CLI 未提供且无法注册 action 的临时性诊断（需在 run_log 注明原因）。

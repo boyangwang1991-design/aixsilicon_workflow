@@ -40,7 +40,7 @@ uv run python bootstrap.py aix wf init --profile ip-dev
 
 ## 3. 选择 Profile 并初始化
 
-> 当前命令仍使用 Manifest v1 的 `include_groups` 语义。现有 `minimal` 和各开发 Profile 启用范围偏大；优化目标与兼容迁移见 [`architecture/target-design.md`](architecture/target-design.md) §4 和 [ADR-0007](adr/0007-typed-dependencies-and-explicit-profiles.md)。在 ADR 落地前，下表描述的是当前运行行为，不代表目标闭包。
+> Profile 使用 ADR-0007 的 `include_repositories` 精确集合语义（`optional_repositories` 为可选附加，`aix wf sync` 也会同步它们）。各 Profile 的精确仓集与 typed 依赖见 [`architecture/target-design.md`](architecture/target-design.md) §4–5 和 [ADR-0007](adr/0007-typed-dependencies-and-explicit-profiles.md)。
 
 各 Profile 覆盖不同的开发场景：
 
@@ -65,12 +65,20 @@ aix wf status                     # 查看各仓状态
 ## 4. 单仓独立开发
 
 ```bash
+# 子仓（repos/<id>）
 aix repo branch vip feature/my-change
-aix repo commit vip -m "feat: ..."
+aix repo commit vip -m "feat: ..."     # commit 前先在子仓内 git add
 aix repo push vip
+
+# 父仓（workflow 控制面根目录，repo_id=workflow）
+aix repo status workflow
+aix repo commit workflow -m "feat: ..."
+aix repo push workflow
 ```
 
-父仓 `git status` 保持 clean——子仓提交不会污染 Workflow 仓库。
+- 子仓提交不会污染 Workflow 仓库（`repos/` 整体忽略）。
+- `aix repo commit` 只执行 `git commit -m`，不自动 `git add`，提交前需先在目标仓内 `git add <files>`（父仓同理）。
+- 父仓建议顺序：`make check` 全绿 → `pre-commit run --all-files` 全绿 → `git add` → `aix repo commit workflow` → `aix repo push workflow`。
 
 ## 5. 生成 FuseSoC 配置与锁
 
