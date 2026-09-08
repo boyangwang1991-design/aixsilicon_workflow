@@ -22,3 +22,14 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
   与本次改动无关 | INFO | 源仓基线 pre-existing
 - `2026-09-08 03:16:13` | **workflow / 校验** | `pytest scripts/tests` 全绿 | PASS |
   19 passed
+- `2026-09-08 03:31:04` | **skill-repo / ip-development-suite** | 固化核心原则 3：
+  四份文档职责边界切干净（LRS=WHAT / HLD=ARCH / LLD=HOW / VPLAN=HOW TO VERIFY）。
+  修复越界：LRS 5.4 子模块划分→功能能力概述；HLD 16.2 RTL 实现约束→架构级约束、
+  17 删除断言建议；LLD 7.2 验证要点→设计验证关注点（给 VPLAN）、附录D 验证用例→
+  关注点摘要、修复 06_verification.md 断链；VPLAN 补充不包含 RTL 实现设计声明 | PASS |
+  源仓 commit `346495f569fd`；9 个 Markdown 文档
+- `2026-09-08 03:31:12` | **workflow / 物化** | `bootstrap.py --ensure` 重新物化
+  skills（源仓 head 更新触发全量复制） | PASS | materialize OK 11 skill(s)
+- `2026-09-08 03:30:41` | **workflow / 校验** | `pytest scripts/tests` 全绿；
+  `validate_suite.py` 仅存预先存在基线差异（expected 23 found 26），与本次改动无关 | PASS |
+  19 passed
