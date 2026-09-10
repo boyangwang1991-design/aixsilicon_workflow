@@ -6,6 +6,14 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 
 格式：`时间(UTC)` | 阶段 | 动作 | 结果 | 证据/哈希
 
+- `2026-09-10` | **workflow / 协作文档** | 核对 Manifest、三条 Flow、六类核心资产仓和 canonical suite；新增架构、仓库与技能地图、交付流程、操作手册、当前限制五篇文档及三张 Mermaid 图，更新导航 | PASS |
+  `docs/index.md` 为入口；11 个 Markdown 文件、109 个本地链接及代码围栏检查无错误；
+  `make check`（根既有 uv 环境、`--no-sync`）通过：ruff、6 个 Schema parity、124 项测试；
+  `pre-commit run --all-files` 全通过。未重新同步依赖或证明 lock 安装一致性，未运行领域 EDA。
+  doctor 通过；IP/CBB/SoC preflight 均因 required 领域 provider 未注册而 BLOCKED，已如实记录。
+  初始普通 git status 仅用于读取工作方法前的只读基线诊断；后续正式状态经 aix。
+  沙箱 uv 输出后收尾阻塞，经授权在沙箱外完成诊断与验证；未修改资产仓实现、未提交或发布。
+
 - `2026-09-10` | **workflow / 全仓提交准备** | 用户授权将全部改动提交到 GitHub；
   范围为 skills、cbb、ip、workflow，各仓保留 main 分支，使用 aix repo commit/push。
   make check、IP/CBB 106 项回归、两套 suite validator、CBB/IP 索引和 README 同步检查通过。

@@ -4,6 +4,11 @@
 
 ## 资产清单
 
+2026-09-10 文档更新：当前正文新增图采用 Mermaid，直接保存在
+`docs/workflow/architecture.md`（职责流、资产消费关系）与 `docs/workflow/lifecycle.md`（交付流程）。
+下表是历史位图资产用途记录，除项目全景图外，不表示当前仍在所列页面引用。
+历史图片中的文档层次或自动化闭环不能用来判断当前能力；以新正文及 `docs/workflow/current-state.md` 为准。
+
 | 文件 | 用途 | 插入位置 | 尺寸 |
 |---|---|---|---|
 | [`documentation-map.png`](documentation-map.png) | 解释文档五层结构与阅读关系 | `docs/index.md` | 1672×941 |

@@ -21,6 +21,7 @@
 | HWIF README 指向已不存在的 workflow 域文档/任务表 | 新导航直接链接仓内指南与 suite，不恢复第二份领域规范或中央任务表 | HWIF 文档 owner |
 | VIP README 仍提及 `vip-repo-maintainer`，实际主入口是 `vip-development-suite` | 以当前存在的套件及子 skill 为入口；registry 与套件生命周期状态不能机械等同 | VIP + Skill owner |
 | IP README 部分历史段落说 planned 无目录，与当前允许开发目录的校验不一致 | planned 目录不代表 implemented；按当前校验和交接契约处理 | IP owner |
+| CBB README 脚本的 `--check` 仍传入 `dry_run=False` | 不作为只读检查入口；需修复参数传递并添加不写文件回归后再纳入巡检 | CBB owner |
 | SoC/VIP 独立工作区示例列出局部 `.venv` | 在本多仓 workflow 内仍统一用根 uv 环境；独立工程示例不能直接套入本地多仓布局 | Skill owner |
 | Tool 归属政策与部分套件自带确定性脚本并存 | 先使用实际已实现入口，不宣称所有能力已迁到 `aix tool` | Tools + Skill owner |
 | IP SEC-015 的 registry 名称/版本与工作区包身份不同 | 保留 planned 告警；交付前由 owner 决定对齐还是拆分，不能自动重命名或升级状态 | IP owner |

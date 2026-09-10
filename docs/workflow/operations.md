@@ -77,8 +77,9 @@ CBB 替换为 `cbb-development`、`cbb-dev` 和 `cbb_vlnv`；SoC 替换为 `soc-
 uv run python repos/aixsilicon_ip_repo/scripts/build_ip_registry.py --check-source
 uv run python repos/aixsilicon_ip_repo/scripts/update_registry_readme.py --check
 uv run python repos/aixsilicon_cbb_repo/scripts/build_cbb_structure.py
-uv run python repos/aixsilicon_cbb_repo/scripts/update_registry_readme.py --check
 ```
+
+CBB README 刷新脚本当前的 `--check` 仍会调用写入逻辑，不列入只读巡检命令；修复前应在隔离副本中核对，不能仅凭参数名称假设无副作用。
 
 不要从历史 README 猜测 FuseSoC VLNV/target；先生成聚合配置并核查资产实际 `.core`。
 HWIF/VIP 的确定性入口及参数查看 [套件地图](repositories-and-skills.md)，正式运行前读取对应子 skill。
