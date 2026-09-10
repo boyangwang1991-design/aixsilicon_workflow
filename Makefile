@@ -8,16 +8,17 @@
 
 PYTHON ?= uv run python
 UV     ?= uv
-BOOTSTRAP := $(PYTHON) bootstrap.py --ensure
-SKILL_DIR := .roo/skills/aixsilicon-workspace-management
+AGENT_DIR ?= $(if $(AIX_AGENT_DIR),$(AIX_AGENT_DIR),.roo)
+BOOTSTRAP := $(PYTHON) bootstrap.py --agent-dir $(AGENT_DIR) --ensure
+SKILL_DIR := $(AGENT_DIR)/skills/aixsilicon-workspace-management
 
-.PHONY: install bootstrap test lint format check coverage schema clean help
+.PHONY: install bootstrap test lint format check coverage schema schema-check clean help
 
 help:
 	@echo "Targets:"
-	@echo "  bootstrap  download skill repo + materialize skills to .roo/skills"
+	@echo "  bootstrap  download skill repo + materialize skills to $(AGENT_DIR)/skills"
 	@echo "  install    create .venv and install launcher (dev deps)"
-	@echo "  test       run unit + integration tests (from .roo/skills)"
+	@echo "  test       run unit + integration tests (from $(AGENT_DIR)/skills)"
 	@echo "  lint       ruff lint (skill src/tests/scripts)"
 	@echo "  format     ruff format check"
 	@echo "  check      bootstrap + lint + schema-check + test"
@@ -35,9 +36,14 @@ install:
 # 物化 skill 位于 ./.roo/skills/aixsilicon-workspace-management；用 workflow 根环境 + PYTHONPATH 执行。
 export PYTHONPATH := $(SKILL_DIR)/src$(if $(findstring Windows,$(OS)),;,:)$(PYTHONPATH)
 export AIX_RUNTIME_SRC := $(SKILL_DIR)/src
+# Keep disposable tool state in the workspace cache directory.
+export UV_CACHE_DIR ?= $(CURDIR)/cache/uv
+export PRE_COMMIT_HOME ?= $(CURDIR)/cache/pre-commit
+export PYTHONPYCACHEPREFIX := $(CURDIR)/cache/pycache
+export COVERAGE_FILE := $(CURDIR)/cache/coverage/.coverage
 
 test: bootstrap
-	$(PYTHON) -m pytest $(SKILL_DIR)/tests -q --rootdir=$(SKILL_DIR)
+	$(PYTHON) -m pytest $(SKILL_DIR)/tests -q --rootdir=$(SKILL_DIR) -o cache_dir=$(CURDIR)/cache/pytest
 
 lint: bootstrap
 	$(PYTHON) -m ruff check $(SKILL_DIR)/src $(SKILL_DIR)/tests $(SKILL_DIR)/scripts
@@ -55,8 +61,8 @@ check: lint schema-check test
 	@echo "check: all passed"
 
 coverage: bootstrap
-	$(PYTHON) -m pytest $(SKILL_DIR)/tests --cov=aixworkflow --cov-report=term-missing --rootdir=$(SKILL_DIR)
+	$(PYTHON) -m pytest $(SKILL_DIR)/tests --cov=aixworkflow --cov-report=term-missing --rootdir=$(SKILL_DIR) -o cache_dir=$(CURDIR)/cache/pytest
 
 clean:
 	$(PYTHON) -c "import shutil; [shutil.rmtree(p) for p in ('build','cache','.pytest_cache','.mypy_cache','.ruff_cache') if __import__('os').path.exists(p)]"
-	$(PYTHON) bootstrap.py aix wf clean
+	$(PYTHON) bootstrap.py --agent-dir $(AGENT_DIR) aix wf clean

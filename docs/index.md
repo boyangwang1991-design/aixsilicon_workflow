@@ -7,6 +7,11 @@
 | 需求 | 阅读入口 |
 |---|---|
 | 初次了解 | [`README.md`](../README.md) |
+| 理解 HWIF / DV Common / VIP / CBB / IP / SoC 配合 | [`workflow/architecture.md`](workflow/architecture.md) |
+| 找到任务对应仓库和 Skill | [`workflow/repositories-and-skills.md`](workflow/repositories-and-skills.md) |
+| 从需求、跨仓验证走到交付消费 | [`workflow/lifecycle.md`](workflow/lifecycle.md) |
+| 查日常命令、副作用和故障处理 | [`workflow/operations.md`](workflow/operations.md) |
+| 分清已实现能力与当前限制 | [`workflow/current-state.md`](workflow/current-state.md) |
 | 安装与初始化工作区 | [`getting-started.md`](getting-started.md) |
 | 查看仓库清单与 Profile | [`manifests/default.yaml`](../manifests/default.yaml) |
 | 查看写入边界 / 归属 | [`../ownership-map.yaml`](../ownership-map.yaml)、[`workflow/ownership.md`](workflow/ownership.md) |
@@ -22,8 +27,16 @@
 | [`getting-started.md`](getting-started.md) | 安装、初始化和基本操作 |
 | [`governance.md`](governance.md) | 文档分层、状态规则和维护门禁 |
 | [`workflow/ownership.md`](workflow/ownership.md) | Schema、仓库和工具归属 |
+| [`workflow/architecture.md`](workflow/architecture.md) | 跨仓责任关系与控制面架构 |
+| [`workflow/repositories-and-skills.md`](workflow/repositories-and-skills.md) | 任务路由、编辑源与套件入口 |
+| [`workflow/lifecycle.md`](workflow/lifecycle.md) | 跨仓交接、领域 Gate 与证据边界 |
+| [`workflow/operations.md`](workflow/operations.md) | 可操作命令与副作用说明 |
+| [`workflow/current-state.md`](workflow/current-state.md) | 有日期的能力核对与未解决差异 |
 
 各资产仓文档（`README.md`/`delivery.md`/`design-reference.md`）由各自 repo 维护，不在本仓重复存放。
+
+建议新成员按“架构 → 仓库与 Skill → Getting Started → 操作手册”阅读；做跨仓变更或发布时再读交付流程与当前限制。
+本地 `repos/` 链接需要先同步对应仓库；私有 Skill 链接还需要权限。流程图使用 Mermaid，不能渲染时可直接阅读相邻表格和步骤。
 
 ## 3. 工作原则与政策
 

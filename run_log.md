@@ -6,6 +6,20 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 
 格式：`时间(UTC)` | 阶段 | 动作 | 结果 | 证据/哈希
 
+- `2026-09-10` | **workflow / 全仓提交准备** | 用户授权将全部改动提交到 GitHub；
+  范围为 skills、cbb、ip、workflow，各仓保留 main 分支，使用 aix repo commit/push。
+  make check、IP/CBB 106 项回归、两套 suite validator、CBB/IP 索引和 README 同步检查通过。
+  IP SEC-015 仍有 planned 包名称/版本一致性警告，不提升交付状态。
+  普通 git diff/ls-files 仅补充 aix diff --stat 未提供的内容审阅、未跟踪文件明细和空白检查。
+
+- `2026-09-10` | **skills / IP suite 复查** | 先记录六项改进，再统一修复日志判定、
+  运行退出状态、超时输出、参数传递和触发范围；补负向回归，重新物化 | PASS |
+  suite validator 24 skills / 0 errors；scripts/tests 88 passed；make check 与
+  pre-commit 全通过。改进与结果见 skill repo
+  `skills/ip-development-suite/docs/review-2026-09-10.md`。
+  初始普通 git status 仅用于加载工作方法前的只读诊断；后续状态和差异使用 aix。
+  沙箱 uv 收尾阻塞，经批准在沙箱外重跑检查，正常退出；保留已有未提交改动。
+
 ---
 
 - `2026-09-08 03:18:28` | **skill-repo / ip-development-suite** | 固化核心原则 1：
@@ -49,3 +63,6 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
     （`aix repo status` 无法展开 untracked 明细、`aix repo shell` 为交互式），未做写操作；
     commit/push 全部走 `aix repo commit|push` 入口 | PASS |
     最终 `aix wf status`：10 仓 clean，remote 全部 sync
+
+- `2026-09-10 08:45:08` | **workflow / 本地清理** | 将 218 组 smoke/ctl-test/sec-flow 测试残留及根 `.pytest_cache/`、`__pycache__/` 归档到 `tmp/cleanup-20260910T084508Z/`；原路径与报告 SHA-256 记录于该目录 `manifest.json`，移动后核验哈希。保留审查报告、`.venv/`、`repos/`、`.aix/`、Skill 运行目录及安装元数据。修复 canonical workflow tests 中 13 个 runner 测试的工作目录隔离，重新物化；Makefile 集中缓存输出 | PASS | `make check` 通过（ruff、6 个 schema、124 个测试）；普通 Git 只读诊断用于展开父仓文件及忽略明细，aix CLI 不提供这些明细，未执行 Git 写操作
+- `2026-09-10` | **workflow / 清理复核** | `pre-commit run --all-files` 全绿；归档与缓存均被 Git 忽略；完整测试后 `reports/` 仅保留套件审查报告，根 `.pytest_cache/`、`__pycache__/` 未再生成，`.venv/bin/python` 仍可用 | PASS | 沙箱 hook 停滞后在获批环境完成检查

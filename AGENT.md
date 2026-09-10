@@ -8,17 +8,17 @@
 ## 1. 定位
 
 - 本仓是 **Manifest 驱动的多仓工作区控制面**，不是源码汇总仓；子仓统一克隆到 `repos/`（父仓 `.gitignore` 完整忽略）。
-- **Skill 集中管理**：`aix` CLI 的源码/测试/脚本由私有 skill `aixsilicon-workspace-management`（`repos/aixsilicon_skill_repo/skills/aixsilicon-workspace-management/`）统一管理；本仓通过 [`bootstrap.py`](bootstrap.py)（纯标准库引导器）下载 skill repo 并把 skills 物化到 `/.roo/skills/`（git 忽略）后运行。首次使用先 `uv run python bootstrap.py --ensure`。
+- **Skill 集中管理**：`aix` CLI 的源码/测试/脚本由私有 skill `aixsilicon-workspace-management`（`repos/aixsilicon_skill_repo/skills/aixsilicon-workspace-management/`）统一管理；本仓通过 [`bootstrap.py`](bootstrap.py) 下载 skill repo 并把 skills 物化到 `/<agent-dir>/skills/`（默认 `/.roo/skills/`，git 忽略）后运行。首次使用先 `uv run python bootstrap.py --ensure`。
   - **skill repo 的 manifest id 是 `skills`**（目录名为 `repos/aixsilicon_skill_repo`）；子仓 git 操作用 `aix repo <cmd> skills`（id 不是目录名）。
-  - **物化带指纹缓存**：skill repo 工作树指纹（`git describe --always --dirty`）未变化时自动跳过全量复制；强制重物化用 `--force`，离线/反复调用 aix 用 `--skip-materialize`。
+  - **物化带内容指纹缓存**：canonical `skills/` 的文件内容未变化时自动跳过全量复制；强制更新 repo 并重物化用 `--force`，离线复用已有副本用 `--skip-materialize`。
   - **uv.lock 防漂移**：镜像源已**项目级固定为清华源**（根 [`uv.toml`](uv.toml) `index-url`），
     并要求本机全局 `%APPDATA%\uv\uv.toml` 仅保留清华源、不配置 aliyun 等备用镜像
     （uv 会从全局 named index 命中非默认源改写 lock）；若仍发现 `uv.lock` 被改写为
     其他源 URL，`git checkout -- uv.lock` 还原并检查全局 uv.toml；环境一致性校验用
     `uv run --locked ...`。
-- **Skill 修改原则（aixsilicon-skill-repo 优先 + 重新物化）**：需要更新任何经物化到工作区的 Skill 内容（如 `.roo/skills/*/SKILL.md` 及其配套脚本/模板）时，必须先修改 aixsilicon-skill-repo 源仓 `repos/aixsilicon_skill_repo/skills/<skill-name>/` 下的对应文件，再执行 `uv run python bootstrap.py --ensure` 重新物化到工作区主目录；**禁止直接编辑 `.roo/skills/` 下的物化副本**（该目录被 git 忽略且每次 `--ensure` 会覆盖，直接改动会丢失且无法追踪）。
+- **Skill 修改原则（canonical 源优先 + 重新物化）**：必须先修改 `repos/aixsilicon_skill_repo/skills/<skill-name>/`，再执行 `uv run python bootstrap.py --ensure`；**禁止直接编辑 `<agent-dir>/skills/` 下的物化副本**。
 - 责任链：**Skill 决定“领域研发方法与流程”→ Workflow 决定“仓库生命周期/临时场地”→ Tool 负责“确定性执行”→ 资产仓保存 SSOT/交付 → Catalog 发布合格资产 → EDA 提供工程证据**。
-- 统一命名：VLNV 一律 `aixsilicon:*`（pre-commit guard [`check_vlnv_namespace.py`](.roo/skills/aixsilicon-workspace-management/scripts/hooks/check_vlnv_namespace.py) 强制）；CLI 单入口 `aix`（[`cli/registry.py`](.roo/skills/aixsilicon-workspace-management/src/aixworkflow/cli/registry.py) 插件发现）。
+- 统一命名：VLNV 一律 `aixsilicon:*`（canonical guard [`check_vlnv_namespace.py`](repos/aixsilicon_skill_repo/skills/aixsilicon-workspace-management/scripts/hooks/check_vlnv_namespace.py) 强制）；CLI 单入口 `aix`（canonical [`cli/registry.py`](repos/aixsilicon_skill_repo/skills/aixsilicon-workspace-management/src/aixworkflow/cli/registry.py) 插件发现）。
 
 ## 2. 开工前必读（按需渐进加载）
 
@@ -61,6 +61,7 @@ aix wf status / aix wf doctor            # 状态 / 诊断
 aix wf lock -o .aix/local.lock.yaml      # 本地解析锁（可选）
 aix wf graph                             # 依赖 DAG
 aix wf fusesoc --generate                # 生成 FuseSoC 聚合配置 + VLNV 索引
+aix wf preflight <flow>                  # 执行前检查 required provider
 aix wf run <flow>                        # 执行标准 flow（标准 action 集）
 aix wf test --affected --repo <id>       # 影响分析
 
@@ -78,7 +79,7 @@ aix tool schema|hwif|reg|core ...
 - **确定性执行门禁（强制）**：所有已有 `aix` 确定性能力覆盖的动作**必须走 `aix` CLI / 注册 action**，
   禁止手写一次性 git/python 命令替代：
   - **子仓 git 操作唯一入口**：`aix repo status|diff|shell|branch|commit|push <repo_id>`；
-    禁止在 `repos/*` 内直接 `git add/commit/push`。注意：`aix repo commit` 只执行
+    禁止在 `repos/*` 内直接 `git commit/push`。注意：`aix repo commit` 只执行
     `git commit -m`（不会自动 `git add`），提交前需先在子仓内 `git add <files>`；
     git 层的 pre-commit hook 会在 commit 时自动运行。
   - 父仓（workflow 控制面）git 操作统一入口：`aix repo status|diff|branch|commit|push workflow`（`repo_id=workflow` 映射到工作区根）。父仓提交顺序：`make check` 全绿 → `pre-commit run --all-files` 全绿 → `git add <files>` → `aix repo commit workflow -m "..."` → `aix repo push workflow`。
@@ -86,10 +87,8 @@ aix tool schema|hwif|reg|core ...
   - **违规示例（Do NOT）**：`git -C repos/xxx commit -m ...`、`git -C repos/xxx push origin main`、
     用 `git status`/`git diff` 代替 `aix repo status`/`aix repo diff` 作为子仓状态证据来源。
   - 唯一豁免：`aix` CLI 未提供且无法注册 action 的临时性诊断（需在 run_log 注明原因）。
-- **Profile 切换注意事项**：`aix wf init --profile <profile>` 会更新 `.aix/state.json`，
-  但 `aix wf sync` 可能仍使用旧 profile。若需同步所有仓库，建议：
-  1. 确认 `.aix/state.json` 中 `profile` 字段已更新；
-  2. 若 sync 未同步预期仓库，手动 `git clone` 缺失仓库到 `repos/` 目录。
+- **Profile 连贯性**：`aix wf init --profile <profile>` 将选择写入 `.aix/state.json`，后续
+  `sync/status/doctor` 默认继承该 profile；命令行 `--profile` 可显式覆盖。
 - **Python 环境一律使用 `uv` 管理**（`uv run python` / `uv sync` / `uv add`），
   禁止再创建新的虚拟环境（不要 `python -m venv`、不要在 `repos/*` 下放置 `.venv`）：
   - 唯一环境：**workflow 仓库根目录** `.venv/`（由根 `pyproject.toml` + `uv.lock` 管理，
@@ -145,7 +144,7 @@ git clone git@github.com:boyangwang1991-design/aixsilicon_<repo>.git repos/aixsi
 
 - 跨多仓功能 → 各仓独立 PR，联合验证由对应 Skill 在临时场地完成；
 - 影响分析 → `aix wf test --affected`；依赖图不完整时**扩大测试范围**，不静默缩小；
-- 事件/CI 防递归：携带 `correlation_id` + `depth`（[`src/aixworkflow/github.py`](.roo/skills/aixsilicon-workspace-management/src/aixworkflow/github.py)）。
+- 事件/CI 防递归：携带 `correlation_id` + `depth`（canonical [`github.py`](repos/aixsilicon_skill_repo/skills/aixsilicon-workspace-management/src/aixworkflow/github.py)）。
 
 ## 7. 质量与证据纪律
 

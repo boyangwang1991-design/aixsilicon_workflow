@@ -7,7 +7,7 @@
 #   1) 解析工作区（Manifest/Lock/Profile）；
 #   2) 提供 SoC 集成的临时场地（临时工作区校验/分配）；
 #   3) 委托 soc-integration-suite 在临时场地完成集成并提交
-#      （skill.* 为可选 action，未物化/未注册时 skipped 不阻断）；
+#      （领域委托为 required action，未物化/未注册时 fail-closed 阻断）；
 #   4) 汇总工作区证据索引。
 # 本 flow 不展开 asset-selection/topgen/connectivity-check 等 skill 内部 stage。
 schema_version: aix.flow/v1
@@ -17,6 +17,8 @@ description: SoC 集成：workflow 提供仓库管理（解析/临时场地/证�
 inputs:
   - soc_project
   - tool_profile
+  - profile
+  - mode
 
 preconditions:
   lock_required: true
@@ -24,6 +26,8 @@ preconditions:
 stages:
   - id: resolve
     uses: workspace.resolve
+    with:
+      profile: <profile>
 
   # 准备并校验 SoC 集成的临时场地（工作区 clean/lock/profile）。
   - id: workspace-prepare
@@ -36,14 +40,15 @@ stages:
       - {repo: '*', paths: ['.aix']}
 
   # 委托 soc-integration-suite 在临时场地完成集成并打包回 chip-<project>-soc 私有仓。
-  # skill.* 为可选 action：未物化时按 skipped 处理（不阻断），符合 ADR-0008。
+  # 领域集成是必需 action；provider 不可用时 preflight 必须阻断，不得伪造成功。
   - id: soc-integrate
     needs: [workspace-prepare]
     uses: skill.soc.integration
     with:
       soc_project: <soc_project>
       suite: soc-integration-suite
-      mode: <full-flow|partial-task|review-only>
+      mode: <mode>
+      tool_profile: <tool_profile>
     write_scope:
       - {repo: '*', paths: ['.aix/generated', 'repos']}
 

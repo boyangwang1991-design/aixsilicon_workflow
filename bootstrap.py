@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -47,6 +48,7 @@ DEFAULT_AGENT_DIR = ".roo"
 AGENT_DIR_ENV = "AIX_AGENT_DIR"
 # 业界常用 agent 目录（skill/agent/rules 等的候选存放位置）
 KNOWN_AGENT_DIRS = (".roo", ".claude", ".opencode", ".cursor", ".codex", ".windsurf")
+_AGENT_DIR_RE = re.compile(r"^[A-Za-z0-9._-]+$")
 
 
 def _run(cmd: list[str]) -> subprocess.CompletedProcess[str]:
@@ -55,12 +57,28 @@ def _run(cmd: list[str]) -> subprocess.CompletedProcess[str]:
 
 def resolve_agent_dir(agent_dir: str | None) -> str:
     """Resolve agent dir: CLI arg > AIX_AGENT_DIR env > default `.roo`."""
-    candidate = agent_dir or os.environ.get(AGENT_DIR_ENV, DEFAULT_AGENT_DIR)
-    return candidate.strip("/\\") or DEFAULT_AGENT_DIR
+    raw = agent_dir if agent_dir is not None else os.environ.get(AGENT_DIR_ENV, DEFAULT_AGENT_DIR)
+    candidate = raw.strip()
+    if (
+        not candidate
+        or candidate in {".", ".."}
+        or "/" in candidate
+        or "\\" in candidate
+        or not _AGENT_DIR_RE.fullmatch(candidate)
+    ):
+        raise ValueError(
+            f"invalid agent directory {candidate!r}; expected one relative directory name"
+        )
+    return candidate
 
 
 def _skills_target(agent_dir: str) -> Path:
     return WORKFLOW_ROOT / agent_dir / "skills"
+
+
+def _materialized_runtime_ready(agent_dir: str) -> bool:
+    entry = _skills_target(agent_dir) / SKILL_NAME / "src" / "aixworkflow" / "cli" / "__init__.py"
+    return entry.is_file()
 
 
 def _ensure_skill_repo(force: bool = False) -> Path | None:
@@ -135,11 +153,11 @@ def _ensure(
     `skip_materialize=True` keeps using already-materialized skills (offline /
     repeated-invocation mode) as long as the delegated aix entry exists.
     """
+    if skip_materialize and _materialized_runtime_ready(agent_dir):
+        return True
     skill_repo = _ensure_skill_repo(force=force)
     if skill_repo is None:
         return False
-    if skip_materialize and (_skills_target(agent_dir) / SKILL_NAME).is_dir():
-        return True
     return _materialize_skills(skill_repo, agent_dir, force=force)
 
 
@@ -158,6 +176,7 @@ def _run_aix(argv: list[str], agent_dir: str) -> int:
     if argv and argv[0] == "aix":
         argv = argv[1:]
     skills_src = _skills_target(agent_dir) / SKILL_NAME / "src"
+    os.environ[AGENT_DIR_ENV] = agent_dir
     sys.path.insert(0, str(skills_src))
     try:
         from aixworkflow.cli import main
@@ -209,7 +228,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("rest", nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
 
-    agent_dir = resolve_agent_dir(args.agent_dir)
+    try:
+        agent_dir = resolve_agent_dir(args.agent_dir)
+    except ValueError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
 
     if args.run_hook:
         if not _ensure(force=False, agent_dir=agent_dir, skip_materialize=args.skip_materialize):
