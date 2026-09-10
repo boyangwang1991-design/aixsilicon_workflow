@@ -6,6 +6,18 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 
 格式：`时间(UTC)` | 阶段 | 动作 | 结果 | 证据/哈希
 
+- `2026-09-10` | **workflow / 全仓提交推送** | submit all to GitHub：skills、cbb、ip、vip、
+  workflow 五仓全部 commit + push 到 origin/main | PASS |
+  skills（2 commits：suite 校准/AHB findings/SPI 优化报告 + SAF-005 回顾，head `0874bb0bf76f`）；
+  cbb（3 commits：packet_locking_arbiter + lockstep_comparator 新增、SAF-005 质量证据与
+  结构检查、PPA 更新，head `ac34181283d2`）；ip（2 commits：spi_master 全生命周期 G0-G5
+  交付 + watchdog 契约更新，head `fb403e8a8e26`）；vip（1 commit：AHB VIP 全套交付，
+  head `ac4bfad02ce2`）；workflow（1 commit：pyproject+uv.lock 依赖锁定，head 已推送）。
+  `make check`（ruff/schema parity/124 tests）与 `uv run pre-commit run --all-files`
+  （11 hooks）全绿。构建产物（simv.daidir/csrc/.alib/SpyGlass DB）经各仓 .gitignore
+  屏蔽未入库；待添加文件核查无凭据、无 >1MB 文件。收尾 `aix wf status` 11 仓全部
+  clean + remote sync。全部 git 操作经 `aix repo status/diff/commit/push` 执行。
+
 - `2026-09-10` | **workflow / 协作文档** | 核对 Manifest、三条 Flow、六类核心资产仓和 canonical suite；新增架构、仓库与技能地图、交付流程、操作手册、当前限制五篇文档及三张 Mermaid 图，更新导航 | PASS |
   `docs/index.md` 为入口；11 个 Markdown 文件、109 个本地链接及代码围栏检查无错误；
   `make check`（根既有 uv 环境、`--no-sync`）通过：ruff、6 个 Schema parity、124 项测试；
