@@ -50,6 +50,17 @@ doc-enhance = [
     "pandas>=2.0",        # Excel 规则数据区识别
     "markitdown",         # 快速路径与基准对照
 ]
+ip-dev = [
+    "fusesoc>=2.4.7",
+    "matplotlib>=3.11.1",
+    "peakrdl>=1.5.0",
+    "peakrdl-cheader>=1.1.0",
+    "peakrdl-html>=2.12.2",
+    "peakrdl-ipxact>=3.5.0",
+    "peakrdl-regblock>=1.3.1",
+    "peakrdl-uvm>=2.4.0",
+    "pytest>=9.1.1",
+]
 
 # PyPI 镜像源统一托管在项目级 `uv.toml`（index-url = 清华源），
 # 不在 pyproject 声明 [[tool.uv.index]]，避免与 uv.toml 冲突被忽略。
