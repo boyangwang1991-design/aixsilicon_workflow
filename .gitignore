@@ -29,6 +29,16 @@
 *.shm
 *.tmp
 
+# EDA (Verdi/Synopsys) GUI & debug artifacts written to workspace root
+/novas.conf
+/novas.rc
+/novas/
+/AN.DB/
+/ucli.key
+/vc_hdrs.h
+/csrc/
+/simv*
+
 # Python
 __pycache__/
 *.py[cod]
