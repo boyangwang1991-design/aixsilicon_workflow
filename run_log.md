@@ -33,3 +33,19 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - `2026-09-08 03:30:41` | **workflow / 校验** | `pytest scripts/tests` 全绿；
   `validate_suite.py` 仅存预先存在基线差异（expected 23 found 26），与本次改动无关 | PASS |
   19 passed
+- `2026-09-10 07:58:00` | **workflow / 提交推送** | 全仓变更提交并推送 GitHub：
+  - `ip`（388 文件）：memory_protection_controller 全生命周期交付 G0–G5 + MPC .gitignore
+    屏蔽 Verdi/VCS 产物（AN.DB、ucli.key、vc_hdrs.h、csrc）+ 清理 ips/ 根旧占位 .MD；
+    commit `50f9f1561f38` → origin/main
+  - `skills`（118+1 文件）：ip/vip suite 演进（python-hw-ir 生成器、render_dc_setup、
+    analyze_sweep、qualify.py、模板精简）+ cbb suite weighted_rr_arbiter 反查记录；
+    门禁 pytest 52+6 全绿、validate_suite.py 通过；commit `6457d01f206a`、
+    `a773a9ce17fc` → origin/main；物化 11 skills
+  - `workflow`（1 文件）：根 .gitignore 屏蔽 novas.conf/novas.rc/AN.DB/ucli.key 等
+    EDA 产物；门禁 `make check` 全绿（ruff + schema 同步 + 104 pytest）、
+    `pre-commit run --all-files` 全绿；commit `dc4e037` → origin/main
+    （连同此前本地领先的 4 个提交一并推送）
+  - 诊断豁免说明：变更甄别阶段使用普通 `git status/check-ignore/log` 只读命令
+    （`aix repo status` 无法展开 untracked 明细、`aix repo shell` 为交互式），未做写操作；
+    commit/push 全部走 `aix repo commit|push` 入口 | PASS |
+    最终 `aix wf status`：10 仓 clean，remote 全部 sync
