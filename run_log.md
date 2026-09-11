@@ -6,7 +6,23 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 
 格式：`时间(UTC)` | 阶段 | 动作 | 结果 | 证据/哈希
 
+- `2026-09-11` | **workflow / 全仓提交推送** | submit all to GitHub：skills、ip、workflow 三仓
+  commit + push 到 origin/main，其余 7 子仓（hwif/cbb/dv-common/vip/tools/catalog/soc-integration/
+  knowledge）本就 clean+sync 无需提交 | PASS |
+  ip（3 commits：GPIO IP 全套+apb_secure_demux 契约+watchdog 更新+registry 刷新 1022 文件
+  `22c5b33`；GPIO ut_gpio_regfile.sv `a965a5cb`；GPIO lint waivers/synth target+lint review
+  +watchdog tc_fault UVM manifest）；skills（1 commit：ip-dev-suite 结构化参数契约与
+  param-space 验证改进）；workflow（1 commit：docs/cbb_repo_diff.md CBB/IP 分类分析）。
+  `make check`（ruff/schema parity/124 tests）与 `uv run pre-commit run --all-files`
+  （11 hooks）全绿。构建/仿真产物（.log/.vcd/csrc/simv 等）经各仓 .gitignore 屏蔽未入库；
+  reports 质量证据沿用仓内跟踪先例提交。期间 watchdog tc_fault UVM 回归在后台运行持续产生
+  reports/uvm 时间戳目录，等回归结束后补交其 manifest 作为证据。
+  注意：`aix repo commit/push` 必须在 workflow 根执行（子仓内执行报 manifest not found）；
+  子仓内 `git add` 属例外的暂存操作（aix repo commit 不自动 add）。
+  收尾 `aix repo status` 确认 10 仓全部 clean + remote sync（详见下方 status 摘要）。
+
 - `2026-09-10` | **workflow / 全仓提交推送** | submit all to GitHub：skills、cbb、ip、vip、
+  workflow 五仓全部 commit + push 到 origin/main | PASS |
   workflow 五仓全部 commit + push 到 origin/main | PASS |
   skills（2 commits：suite 校准/AHB findings/SPI 优化报告 + SAF-005 回顾，head `0874bb0bf76f`）；
   cbb（3 commits：packet_locking_arbiter + lockstep_comparator 新增、SAF-005 质量证据与
