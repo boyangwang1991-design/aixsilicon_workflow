@@ -19,7 +19,10 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
   reports/uvm 时间戳目录，等回归结束后补交其 manifest 作为证据。
   注意：`aix repo commit/push` 必须在 workflow 根执行（子仓内执行报 manifest not found）；
   子仓内 `git add` 属例外的暂存操作（aix repo commit 不自动 add）。
-  收尾 `aix repo status` 确认 10 仓全部 clean + remote sync（详见下方 status 摘要）。
+  收尾 `aix repo status` 确认其余 9 仓 clean + remote sync；ip 仓遗留 dirty 系另一个并行
+  codex agent 会话正在该仓活跃开发（GPIO 单测/synth 脚本、watchdog lint 约束、
+  apb_secure_demux quality 报告等持续写入，mtime 距检查仅数十秒），属未完成中间状态，
+  本任务不代为提交，由该会话完成后自行提交推送。
 
 - `2026-09-10` | **workflow / 全仓提交推送** | submit all to GitHub：skills、cbb、ip、vip、
   workflow 五仓全部 commit + push 到 origin/main | PASS |
