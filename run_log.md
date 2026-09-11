@@ -86,3 +86,15 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 
 - `2026-09-10 08:45:08` | **workflow / 本地清理** | 将 218 组 smoke/ctl-test/sec-flow 测试残留及根 `.pytest_cache/`、`__pycache__/` 归档到 `tmp/cleanup-20260910T084508Z/`；原路径与报告 SHA-256 记录于该目录 `manifest.json`，移动后核验哈希。保留审查报告、`.venv/`、`repos/`、`.aix/`、Skill 运行目录及安装元数据。修复 canonical workflow tests 中 13 个 runner 测试的工作目录隔离，重新物化；Makefile 集中缓存输出 | PASS | `make check` 通过（ruff、6 个 schema、124 个测试）；普通 Git 只读诊断用于展开父仓文件及忽略明细，aix CLI 不提供这些明细，未执行 Git 写操作
 - `2026-09-10` | **workflow / 清理复核** | `pre-commit run --all-files` 全绿；归档与缓存均被 Git 忽略；完整测试后 `reports/` 仅保留套件审查报告，根 `.pytest_cache/`、`__pycache__/` 未再生成，`.venv/bin/python` 仍可用 | PASS | 沙箱 hook 停滞后在获批环境完成检查
+
+- `2026-09-10` | **skills / chipdraw-skill-suite** | 修复 canonical 绘图套件的错误阻断、QA 状态、适配器、视图投影、多视图报告、Manifest diff、wheel 资源打包与技能入口；共享 uv 环境安装 chipdiagram。新增 20 项回归（共 71），5 个 SKILL 校验通过，24 个视图生成检视。补充物化忽略 node_modules，避免复制依赖树；workflow make check 125 测试通过。完整工程验收仍受真实 PDK/Xschem/ngspice、Draw.io 导出工具和原始建设方案缺失限制，未标记全部功能 verified | PARTIAL | 证据 `reports/chipdraw-acceptance/`；make / pre-commit 通过 uv 选定的根解释器执行，解决嵌套 uv 子命令退出停滞，未跳过 hook。普通 Git 仅一次只读检查父仓是否有意外变更，主状态与 diff 证据仍使用 aix；未提交或推送，保留其他技能已有变更。
+
+- `2026-09-10` | **skills / chipdraw 后端复核** | 完成 WaveDrom 3.2.0 本地安装和依赖锁定；APB 示例真实导出 WaveJSON/SVG/PNG，ERROR=0、WARNING=0；FSM 与 APB PNG 已打开检视。工程 PDK/Xschem/ngspice 与 Draw.io 导出验收仍未完成 | PASS（时序导出） | `reports/chipdraw-acceptance/timing-export.log`
+
+- `2026-09-10` | **skills / chipdraw 中等复杂度用例测试** | 新建架构级异步 DMA 测试规格（128→32 位、双时钟域、3 FIFO、寄存器、流水线、CDC/RDC、安全机制），通过真实 CLI 抽取 SystemRDL 并生成 7 个视图；17 项检查中 14 通过、3 失败。发现虚假转换器引用和 FIFO/通路位宽不匹配漏检，以及 FIFO 图缺少深度/位宽标签；再次运行复现相同结果。未修改技能源，未把草稿绘图结果视为硬件签核 | FAIL（3 项） | `reports/chipdraw-medium-dma/report.md`、`run_case.py`、`latest.json` 与独立 runs 目录保存输入、命令日志、产物和哈希。
+
+- `2026-09-10` | **chipdraw / 测试 PNG 统一输出** | DMA 两次测试运行的 20 个已生成图数据统一导出 PNG；最新图册包含正常用例 7 张及错误注入/版本变体 3 张。基于原 graph.json 使用 Graphviz 渲染，逐图验证可解码、尺寸与 SHA-256，打开检视数据通路图。测试脚本已接入自动 PNG 输出，报告入口改为 PNG；原测试 3 项失败结论保持不变 | PASS（PNG 导出） | `reports/chipdraw-medium-dma/png-gallery.html`、`png-gallery.md`、`export_png.py` 与各运行 `png-manifest.json`
+
+- `2026-09-10` | **skills / chipdraw 固定 PNG 契约** | 全图型统一强制输出 diagram.png；缺失、损坏、旧文件不能满足构建，纳入 Manifest 与哈希。增加确定性 Graphviz/Pillow 后备渲染及 Pillow 完整解码校验，更新全部技能入口与 CLI 格式说明。套件 80 项测试通过；24 视图 PNG 解码/哈希通过；DMA 10 PNG 通过，原有 3 项功能失败保留 | PASS（PNG） | `reports/chipdraw-required-png/report.md`；完成物化，make check（125 测试）与完整 pre-commit 检查，未提交或推送。
+
+- `2026-09-10` | **skills / chipdraw 两个精选框图** | 根据用户反馈将展示收敛为 SoC 总览、IP 数据通路两例，重写 canonical YAML；SoC 分区及总线层次清晰，IP 独立读写通路，明确单时钟 payload 范围。修复孤立元数据投影、FIFO 参数标签，补充分组与正交 PNG 渲染。两张 PNG 打开检视并核验解码/Manifest 哈希，82 项套件测试通过；make check 125 项与完整 pre-commit 通过，已物化 | PASS（示例绘图） | `reports/chipdraw-showcase/index.html`、`review.md`；保留 IP 未绑定 RTL 警告，不声明硬件签核，未提交/推送。
