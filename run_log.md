@@ -6,6 +6,13 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 
 格式：`时间(UTC)` | 阶段 | 动作 | 结果 | 证据/哈希
 
+- `2026-09-11` | **workflow / 全仓提交推送（第二轮）** | 用户再次 submit all to GitHub：
+  skills（1 commit：apb-secure-demux 流程改进文档更新）、ip（1 commit：apb_secure_demux
+  lint/synth 进度与 rtl_leaves 证据、gpio 约束三件套与 UT/synth 脚本、watchdog
+  sgdc/spyglass 约束与 malloc-retry 覆盖率证据）快照提交推送；并行 codex 会话仍在
+  ip 仓持续写入，本快照包含其截至提交时刻的最新产出 | PASS |
+  其余 8 仓 clean+sync；skills push 后自动重新物化 11 skills。
+
 - `2026-09-11` | **workflow / 全仓提交推送** | submit all to GitHub：skills、ip、workflow 三仓
   commit + push 到 origin/main，其余 7 子仓（hwif/cbb/dv-common/vip/tools/catalog/soc-integration/
   knowledge）本就 clean+sync 无需提交 | PASS |
