@@ -23,7 +23,7 @@ map:
   - asset: CBB 代码 / 属性 / PPA 配置
     owner_repo: aixsilicon_cbb_repo
     skill_write: 可写指定 CBB 目录，不能自动 commit
-    allowed_paths: [cbb]
+    allowed_paths: [components, adapters]
 
   - asset: VIP 代码
     owner_repo: aixsilicon_vip_repo

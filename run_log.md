@@ -124,3 +124,78 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - `2026-09-10` | **skills / chipdraw 固定 PNG 契约** | 全图型统一强制输出 diagram.png；缺失、损坏、旧文件不能满足构建，纳入 Manifest 与哈希。增加确定性 Graphviz/Pillow 后备渲染及 Pillow 完整解码校验，更新全部技能入口与 CLI 格式说明。套件 80 项测试通过；24 视图 PNG 解码/哈希通过；DMA 10 PNG 通过，原有 3 项功能失败保留 | PASS（PNG） | `reports/chipdraw-required-png/report.md`；完成物化，make check（125 测试）与完整 pre-commit 检查，未提交或推送。
 
 - `2026-09-10` | **skills / chipdraw 两个精选框图** | 根据用户反馈将展示收敛为 SoC 总览、IP 数据通路两例，重写 canonical YAML；SoC 分区及总线层次清晰，IP 独立读写通路，明确单时钟 payload 范围。修复孤立元数据投影、FIFO 参数标签，补充分组与正交 PNG 渲染。两张 PNG 打开检视并核验解码/Manifest 哈希，82 项套件测试通过；make check 125 项与完整 pre-commit 通过，已物化 | PASS（示例绘图） | `reports/chipdraw-showcase/index.html`、`review.md`；保留 IP 未绑定 RTL 警告，不声明硬件签核，未提交/推送。
+
+## 2026-09-13 IP/CBB 分类与管理清理
+
+- 用户授权：按 tmp/ip_cbb_cleanup 原则及指导 YAML 整理 IP/CBB；补充强调由各 development-suite 主要管理。
+- IP 355→292，CBB 410→298；APB 完整工程及 diversity comparator 契约迁仓，原实现/文件保留；退出记录与历史编号写入各资产仓 governance。
+- 两仓 registry 统一编辑入口；canonical IP/CBB Skill、artifact contract、IP 00-workspace、CBB scaffold 与交接回归同步修改并重新物化。
+- 验证：两套 Suite 测试/自检、registry/README、APB VCS 功能与变异回归、37 个受版本控制文件的字节一致性、make check、pre-commit 均通过。
+- 临时诊断说明：发现根 AGENT.md 之前直接读取过子仓 git status；之后以 aix wf/repo status/diff 为状态证据。文件迁移完整性使用只读 git ls-tree/show（aix 无 Git blob 清单与读取接口），结果在 tmp/ip_cbb_cleanup/audit。
+- 存量差异：两个 planned IP 的包身份警告、旧 axi_mpu Core 格式及本地 build 重复 Core；详见各仓 docs/cleanup-validation.md。未提交、推送或发布。
+
+## 2026-09-13 过时材料与 CBB 报告边界复查
+
+- 按用户要求归档 IP plan.md、空 OpenTitan 清单及 89 个已退出规划的纯空占位目录，恢复位置写入治理记录；有实质内容的工程保留。
+- 归档 CBB 旧初始化脚本，旧入口仅报退役并返回 2；更新过时说明。将 CBB Skill 的旧 plan/design 移出 Skill 发布树，导航和校验指向现行合同。
+- 用户指出 CBB 仓根 reports 泄漏：其混合运行日志逐字节归档至该仓 docs/archive/2026-09-ip-cbb-cleanup/repository-root-reports。
+- 修复根因：log 不再默认 workspace=.；log/gate 写前校验具体 CBB 身份、登记路径和报告符号链接；registry 检查拒绝根 reports。Skill 合同区分仓根 --root 与工程 --workspace。
+- CBB 全部 42 个测试通过（含新增报告边界回归），IP/CBB 套件自检和 registry/README 检查通过；canonical Skill 已重新物化。未修改 RTL 或提升 Gate，未提交推送。
+
+## 2026-09-13 CBB 全量需求合同与 AXI 归属修正
+
+- 按用户要求为当前 297 个 CBB 建立目录和需求合同：287 份规划草案、10 份现有 YAML 派生视图，统一 README 入口和 docs/requirement-contracts.md 导航。未生成占位 RTL 或提升实现/Gate 状态。
+- 单通道 axi_channel_register_slice 按明确指示由 CBB AXI-001 迁入 IP MIG-IP-AXI-001，现 IP 293 条；原 ID 保留退出记录，两套 Skill 同步归属规则。
+- 仓内新增只读合同覆盖/身份/源哈希校验并接入手动 CI；新增 5 项缺失/错配/源漂移/阶段交接回归。两 Suite 联合测试通过（272 passed, 1 skipped），registry/README 和套件自检通过，canonical 技能已物化。
+- 已有工程文件按 Git HEAD 逐字节核对（README 和需求合同除外）；证据 tmp/cbb_requirements/preserved-files.json。popcount 的历史 profiles.yaml 存在未引用冒号导致的 YAML 语法问题，本轮合同仅派生 cbb/params/behavior，不据此宣称配置或 Gate 完成。未提交或推送。
+- 收尾验证：make check（125 项 workflow 测试）与 pre-commit 全部通过。
+
+## 2026-09-13 IP Suite 第一批 F01–F06：门禁真实性与证据保留
+
+- 用户授权实施第一批 F01–F06；canonical 新增设计新鲜度/评审绑定、RTL 真实执行与摘要、模块 UT 源集合、文档/PPA 原始证据及内容寻址保留；quality/proof/release 消费者接入，已重新物化。
+- 原评估反例在独立报告目录重跑，相关门禁均拒绝；有效完整样例 G0–G5 通过，清理 build、正式 ZIP 打包并迁移解包后重审结果一致。
+- 验证：IP 211 passed / 1 skipped（商业 VCS）；工作区 make check（125 项）、完整 pre-commit、24 Skill 自检、quick_validate 和新增 Python Ruff F/E9 均通过。
+- 环境诊断：沙箱内 uv 未回收已结束子进程；沙箱外探针及检查正常退出，经自动审批完成同一根 uv 环境检查。未创建第二环境。
+- 保留原评估材料；skills 状态/差异通过 aix repo 获取。工作区有已有及并行 CBB/资产治理改动，本批不回滚或提交它们。无真实 IP 审批、提交、推送或发布；临时 Git 提交仅用于隔离发布测试夹具。
+- 报告与证据：reports/ip-development-suite-f01-f06-2026-09-13/实施报告.md。
+
+## 2026-09-13 CBB Suite F06–F12 优化实施
+
+- 用户授权继续剩余优化项；修改 canonical CBB Skill 和 workflow ownership-map 的 CBB 包路径。
+- 完成纯 YAML 计划、compact 文档/按族骨架、自动执行事件与哈希缓存、单点 PPA、工具 profile 能力 smoke、Formal 非空/有界判定、阶段一致性校验。
+- 保留已有改动，不提交或推送。仅生成实施报告和测试证据，不对真实 CBB 作资格提升。
+- 环境沿用 uv 管理的根 .venv；此前 uv 启动器发生等待，本轮直接调用该解释器。临时根 git status 仅作定位，正式状态证据用 aix repo。
+- 最终验证和 pre-commit 等效入口的细节见 reports/cbb-skill-f06-f12-2026-09-13/report.md。
+
+## 2026-09-13 CBB Skill 历史材料清理
+
+- 用户授权清理/归档；将套件 docs 下 5 份历史报告移至 skill repo docs/archive/2026-09-cbb-suite/reports，修正相对链接并保留历史待办，不视为关闭。
+- 删除限定于该 canonical 套件的 39 个生成型 Python 缓存文件；保留现行脚本、测试、规则和模板。
+- 更新 README 与归档索引；重新物化，检查执行入口无归档依赖。清单与检查日志见 reports/cbb-suite-cleanup-2026-09-13/。
+
+## 2026-09-13 IP Suite 剩余优化（主流程保持）
+
+- 按用户要求继续完成主流程之外的优化：F07/F08/F15 契约修复，F09 RAL 生成与 G4 交接，F10 条件专项证据，以及 F13/F14/F16/F18 的字段视图、解析复用、PPA 固定版本与阶段内部执行续跑。
+- lifecycle.yaml 与第一批基线 SHA-256 完全一致；未实施 F11 提前启动、F12 UT 裁剪、F17 oracle 策略变化或单点 PPA 签核放宽。
+- 最终 IP 套件 243 项全部通过、0 跳过，本次新增合同用例 25 项。真实 VCS CSR W1C/字节使能/race/reset 仿真及 RAL package 编译通过；RAL 初次编译暴露 UVM 库顺序问题，已修正规范并复测。
+- 工作区 make check 通过（125 项），24 Skill 自检无错误/警告，canonical 已物化；完整 pre-commit 日志与收尾校验保存在报告目录。
+- 使用 workflow 根 uv 环境；沙箱外检查沿用已确认的 uv 回收问题处理方式。无真实 IP 审批或 Gate 提升，无提交、推送、发布；保留已有及并行改动。
+- 报告：reports/ip-development-suite-remaining-2026-09-13/实施报告.md；含逐项完成/暂缓边界、真实工具日志、JUnit 与源码快照。
+
+## 2026-09-14 IP Suite 历史材料清理
+
+- 按用户授权将历史 docs/reports、演进路线、过时 evals 和离线 UVM 副本迁至 skill repo docs/archive/2026-09-ip-suite；178 个文件逐项校验 SHA-256、大小和权限，许可证及原始证据完整保留。
+- 首次删除 59 个可再生缓存文件，收尾清除并行工作重建的 22 个缓存；移除退役 SpinalHDL 空目录。活动树为 192 个文件、1,618,344 字节。
+- 本次只调整三个活动 Markdown 导航；保留现行脚本/测试/合同、主流程和共享工作区并行修改。canonical 经 bootstrap 物化，与分发副本逐文件一致。
+- 回归 244 项全部通过（含 VCS，0 跳过）、24 Skill 自检、quick_validate、make check 通过；完整 pre-commit 结果随报告留存。根 uv 检查沿用沙箱外执行的既有环境处理方式。
+- 报告：reports/ip-development-suite-cleanup-2026-09-13/清理报告.md。未提交、推送或发布。
+
+## 2026-09-14 全仓提交推送 GitHub
+
+- 用户指示 SUBMIT ALL TO GITHUB；状态证据：cbb（54 modified/deleted + 160 untracked）、ip（133 + 18）、skills（248 + 37）、workflow（2 modified），全部 aix repo status/diff 确认。
+- cbb：requirement contracts 全量、IP/CBB 分类清理、报告边界修复与 adapters/registry 更新，`aix repo commit cbb` + push 成功。
+- ip：planned-only 占位契约退役、axi_channel_register_slice 迁入、GPIO 证据流水线与 registry 脚本整合，`aix repo commit ip` + push 成功。
+- skills：cbb/ip suite F01-F18 优化、requirement contracts、workflow policy 与证据强化，历史材料归档，`aix repo commit skills` + push 成功。
+- 父仓：ownership-map.yaml 的 CBB allowed_paths 更新为 components/adapters；提交前 make check（125 项测试、ruff、schema parity）与 `uv run pre-commit run --all-files`（11 hooks）全部通过。
+- 临时诊断说明：`aix` 无逐文件 diff 渲染接口，使用只读 `git status --porcelain` 查看变更明细；`pre-commit` 不在 PATH，改用 `uv run pre-commit`，未绕过任何门禁。
+- 最终 `aix wf status` 全部 10 子仓 clean/sync，workflow 父仓提交推送完成。
