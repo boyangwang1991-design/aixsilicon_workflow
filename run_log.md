@@ -199,3 +199,16 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - 父仓：ownership-map.yaml 的 CBB allowed_paths 更新为 components/adapters；提交前 make check（125 项测试、ruff、schema parity）与 `uv run pre-commit run --all-files`（11 hooks）全部通过。
 - 临时诊断说明：`aix` 无逐文件 diff 渲染接口，使用只读 `git status --porcelain` 查看变更明细；`pre-commit` 不在 PATH，改用 `uv run pre-commit`，未绕过任何门禁。
 - 最终 `aix wf status` 全部 10 子仓 clean/sync，workflow 父仓提交推送完成。
+
+## 2026-09-14 第二轮全仓提交与 139MB 证据内容审查
+
+- 用户再次指示 SUBMIT ALL；cbb（constant_multiplier 全量 G0–G5 交付：model/profiles/trace/tools/verification/formal/PPA/quality）、ip（GPIO 全流程：UVM env/th/tc、synth/signoff/evidence 193 个内容寻址对象）、skills（pass_with_condition 门禁、release conditions、证据强化）三仓分别 commit+push 成功，全部 clean/sync。
+- 用户质疑 ip 仓 139MB 内容是否为运行中间件；逐项分析如下（证据：reports/evidence/index.json，schema ip-retained-evidence/1.0，204 条目/238 对象/106.0MB）：
+  - 38.58MB×2 = `build/ppa/n32_100mhz_*/synth.log`（12a7d930…）与 `reports/synth/fullflow_combined.log`（c4cf90b6…）：后者是前者的超集（前缀逐字节相同 + 约 2.9KB DC 尾部），为同一 DC run 的单步与 combined 两种身份重复保留，占总量 77MB/73%。
+  - 1–5.4MB×13 = VCS UVM run manifest（fuseoc/uvm-vcs 索引文件，每 run 约 1.2MB×8）与覆盖率 urgReport 明细（modinfo/mod*.html×5）；其余 188 个对象共 3.6MB，为结构化 JSON/YAML 签核报告与解析器输出，属合理审计证据。
+  - 判定：非"运行中间件数据库"（build/ 波形/EDA 库均被 .gitignore 拦截），而是 IP suite 证据保留合同（gate-evidence-retention.md）按设计复制"报告引用的日志闭包"；但大 EDA 日志以两种身份重复保留确有优化空间。
+- 用户决定：方案 1 保持现状不动历史，仅评估政策改进建议。评估结论（供后续批次采纳，本批不实施）：
+  - evidence_store.py 增加"同前缀超集检测"：新保留对象与已有对象 >10MB 且前缀相同时，保留 combined、单步日志以 offset/长度区间引用，预计可省约 38MB/次全流程；
+  - index.json 对 >10MB 对象增加 `large: true` 标注与保留理由字段，供打包检查与人工审查显式豁免；摘要化（head/tail）违反现行"原始日志不改 SHA"合同，不建议；
+  - 签核流程侧：synth 证据统一引用 combined 单一身份，避免同 run 双身份入库。
+- 大文件均低于 GitHub 100MB 单文件限制，推送无阻断；未重写历史、未 force-push。
