@@ -6,6 +6,24 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 
 格式：`时间(UTC)` | 阶段 | 动作 | 结果 | 证据/哈希
 
+- `2026-09-16` | **workflow / 修复 `uv sync` 卡死（构建期全树包发现）** | 症状：`uv sync` 停在
+  `Building aixworkflow @ file://...` 永不退出（实测 5m55s 未结束；`timeout` 无法感知阻塞）。
+  证据链：ps 显示 uv 等待构建子进程 `backend.build_editable(...)` 持续 100% 单核、无文件 syscall；
+  `uv build --sdist` 产出 7.4MB 且含 5226 条 `repos/` 条目；`top_level.txt` 把
+  `repos/build/cache/tmp/docs` 识别为包。根因：工作区根既是 manifest 控制面又是 `repos/`
+  （14G / 14 万文件 / 约 492 个 `__init__.py`）所在目录，而 `[tool.setuptools.packages.find]`
+  `where = ["."]` 触发根目录递归包发现与 sdist 清单推演。
+  修复：canonical [`pyproject.toml`](pyproject.toml) 改为显式 `py-modules` +
+  `packages.find where = []`；新增 [`MANIFEST.in`](MANIFEST.in) `prune repos/reference/build/cache/...`；
+  [`.gitignore`](.gitignore) 增加 `/bdist/`、`/dist/`、`/command.log`、`/dbgpoly.log`；
+  清理根 `build/`(153M) 与 `aixworkflow.egg-info/`；canonical
+  [`uv-environment.md`](repos/aixsilicon_skill_repo/skills/aixsilicon-workspace-management/references/uv-environment.md:47)
+  新增该故障的现象/根因/自检章节并重新物化 skills。
+  结果：`uv build --sdist` 11.6s→0.56s、7.4M→15K（`repos/` 条目 0）；`uv sync --locked`
+  由 >300s 卡死→18s（二次幂等 0.05s）；删除 `.venv` 冷启动全量同步 0.60s；
+  `make check` 6.23s 全绿、`pre-commit run --all-files` 11 项全 Pass；`uv.lock` 未漂移。
+  证据：cmd artifacts 复现与 strace 采样、`/tmp/w3` sdist 清单 | PASS |
+
 - `2026-09-14` | **skills+cbb / G5 representative 放宽修复** | 修复 G5 回归失败根因（工具链不一致）：
   canonical [`qualification.py`](repos/aixsilicon_skill_repo/skills/cbb-development-suite/scripts/impl/qualification.py)
   `matrix_errors` 新增 `plan.matrix.representative` 放宽模式——当声明代表配置 run + complete_pairwise
@@ -252,3 +270,36 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - G4/G5 尚不能签核：配置矩阵、RAL 交接、覆盖关闭、形式证明、真实 SoC/X2P 受控输入及四点 PPA 仍有缺口；未以单一典型配置仿真通过替代全支持范围验证。
 - 后续用户明确授权暂缓完整覆盖率；以原话和哈希记录 coverage_continuation，仅豁免 g4.coverage_closure 的流程阻塞，不抹掉技术失败。新增门禁回归覆盖越界豁免、其他检查失败及授权漂移。当前 G0–G3 pass，G4 仍因其他缺项 fail，G5 blocked。
 - 空闲响应修复后 batch_1789378522964290525 的 17 个 UVM 用例、10/10 模块 UT、lint/elab/synth 均通过；RAL 实际 package 编译通过。URG 两次在许可证初始化栈崩溃；遵照用户授权保留覆盖条件并继续其他工作，不伪造覆盖率。
+
+## 2026-09-15 VIP Suite 流程审查与过时文档清理
+
+- 用户要求审查 vip-development-suite 流程并先写报告，随后授权归档或删除冗余、过时内容。
+- 已阅读 canonical 套件与关键脚本，报告：reports/vip-development-suite-review-2026-09-15/report.md；8 项发现含两项隔离探针复现（完整诊断覆盖默认资格、验收子项未逐项绑定证据）。未修改执行脚本/schema。
+- 将历史 plan.md 归档到 skill repo/docs/archive/2026-09-vip-suite/，更新入口；清理 FAQ、变异、RTM 和报告路径中的过时叙述，保留有效 full-contract 诊断与全部既有修改。修改前副本和 cleanup.diff 保存在本地报告目录。
+- canonical 清理已 bootstrap 物化。validate_suite 与 quick_validate 输出有效；pytest 84 个通过标记/4 个跳过后未正常退出，make check 和 pre-commit 也停滞，已中断，未声明完整验证成功。原始日志在 build/vip-development-suite-review-2026-09-15/。
+- 本次审查套件本身，未指定 VIP，因此报告与诊断使用工作区 reports/build，未写入任何真实 VIP 资产。首次 uv 缓存只读错误后指定 /tmp/vip-review-uv-cache；aix repo diff 不支持 --stat，后改用受支持的 aix repo diff skills。未提交或推送。
+
+## 2026-09-15 VIP Suite F1–F8 优化实施
+
+- 用户先指定修复 F1，随后要求依据报告优化 SKILL 并完成剩余优化；保留原工作树变更，在 canonical suite 修改。
+- F1 隔离 full-contract 报告与输出；F2 引入 qualification vip.acceptance/v2 子项校验；F3 新增 freeze-plan 与不可覆盖基线/变更关联；F4 校验 execution/reused/review 来源；F5 支持 --target/--make-var 和实际命令预览、真实工具版本记录；F6 增加 compact 文档与纯时序 Profile 的显式 L1 适用性、删除只增测试计数规则；F7 分离 G5/G6 报告；F8 同步过时规范、模板和 evals。
+- 121 tests passed，4 商业 EDA opt-in tests skipped；套件 lint、validate_suite、quick_validate、最终 make check 全部正常退出通过。canonical 已重新物化。原始证据保存在 build/vip-suite-f1/；实施记录 reports/vip-development-suite-review-2026-09-15/implementation.md。
+- 沙箱内 uv 无法回收已退出 Python 子进程，转经 require_escalated 自动审批执行限定修改与检查，正常完成；未提交或推送，也未自动迁移真实 VIP 资产。旧 qualification v1 需要重新审阅迁移到 v2，不能只改 schema。
+
+## 2026-09-16 CBB INT-001 parallel_data_fetch 落位、注册与实现
+
+- 用户提供 `repos/aixsilicon_cbb_repo/components/parallel_data_fetch_contract.md`（709 行需求与架构说明），要求"找一个位置，注册后实现"；后续明确"新建 interconnect"类别，并在设计评审中指出该构件必须拆成两个模块以便 SoC 跨区集成。
+- **G0 Intake**：按 domain-rules §1 判定为 CBB（A3 局部握手构件）而非 IP/HWIF/VIP——只提供参数化核心逻辑与局部握手，不定义总线协议契约、无 CSR/中断、不承担独立集成功能。查重结论：与 STR-008/STR-014/STR-021、QUE-008、CDC-007、MON-013 契约均不同（均无"请求→远端原子快照→窄链连续发送→请求端重组"整事务语义），故新增条目。
+- **落位与注册**：新建 `components/interconnect` 类别；`governance/reserved-ids.yaml` 追加 `parallel_data_fetch: INT-001`；`registry.yaml` 新增 INT-001（A3/P2，path `components/interconnect/parallel_data_fetch`）；需求合同从 `components/` 根迁入 registry.path 并先以 planning-intent 草稿形式保留，待 cbb.yaml 落地后转为派生视图（源哈希绑定 cbb.yaml/behavior.yaml）。
+- **C1 契约**：`cbb.yaml`（13 参数、PC-001～PC-011、REQ-001～009）、`behavior.yaml`（INV-001～008/ASM-001～005/EXC-001～008）、`profiles.yaml`（sync_typical/async_typical/slice_shift/slice_indexed）、`verification/plan.yaml`、`verification/config-inputs.yaml`。严格按纪律先跑 `config-gen`（219 配置：mandatory 1/boundary 28/pairwise 147/risk 2/consumer 4/negative 33），再按真实 config_id 回填 REQ 与计划，`check --phase specify --strict` 通过，RTM 22 条。
+- **约束求值复核**：发现原 PC-009（`%4==0` 防非 2 幂）不足以取证（12/20/24 会通过），改为 `%8 or ==4` 并新增 PC-011（异步模式禁用同步 pipeline）；同时删除不可达的 PC-010（在 PC-003+PC-004 下除数大于 n/2 只能等于 n），避免保留无法取证的死约束。
+- **流程加固（用户要求）**：在 canonical `cbb-development-suite` 固化 **DOC-02「文档/方案先行」**——契约与验证计划（C1）、设计论证（C2）未落地前禁止写 RTL/SVA/Core/验证代码，partial-task 同样适用（只裁剪范围、不跳过论证）；同步写入 super-skill 执行流程与 implement-cbb-rtl 步骤 1（详设先行硬门禁）、workflow-policy.yaml 规则。`validate_suite.py` 通过，套件测试 38 项 OK（`--with pytest`），已重新物化。
+- **C2 设计论证**：`docs/intake.md`（边界/查重/依赖/风险/范围决策）、`docs/cbb_spec.md`（派生规格）、`docs/design.md`（模块划分与集成边界、双状态机、时序与守恒、复位与错误优先级模型、CDC/RDC 白名单选型、PPA 优化点与 Pareto 位置、验证映射）、`docs/detail-design/slice_impl.md`（三实现论证）。
+- **双端点重构（用户评审意见）**：原实现为单一 wrapper；用户指出"应分成两个模块，否则无法集成到 SoC"。据此将 RTL 拆为 `parallel_data_fetch_requester`（仅 A 域）与 `parallel_data_fetch_provider`（仅 B 域），窄链路成为模块边界；`pdf_async_fifo` 因写端 B 域/读端 A 域无法归入任一单侧，作为同级链路单元由集成方实例化并已写入 design.md §1；`parallel_data_fetch` 降级为同层封装（仿真/冒烟）。
+- **G3 静态基线**：新增多模块脚本 `verification/scripts/run_static_checks.sh`，wrapper 17 组参数化正向 + 端点独立 4 组、15 组负向由 `generate` 内 `$error` 拦截（工具非零退出且含参数诊断）。VCS W-2024.09：positive 21/21、negative 15/15。
+- **G4 功能仿真**：`verification/scripts/run_functional_sim.sh` + TB 覆盖 12 个参数化用例（默认/BEAT_COUNT=1/非 2 次幂 9/pipe1/pipe8/三切片/MSB-first/奇校验/无校验/宽链路），每用例 52 事务、SVA 全程开启、`bubbles=0`。
+- **调试过程（保留根因，避免重复踩坑）**：① RTL 中 requester 的 `link_req_o` 悬空导致 `req_toggle` 为 X、provider 边沿检测失效；② TB 数据源 FSM 以"`b_fetch_ready` 当前值"为推进条件造成死锁；③ TB 在响应到达前提前拉低 `a_rsp_ready` 且判据用 `!a_rsp_ready`，导致请求被丢弃/响应不消费、DUT 滞留 HOLD；④ parity 注入与 BEAT_COUNT=1 的首拍即 last 竞争，改为整事务期间确定性反相注入。以上均修正并有回归证据。
+- **状态与证据**：`registry.yaml` INT-001 由 planned → **implemented**（`build_cbb_structure.py` 293 条/implemented=11）；README 状态总览与需求合同索引刷新且 `--check` 一致；Gate G0–G4 记录于工程内 `reports/quality/gates/parallel_data_fetch.yaml`；`reports/qualification-report.md` 列出剩余风险；`cbb_tool.py log` 追加 5 条事件到工程内 run_log。
+- **未完成与不夸大**：G5 配置矩阵回归未执行；异步模式（ASYNC_MODE=1）仅有结构与 elaboration 证据（profiles 标 experimental）；G6 门级 PPA 为 `OPTIONAL_UNAVAILABLE`（E0，未伪造数值）；G7/G8 未执行，不声明 released。配置集未含 `random` 集合（13 参数采样域超出 config-gen 有界枚举上限 10000），随机激励由 TB 内 tc_random 承担并已记录取舍。
+- **门禁**：父仓 `make check` 三项实质通过（ruff 需 `--with ruff`、schema-check 通过、workspace-management tests 全绿需 `PYTHONPATH`），`pre-commit run --all-files` 全绿（11 项）。根环境未预置 ruff/pre-commit/pytest，属环境状态而非本次改动；未以该状态声称 make check 原生命令一次通过。
+- 未提交或推送；子仓改动留在工作树。
