@@ -303,3 +303,12 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - **未完成与不夸大**：G5 配置矩阵回归未执行；异步模式（ASYNC_MODE=1）仅有结构与 elaboration 证据（profiles 标 experimental）；G6 门级 PPA 为 `OPTIONAL_UNAVAILABLE`（E0，未伪造数值）；G7/G8 未执行，不声明 released。配置集未含 `random` 集合（13 参数采样域超出 config-gen 有界枚举上限 10000），随机激励由 TB 内 tc_random 承担并已记录取舍。
 - **门禁**：父仓 `make check` 三项实质通过（ruff 需 `--with ruff`、schema-check 通过、workspace-management tests 全绿需 `PYTHONPATH`），`pre-commit run --all-files` 全绿（11 项）。根环境未预置 ruff/pre-commit/pytest，属环境状态而非本次改动；未以该状态声称 make check 原生命令一次通过。
 - 未提交或推送；子仓改动留在工作树。
+
+## 2026-09-17 进展核查与门禁强度修正（INT-001）
+
+- 用户要求"检查项目进展"；核查三仓提交/推送均成功（cbb f18b122、skills 5815185、workflow a5cfd20，均 ahead=0）。
+- 发现并纠正一处**门禁强度问题**：此前用 `$display("[tc_async_modes] ...")` 文案让未实现的异步用例通过 `check --strict` 的引用完整性——这等于用字符串伪造用例落地。已撤销该做法，改为：把未实现的异步回归从 `cbb.yaml` 的已落地 `tests`/`plan.yaml` 的 `testcases` 中移出，以 `pending_work`（不含 `tc_` 前缀，避免被校验器当作 token 提取）显式登记为后续工作，并在 plan 注释与资格报告中说明。
+- 复核确认：`check --state specify/implemented --strict` 双强度均 PASS、`rtm --check-only` OK、`build_cbb_structure` 293 条/implemented=11、README `--check` 一致、需求合同派生视图源哈希已随 cbb.yaml 变更刷新（`check_requirement_contracts` 仅剩 accumulator/constant_multiplier 两个**既有**陈旧项）。
+- 用正式入口重建 content-bound 执行证据：`run-step --step implement`（G3 静态基线）与 `--step verify`（G4 功能），事件写入工程内 `reports/quality/events.jsonl`（action=executed，含输入/输出哈希）。
+- Gate 记录更新为 G0–G4=pass，证据全部指向工程内真实存在的文件；`gate --check` 仍报 `G3/G4: qualification requires content-bound run evidence` 与 `G5–G8 未记录`，属**本轮范围的真实反映**（qualification 级要求 `run-<date>-NN` manifest，本轮完成到 development candidate）。已在 `reports/qualification-report.md` §1.1 显式说明该差异，不把脚本路径伪装成 run 证据，也不补未执行的 G5–G8。
+- 重新执行 G3（21 正向/15 负向）与 G4（12/12 用例）以确认修正后证据与当前 RTL 一致；`pre-commit run --all-files` 11 项全绿。
