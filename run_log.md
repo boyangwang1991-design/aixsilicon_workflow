@@ -312,3 +312,23 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - 用正式入口重建 content-bound 执行证据：`run-step --step implement`（G3 静态基线）与 `--step verify`（G4 功能），事件写入工程内 `reports/quality/events.jsonl`（action=executed，含输入/输出哈希）。
 - Gate 记录更新为 G0–G4=pass，证据全部指向工程内真实存在的文件；`gate --check` 仍报 `G3/G4: qualification requires content-bound run evidence` 与 `G5–G8 未记录`，属**本轮范围的真实反映**（qualification 级要求 `run-<date>-NN` manifest，本轮完成到 development candidate）。已在 `reports/qualification-report.md` §1.1 显式说明该差异，不把脚本路径伪装成 run 证据，也不补未执行的 G5–G8。
 - 重新执行 G3（21 正向/15 负向）与 G4（12/12 用例）以确认修正后证据与当前 RTL 一致；`pre-commit run --all-files` 11 项全绿。
+
+## 2026-09-17 INT-001 异步模式双时钟回归（补齐最大功能缺口）
+
+- 按 DOC-02 先落方案后写代码：`docs/design.md` §8 给出异步验证方案（时钟比例策略/激励矩阵/判据/相位纪律/范围限制），
+  `verification/plan.yaml` 将 `tc_async_modes`、`tc_async_reset_order` 从 pending_work 提升为 planned 并写明 acceptance。
+- 新增 `verification/simulation/parallel_data_fetch_async_tb.sv` 与 `verification/scripts/run_async_sim.sh`：
+  8 组时钟比例/相位（A 快 B 慢 4×、A 慢 B 快 1/4×、临界 FIFO==BEAT_COUNT、同频异相相位 0/3/7、互质 7:17、深 FIFO 64），
+  含 provider error 与"事务中 B 端复位→错误结束→link 重建后可继续"。**8/8 通过**（VCS W-2024.09）。
+- **RTL 真实缺陷修复**（非测试放宽）：契约 §14 明确"异步模式不得立即复用 toggle 发起新请求，应先完成 link recovery"。
+  原 `QUIET_MAX` 按同步量级设定（`BEAT_COUNT+LINK_PIPE_STAGES+REQ_SYNC_STAGES+2`），异步下 A 端在错误后立即复用请求会出现
+  A=HOLD / B=IDLE 的失配（请求事件不对齐）。修正为按跨域往返量级保守放大
+  `2*BEAT_COUNT + 4*REQ_SYNC_STAGES + 16`（时序参数推导，不改外部接口/参数语义）；同步模式窗口保持不变。
+- **TB 相位缺陷修复**（domain-rules §3.1.2 纪律）：① 等响应前多等一个 negedge，若 A 端在间隙已握手完成并撤销 valid，
+  TB 会错拍漏消费而永久等待；② reset 场景在 fork 内预置 `rsp_ready` 造成错拍漏消费。两处均改为单点驱动 + guard 超时判据。
+- 复核未受影响：同步 G4 12/12、同步 G3 21 正向/15 负向 重新跑均通过；`check --strict`（specify/implemented 双强度）、
+  `rtm --check-only`、config-gen（215 cfg）、structure（293 条/implemented=11）、README `--check`、`pre-commit` 11 项全绿。
+- 证据：`run-step --step verify`（run_async_sim.sh）事件写入工程内 `reports/quality/events.jsonl`；G4 gate 记录更新为
+  同步+异步两组证据；`reports/qualification-report.md` 更新支持范围并新增两条剩余风险（异步 `REQ_SYNC_STAGES`=3/4 未逐点回归、
+  时钟停摆场景未单独激励），不夸大覆盖。
+- 契约回填：cbb.yaml 的 REQ-004/REQ-008 `tests` 引用 tc_async_reset_order / tc_async_modes；需求合同派生视图源哈希同步刷新。
