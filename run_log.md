@@ -355,3 +355,36 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - 因 RTL 变更，完整回归复核：G3 21 正向/15 负向、同步 G4 12/12、异步 G4 8/8、G5 Tier A 13/13 全绿。
 - 证据：`run-step --step characterize`（run_config_matrix_sim.sh）事件写入工程内 reports/quality/events.jsonl；
   G5 gate 更新；qualification-report 记录缺陷根因、分层理由与剩余风险；CHANGELOG 记录 Added+Fixed。
+
+## 2026-09-17 INT-001 G6 PPA 表征（PPA-E1 真实综合）+ pdk-scan 流程缺陷修正
+
+- 用户指出"本机有 PDK，请按 SKILL 指引使用"。**我先前的错误**：把 pdk-scan 的 PDK_UNAVAILABLE
+  当作事实，写进 characterization.status 并对外称"本机无可提交的标准单元库快照"，跳过了
+  "先探测再降级"纪律——尽管我第一条命令已确认 ~/pdk 存在。
+- **SKILL 真实缺陷（已按用户确认的 A+B+C 修正并推送）**：`pdk.py` 的 `DEFAULT_PDK_CANDIDATES` 只有
+  `('./pdk',)`，从 workflow 根运行必然未命中；更严重的是未命中时直接输出
+  "G6 允许 OPTIONAL_UNAVAILABLE(E0)"，把"路径没给"导向"环境无库"。
+  - A：默认候选增加 `../pdk`、`../../pdk` 与 `~/pdk`、`~/PDK`、`~/tech`、`~/techlib`、`~/eda/pdk`、
+    `/opt/pdk`、`/opt/PDK`、`/eda/pdk`（expanduser）；修正后自动命中 `/home/eda/pdk`。
+  - B：未命中不再给降级许可，改为输出已尝试路径 + "本机已探测到 EDA 工具"提醒 + 复扫三步；
+    not-ready 分支区分四种情形（库+dc_shell 都在 / 有库无综合器 / 有综合器无库 / 都无）；
+    文档（tool-adapters、ppa-evidence、optimize-cbb-ppa 步骤 2）明确
+    `PDK_UNAVAILABLE`(未命中) ≠ `missing`(确证缺失)。
+  - C：snapshot 新增 `searched_roots[]`（path/exists/source），G6 评审可核验"确实枚举过"。
+  - validate_suite OK、套件测试 38 项 OK，已重新物化并推送（skills 仓）。
+- **G6 表征（真实综合）**：库 GF28LP `sc9_cmos28lp_base_hvt tt_nominal_max_1p00v_25c`
+  （取自 GF21LB004-FB bundle），DC V-2023.12-SP3，`compile_ultra`；10 点 sweep（切片三实现 /
+  pipe 0-1-8 / 宽度 64-1024 / async FIFO 8-16），**10/10 PPA-DONE**（run-20260917-01，≈5.5 min）。
+  比较图 reports/ppa_run-20260917-01.png；报告 reports/ppa-report.md（PPA-E1）。
+- **实测推翻两处设计推论（按 PPA 变更出口纪律修正文档）**：
+  1. 面积标度 ≈11.4 µm²/bit、线性——**成立**；
+  2. "banked 时序更优"——**推翻**：256→32 下 shift 0.03 / indexed 0.04 / banked 0.00 ns，
+     面积三者差 <0.6%。已修正 design.md §6、slice_impl.md、profiles.yaml
+     （sync_typical optimization_goal timing→area；banked 默认依据改为翻转率/功耗待 SAIF 证实）；
+  3. "LINK_PIPE_STAGES 改善时序"——**未体现**：+24% 面积换 slack +0.02 ns，
+     关键路径在端点内部（超时/错误合并/重组末拍），已标注；
+  4. async FIFO 增量——**成立**：+41.0%（FIFO=8）/+80.6%（FIFO=16），深度减半约省 22%。
+- PPA 未改 RTL，但按要求做功能保持复核：G3 21+15、同步 G4 12/12、异步 G4 8/8 全绿。
+- 证据：run-step step=synth（包内 runner `characterization/run_synth_sweep.sh`）事件入 events.jsonl；
+  G6 gate 记录；资格报告状态更新为 G0–G6 / 成熟度 E1，新增三项 PPA 剩余风险（tt 单 corner、
+  无 SAIF、无布局/拥塞代理——后者特别说明本构件核心价值是长距布线资源，逻辑面积无法体现）。
