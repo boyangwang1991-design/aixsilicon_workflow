@@ -70,10 +70,17 @@ ip-dev = [
 aix = "aix_launcher:main"
 
 [tool.setuptools]
+# 本仓是 manifest 驱动的多仓工作区控制面，根目录只分发两个引导模块；
+# 私有运行时（aixworkflow src）由 bootstrap.py 物化，不参与打包。
 py-modules = ["aix_launcher", "bootstrap"]
 
+# 显式声明为空包集合：禁止 setuptools 在仓库根递归发现包。
+# 若使用 packages.find(where = ["."])，构建会把 repos/（14G，含 492 个
+# __init__.py）、cache/、build/、.roo/ 等运行期目录当作候选包做全树扫描
+# 与 sdist 清单推演，单线程纯 CPU 长跑使 `uv sync` 长时间无输出，表现为“卡死”。
+# 详见 .roo/skills/aixsilicon-workspace-management/references/uv-environment.md。
 [tool.setuptools.packages.find]
-where = ["."]
+where = []
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

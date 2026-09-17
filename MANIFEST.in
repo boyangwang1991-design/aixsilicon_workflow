@@ -1,0 +1,32 @@
+# sdist 内容安全网：本仓为多仓工作区控制面（manifest 驱动），
+# 根目录下的 repos//reference/ 等为独立克隆或 vendored 材料，绝不进入分发物。
+# 缺少本文件时，历史配置会把 repos/(14G)、cache/、build/、.roo/ 打进 sdist，
+# 并使 setuptools 在打包阶段做全树扫描，导致 `uv sync` 表现“卡死”。
+include LICENSE
+include README.md
+include pyproject.toml
+include aix_launcher.py
+include bootstrap.py
+
+prune repos
+prune reference
+prune build
+prune cache
+prune reports
+prune tmp
+prune .aix
+prune .roo
+prune .claude
+prune .codex
+prune .windsurf
+prune .cursor
+prune .agents
+prune docs
+prune schemas
+prune manifests
+prune workflows
+prune policies
+prune overrides
+prune workflow
+
+global-exclude *.py[cod] __pycache__/* *.so *.egg-info/* *.log *.jou *.wlf *.vcd *.fsdb *.shm

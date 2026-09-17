@@ -388,3 +388,18 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - 证据：run-step step=synth（包内 runner `characterization/run_synth_sweep.sh`）事件入 events.jsonl；
   G6 gate 记录；资格报告状态更新为 G0–G6 / 成熟度 E1，新增三项 PPA 剩余风险（tt 单 corner、
   无 SAIF、无布局/拥塞代理——后者特别说明本构件核心价值是长距布线资源，逻辑面积无法体现）。
+
+## 2026-09-17 submit all：清理临时产物并提交各仓残留
+
+- 用户要求 "submit all to github"；核查三仓残留后发现两类需处置项，用户确认：A 将 `workflow/tmp/` 加入
+  `.gitignore` 并删除；B `soc-integration-suite` 的既有 error 只记录不修。
+- **A（已执行）**：`workflow/tmp/{acc_verify.py,gen_evidence_index.py,gen_evidence_index2.py}` 为前序任务的
+  临时诊断脚本（自述"独立参考模型""重新生成 evidence-index"），未被忽略且未提交。按 `AGENT.md`
+  「临时性诊断」定位与 workflow 仓"临时场地"职责，加入 `/workflow/tmp/` 忽略规则并删除，不入库。
+- **B（记录不修）**：`skills/soc-integration-suite/skills/02-soc-architecture/SKILL.md:77,321` 引用
+  `../../markdown-to-docx/SKILL.md` 不存在（该 suite 目录**无未提交改动**，属既有问题，非本次引入）。
+  本次不修以免扩大范围；建议后续在该 suite 自己的任务中修复（该链接指向同级 skill 目录，
+  markdown-to-docx 在 workspace `.roo/skills/` 下存在，但在 skill repo 的 `skills/` 下不存在）。
+- **提交流程**：父仓 `make check` 与 `pre-commit` 全绿后按 `AGENTS.md` 顺序 `git add` → `aix repo commit workflow`
+  → `aix repo push workflow`；各子仓独立提交推送。skills 仓改动为前序 vip-development-suite 优化
+  （66 files, +2270/-4009；测试 121 passed / 4 skipped，套件自校验通过），本次一并提交。

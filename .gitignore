@@ -48,6 +48,15 @@ __pycache__/
 .ruff_cache/
 *.egg-info/
 
+# setuptools build scratch/images at repo root (never distributable)
+/bdist/
+/dist/
+/command.log
+/dbgpoly.log
+
+# 临时诊断脚本（AGENT.md「临时性诊断」；不作为交付物入库）
+/workflow/tmp/
+
 # IDE and local overrides
 .vscode/
 .idea/
