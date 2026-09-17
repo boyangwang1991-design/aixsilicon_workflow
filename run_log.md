@@ -332,3 +332,26 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
   同步+异步两组证据；`reports/qualification-report.md` 更新支持范围并新增两条剩余风险（异步 `REQ_SYNC_STAGES`=3/4 未逐点回归、
   时钟停摆场景未单独激励），不夸大覆盖。
 - 契约回填：cbb.yaml 的 REQ-004/REQ-008 `tests` 引用 tc_async_reset_order / tc_async_modes；需求合同派生视图源哈希同步刷新。
+
+## 2026-09-17 INT-001 G5 配置空间验证（分层策略 + RTL 缺陷修复）
+
+- 用户反馈"逐点回归量太大、运行时间不可控，应放到 PPA 后面"。实测单配置 ≈20.7 s（VCS 编译+仿真），
+  32 点约 11 min、215 点更久，交互式不可控 —— 反馈成立。
+- **但整体后移不成立**：套件 workflow-policy.yaml 阶段顺序为 C4(G4/G5)→C5(G6)，且 artifact-contract 要求
+  C5 前置为"功能 smoke 通过的候选"；用未做功能验证的 RTL 表征，PPA 结论不可解释。
+  且本轮 G5 首跑即抓到 G4 漏掉的真实 RTL 缺陷（下述），整体后移会把它带进 G6。
+- **采取分层**：Tier A（默认，留在 C4/G5）= 13 个有界代表点，4m07s，**13/13 通过**；
+  Tier B（`--full`，**建议 G6 PPA 之后**由 CI runner 执行）= 32 点扩展扫描 + `--complete-pairwise`。
+  PPA 完成后已知 Pareto 点，可据此定向加扫；该策略已写入 plan.yaml matrix 段、脚本头注释与资格报告 §2.1。
+- **G5 抓到并修复的真实 RTL 缺陷**：wrapper 把 `pb_ready` 接到 `link_reserve_ok_i`（每拍重估
+  "剩余空间 ≥ BEAT_COUNT"）。当 `RSP_FIFO_DEPTH ≈ BEAT_COUNT` 时，突发中途剩余空间不足一个完整
+  transaction → `reserve_ok` 拉低 → 连续发送被打断、`last` 丢失（ERR_PROTOCOL(4)）。
+  按契约 §7 修正：reservation 只在**启动发送前**门控（provider 在 PV_WAIT_DATA 用 link_reserve_ok_i 确认空间），
+  发送期只受 FIFO 满控制（`assign pb_ready = ~fifo_full;`）。修复后 `async_crit_fifo`(FIFO=4,BEAT=4)
+  与 `risk_async_4096_8`(FIFO=512,BEAT=512) 均通过。G4 的 20 用例未覆盖"深度×时钟比"组合——
+  这是广度验证的价值。
+- 另修正 config_matrix_tb 三处编译期缺陷（声明被 always_ff 驱动 + initial 顺序 + 检查 req_ready 过早：
+  link_up 置位后状态机还需一拍进 IDLE）。
+- 因 RTL 变更，完整回归复核：G3 21 正向/15 负向、同步 G4 12/12、异步 G4 8/8、G5 Tier A 13/13 全绿。
+- 证据：`run-step --step characterize`（run_config_matrix_sim.sh）事件写入工程内 reports/quality/events.jsonl；
+  G5 gate 更新；qualification-report 记录缺陷根因、分层理由与剩余风险；CHANGELOG 记录 Added+Fixed。
