@@ -72,7 +72,9 @@ doc-enhance = [
     { name = "python-pptx" },
 ]
 ip-dev = [
+    { name = "dilithium-py" },
     { name = "fusesoc" },
+    { name = "kyber-py" },
     { name = "matplotlib" },
     { name = "peakrdl" },
     { name = "peakrdl-cheader" },
@@ -85,9 +87,11 @@ ip-dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "dilithium-py", marker = "extra == 'ip-dev'", specifier = "==1.4.0" },
     { name = "docling", specifier = ">=2.0" },
     { name = "fusesoc", marker = "extra == 'ip-dev'", specifier = ">=2.4.7" },
     { name = "jsonschema", specifier = ">=4.18" },
+    { name = "kyber-py", marker = "extra == 'ip-dev'", specifier = "==1.2.0" },
     { name = "markitdown", marker = "extra == 'doc-enhance'" },
     { name = "matplotlib", marker = "extra == 'ip-dev'", specifier = ">=3.11.1" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.8" },
@@ -910,6 +914,15 @@ wheels = [
 ]
 
 [[package]]
+name = "dilithium-py"
+version = "1.4.0"
+source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
+sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/5e/54/76bcb128610f7587695adb802304710b587ce60b71951b455269b12b8e55/dilithium_py-1.4.0.tar.gz", hash = "sha256:b6d455c6af34012062a0af906ad1617803bf46b37dc54938f68c478b2524252a", size = 6743333, upload-time = "2025-12-17T19:15:08.394Z" }
+wheels = [
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/68/92/3e242ff1e2d9e459c599caef9127708b1f92606f38a9031a4b45549b427c/dilithium_py-1.4.0-py3-none-any.whl", hash = "sha256:dda3ae43e6e3d212ae1fe1b30d5b6dffe5e25a1f389d1fea26faad4afdc33ff8", size = 39936, upload-time = "2025-12-17T19:15:07.004Z" },
+]
+
+[[package]]
 name = "dill"
 version = "0.4.1"
 source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
@@ -1605,6 +1618,15 @@ wheels = [
     { url = "https://pypi.tuna.tsinghua.edu.cn/packages/f4/ce/a7dc71353dd06a4cbe02222773f52d4a28c81e5a452a75797f8ed113dc99/kiwisolver-1.5.1-pp311-pypy311_pp73-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:5daa1f19e097050b9c4d9a78fcc9263cb96c9dfae08037ddc1b7c4ad1889f2a2", size = 79891, upload-time = "2026-08-28T10:28:22.936Z" },
     { url = "https://pypi.tuna.tsinghua.edu.cn/packages/10/b1/d61c61a84ff85d1a36a99df2c152b59ffedb1d356c598902aba44abcdb60/kiwisolver-1.5.1-pp311-pypy311_pp73-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:cdaeeb6c350106df6bf9d873395973e5f066a9713200b72cd64f55d0a3eafab6", size = 77605, upload-time = "2026-08-28T10:28:24.322Z" },
     { url = "https://pypi.tuna.tsinghua.edu.cn/packages/d3/52/5aef56f21a460a6e43ab3cdfc7697d59d7b87deb0ec97a0f7b91aa4a521b/kiwisolver-1.5.1-pp311-pypy311_pp73-win_amd64.whl", hash = "sha256:17851e5dad4484be0cbccbde3b15331deae036de9aebd45eed964487802b172f", size = 98465, upload-time = "2026-08-28T10:28:25.696Z" },
+]
+
+[[package]]
+name = "kyber-py"
+version = "1.2.0"
+source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
+sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/ce/38/83a33d2bbb3e7d0b2d13ffd7e1438e513622dc652cf4c00865e9f925ee08/kyber_py-1.2.0.tar.gz", hash = "sha256:9062b7c307b4b84980ec6b775091558d60c488985c4e8081eeb66fd4bb29a354", size = 2384774, upload-time = "2025-12-17T19:07:44.796Z" }
+wheels = [
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/eb/50/0eda99082660ead34aebe2c212e40ff371ce7dd327d80c0980a7398f2d43/kyber_py-1.2.0-py3-none-any.whl", hash = "sha256:517f4c8f5009f5b4dfb8f4bfd0f6d631bf56e0cad3f709282e6450e5d8eda6aa", size = 33749, upload-time = "2025-12-17T19:07:43.476Z" },
 ]
 
 [[package]]

@@ -403,3 +403,54 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - **提交流程**：父仓 `make check` 与 `pre-commit` 全绿后按 `AGENTS.md` 顺序 `git add` → `aix repo commit workflow`
   → `aix repo push workflow`；各子仓独立提交推送。skills 仓改动为前序 vip-development-suite 优化
   （66 files, +2270/-4009；测试 121 passed / 4 skipped，套件自校验通过），本次一并提交。
+
+## 2026-09-18 ESL Suite 方法完善与规划归一
+
+- Canonical Skill：修正 W01–W14 路由与工具发现，新增 SystemC 主体模型目录/文档、标准化集成 I01–I07、专业 references；保留 K01–K12 与 K13 环境扩展。
+- ESL 资产仓：12 类基础模型及 basic_system 登记 planned；环境合同固定 SystemC 3.0.2/C++17，CMake/安装入口更新；未执行下载或安装。临时规划正文迁往各自 owner，原路径仅保留导航。
+- 检查：14 个 SKILL frontmatter、Suite 结构/相对引用/registry、可移植安装与负向边界检查通过；planned 模型登记/链接/inspect 过滤、历史 Python import 和安装器 mock 合同检查通过。证据分别在 Suite evals/validation-2026-09-18.json 与 esl_repo/runs/planning-validation-2026-09-18/。
+- 限制：SystemC 3.0.2 package 未找到，实际编译/集成 BLOCKED；Agent 行为与宿主自动发现 NOT_RUN。pre-commit 因 PyPI DNS/依赖安装失败受阻，make check 未完成；局部 ruff 通过。已物化 .roo/skills，未提交或推送。
+- 开始时在尚未读取 AGENT.md 前用普通 git status 作父仓临时诊断；后续子仓状态/diff 均用 aix repo。
+
+## 2026-09-18 SystemC 3.0.2 实际安装
+
+- 按用户最终要求从官方 3.0.2 源包构建，安装到 ~/.local/systemc-3.0.2；原 2.3.4 保留。仅更新 .bashrc 的 ESL SystemC 块，备份为 ~/.bashrc.esl-backup-20260918-054015。
+- C++17 / GCC 8.5.0 本机源码构建成功；SystemC 计数器与 TLM 读写/越界/时间测试 2/2 PASS，新 shell doctor 与运行时库路径确认 PASS。官方推荐 GCC >=9.3，本机冒烟不等于全量兼容认证。
+- 修复 CMake 三段 EXACT 错拒 3.0.2.20251031 官方 package、旧计数器初始化额外计数、下载半包误判缓存、doctor 将旧版误报就绪；环境回归 3 项与相关 ruff 通过。
+- 工程证据：repos/aixsilicon_esl_repo/runs/systemc-3.0.2-install/。ENV03 已更新；基础模型与 I01–I07 集成尚未实施，不因环境通过升级为 available。
+
+## 2026-09-18 常用基础 ESL 模型 B0
+
+- 新增 RAM、ROM、host_master、tlm_bus 的 SystemC 库、公开 Config/API、manifest、设计/集成/验证文档；ROM 复用 RAM，共用字节存储/准入组件归资产仓。SystemC 3.0.2/C++17。
+- 提供 B0 双主机基础系统、RAM 8 项专项与 B0 8 项组合用例；源码/安装/移动 prefix 后消费共 32 次 CTest 全部通过。证据 esl_repo/runs/basic-models-b0-final-20260918-r2/checks.json（命令/日志/输入 hashes）。
+- 四个模型及 B0 登记 available，其余模型保持 planned；进度更新同一任务账本。inspect 返回现有 manifest，通用 run 装配仍未实现。
+- Suite 补充容量计数、LT 拒绝/重试边界与 drain-only 系统复位次序；方法留 Skill，工程资产留 ESL Repo。没有创建提交或推送。
+- 收尾修复：RAM 在 idle reset 后立即 resume 时忽略旧 epoch 的残留通知，保持新事务完整延迟；对应回归已包含在最终 32 项 CTest 中，源码 hash 复核一致。
+- 附加检查：3 项环境工具测试通过，CLI/验证脚本 ruff 通过；Suite 结构/引用检查通过并重新物化，新增方法文件与 canonical 一致。inspect 确认 4 个 available 模型及 8 个 planned 模型。
+- 全仓门禁再次尝试：make check 停在 bootstrap 后超时；pre-commit 已过基础文本/YAML/JSON 检查，停在 aix-guard-runtime-paths 后超时，未宣称全仓门禁通过。日志 /tmp/esl-b0-make-check.log、/tmp/esl-b0-precommit.log。
+
+## 2026-09-18 ESL 目录职责重构
+
+- 按用户最新要求优先重构：SystemC 目标资产保留 models/common/systemc/examples；环境 smoke 从 examples/min_systemc 移到 tests/environment/systemc；Python 工具测试统一 tests/tools。
+- 历史 Python common/models/mini_pipeline/模板整体迁到 reference/legacy_python，仅保留一份；CLI 按需加载历史 import 路径，Python 模板输出也限制在历史子树。更新注册路径、文档链接和唯一目录索引 docs/repository_layout.md。
+- 保留 timer/irq_controller 开发草案，继续 planned；未完成的 B1 不进入默认构建。B1 原任务继续在 IP02 追踪。
+- 回归：B0 32 次 CTest PASS（含源码、安装和搬迁消费者）；环境新路径 2 项 CTest PASS；工具/迁移 pytest 7 项 PASS；历史配置/合同与 T01–T03 数据/周期 PASS。修改的 Python ruff PASS。证据 esl_repo/runs/layout-refactor-20260918/。
+- 没有修改公开 SystemC 模型 ABI，没有创建提交或推送。
+- 补充：迁移后的历史 observability 检查 A06–A10/percentile 通过。全仓 make check 与 pre-commit 再次在 25 秒上限内未完成（分别停在 bootstrap、runtime-paths guard）；不标记全仓门禁 PASS。日志 /tmp/esl-layout-make-check.log、/tmp/esl-layout-precommit.log。
+- 目录迁移需要捕获旧 Markdown 相对链接并重定向；现有 aix/esl CLI 无目录迁移 action，本次使用临时迁移脚本完成文件移动/链接修正，回归入口与测试保存在资产仓。
+
+## 2026-09-18 B1 定时器与中断控制器
+
+- 完成 timer/irq_controller 的 SystemC 库、探索 MMIO32 ABI、公开 Config/端口、异步高有效 reset、排空协议与三份模型文档。共用 MMIO32 helper 位于 ESL common，仅为内部实现。
+- 新增 interrupt_system：双 timer、控制器、host、总线；12 项场景覆盖时间/清除竞争、屏蔽/优先级、电平重挂起、在途复位、背压、错误与绑定。
+- 统一回归源码/安装/搬迁消费，连同 B0 共 68 次 CTest PASS，源文件 hash 复核一致。证据 esl_repo/runs/timer-irq-final-20260918/checks.json。工具/目录 pytest 7 项及验证脚本 ruff PASS。
+- 两个模型与中断示例登记 available，B1 UART/GPIO 及 B2 DMA 仍 planned；只更新原任务账本。未创建提交或推送。
+- 全仓门禁：本次 make check 在 bootstrap 依赖获取阶段因 PyPI 镜像 DNS 失败；pre-commit 的 guard 同样遇到 setuptools 下载 DNS 失败，未宣称全仓通过。日志 /tmp/esl-b1-make-check.log 与 /tmp/esl-b1-precommit.log。局部编译/CTest/pytest 不依赖此次网络获取，已独立通过。
+
+## 2026-09-18 ESL Repo / Skill 合理性审视
+
+- 用户要求审视后暂停 UART/GPIO 功能推进；两者新增源码尚未验证，仍保持 planned，不进入 available 或默认构建。
+- 已读工具、模板、注册表、模型合同、安装配方、测试与 Suite 方法/验收账本。通过现有 CLI 复现：不存在的模型与非法连接仍运行 mini_pipeline 并返回 PASS；缺失配置返回 BLOCKED 但进程码为 0。
+- 临时隔离 fixture 复现：未登记可用的 compute_cpp 仍可生成，model.yaml 缺失被跳过，产物为 executable 而非可复用库。已安装 timer 文档引用 MMIO32 合同，但 prefix 未包含该合同。
+- 审视证据：esl_repo/runs/architecture-review-20260918/results.json。隔离模板/安装文件诊断无对应 CLI action，使用 /tmp/esl_review_repro.py；执行 run 使用实际 CLI，未修改被审查实现以掩盖问题。
+- 结论待办优先：后端/资产校验与失败返回 → 模板/模型合同 → 安装交付完整性 → Skill 验收覆盖及行为评估；已有 SystemC CTest 证据不自动证明这些工具能力或 Skill 行为有效。

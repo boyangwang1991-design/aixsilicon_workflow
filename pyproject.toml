@@ -51,7 +51,9 @@ doc-enhance = [
     "markitdown",         # 快速路径与基准对照
 ]
 ip-dev = [
+    "dilithium-py==1.4.0",
     "fusesoc>=2.4.7",
+    "kyber-py==1.2.0",
     "matplotlib>=3.11.1",
     "peakrdl>=1.5.0",
     "peakrdl-cheader>=1.1.0",
