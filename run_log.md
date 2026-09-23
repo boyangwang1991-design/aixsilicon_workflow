@@ -454,3 +454,134 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - 临时隔离 fixture 复现：未登记可用的 compute_cpp 仍可生成，model.yaml 缺失被跳过，产物为 executable 而非可复用库。已安装 timer 文档引用 MMIO32 合同，但 prefix 未包含该合同。
 - 审视证据：esl_repo/runs/architecture-review-20260918/results.json。隔离模板/安装文件诊断无对应 CLI action，使用 /tmp/esl_review_repro.py；执行 run 使用实际 CLI，未修改被审查实现以掩盖问题。
 - 结论待办优先：后端/资产校验与失败返回 → 模板/模型合同 → 安装交付完整性 → Skill 验收覆盖及行为评估；已有 SystemC CTest 证据不自动证明这些工具能力或 Skill 行为有效。
+
+## 2026-09-18 ESL 审视问题修复
+
+- CLI 只执行显式 legacy-python-mini-pipeline；未知模型、连接、参数和后端在执行前拒绝，缺文件等失败非零退出。参考数据使用独立饱和算术 oracle，时间检查服务上下界；sweep 支持笛卡尔积/显式等长 zip 并保留失败点，compare 拒绝空或不兼容结果。
+- 增加可执行 manifest/registry 合同与证据 SHA-256 有效性检查；9 项 available 资产的 validate --evidence 返回 PASS。planned 不自动升级，UART/GPIO 保持 planned。
+- register_target 是可复用 SystemC 库模板；拒绝 planned/缺文件/越界路径/覆盖，完整生成后校验。独立隔离生成和源码/安装/搬迁消费者 6 次 CTest PASS（2 个独立用例），证据 esl_repo/runs/review-fixes-template-validated/checks.json。
+- 基础六模型、两个系统例程共 28 个独立用例、68 次 CTest PASS。安装文档按相对结构交付公共合同，Markdown 本地文档链接无缺失；证据 esl_repo/runs/review-fixes-integration-final/checks.json。前次缺 tests/README 的失败记录保留，没有覆盖为 PASS。
+- pytest 30 passed in 0.36s（关闭宿主自动加载插件），修改 Python 的 ruff PASS。原 uv/pytest 宿主插件组合在输出测试结果后不退出；使用有限超时避免挂起。
+- Skill 明确共享测试 fixture、同步无在途模型的生命周期例外、逐模型集成覆盖和源码/证据失效规则；结构校验 1 主入口 + 13 子技能通过，skill-creator quick_validate 通过，bootstrap 已重新物化，diff -qr 确认 canonical 与副本一致。S06 Agent 行为评估和自动宿主发现仍 NOT_RUN。
+- 全仓 make check 与 pre-commit 本轮在 25 秒上限未完成，分别停在 bootstrap 物化后与 runtime-paths guard；不能宣称全仓门禁通过。日志 /tmp/esl-review-make-check.log、/tmp/esl-review-precommit.log。局部消费者与工具检查独立通过。没有提交或推送。
+
+## 2026-09-18 B1 UART/GPIO 交付
+
+- 按 ESL Suite 软件可见模型/标准集成方法推进资产账本 IP02；复用既有 UART/GPIO 源码草稿、公共 MMIO32 和 CMake 导出，不另建 Python 行为镜像。补齐公开 manifest、模型目录说明与 design/integration/verification；UART 增加同刻 overrun/W1C set 优先及排空前拒绝 resume。
+- 新增 peripheral_system 独立消费者：host/bus、双 UART、双 GPIO、中断控制器，22 个场景检查帧时延/loopback/FIFO/外部背压、GPIO 边沿/方向/掩码、W1C、在途 reset/drain/capacity、双实例、非法配置与未绑定。共享 fixture 避免各模型复制测试。
+- 统一验证扩大到 8 个基础模型与 3 个消费者；source/install/relocated 共 134 次 CTest、50 个独立场景通过，安装文档 Markdown 链接与公共合同完整。最终证据 esl_repo/runs/uart-gpio-final-20260918/checks.json；公共合同变化后模板重验 6 次 CTest 通过，证据 runs/uart-gpio-template-20260918/checks.json。
+- UART/GPIO 与 peripheral_system 在成功验证后登记 available，既有资产证据同步更新；资产索引与唯一 TODO 已更新，下一步 B2 DMA 先处理 ID01 历史 ID 兼容。B1 由两组消费者验证，不宣称完整 CPU 系统已经装配。
+- pytest 30 项通过，validate_basic_models.py 的 ruff 通过；全仓 make check/pre-commit 在 25 秒上限仍未结束（bootstrap/runtime-paths guard），不标为通过。对应日志归档到最终 run 目录。本轮只改 ESL 资产和运行日志，Skill 方法无需复制资产或新增规则；无提交或推送。
+
+## 2026-09-18 NPU SRAM 硬件架构探索定义
+
+- 按用户“先制定硬件架构、配置和变量”的最新要求，本阶段交付架构提案，未进入模型实现或性能寻优执行。
+- 新增 esl_repo/docs/npu_sram_ctrl_architecture.md，并从原实施规划链接：明确 8 MiB/8×1024-bit 边界、四种等带宽 Bank 组织、Flat 多 lane 与四 group 分层链路预算、地址映射、有限队列、仲裁、ECC/RMW、benchmark、保留集及量化目标。
+- 使用 esl-development-suite 方法；未注册 available 资产，未宣称仿真、PPA 或 RTL 校准通过。保留仓库已有其他未提交改动。
+- 文档本地链接、代码围栏、尾部空白及容量/带宽/等待队列预算算术检查输出 PASS。现有 CLI 无针对架构 Markdown 提案的检查 action，使用 uv 根环境执行临时只读检查。uv 包装进程输出后未及时退出，不以进程整体状态替代上述检查输出。
+- 本次仅文档变更，不重跑 SystemC 功能/性能测试；全仓 make check/pre-commit 未执行。不提交、不推送。
+
+## 2026-09-18 B2 SystemC DMA 交付
+
+- 延续 ESL Suite 行为建模和标准集成方法，新增 DMA SystemC 库、公开 Config/Command/Completion、manifest 和设计/集成/验证文档。无 Python DMA 行为模型；Python 仅承担仓库工具与验证编排。
+- 命令容量包括排队、执行和未取完成结果；真实分块读写共享单一 TLM initiator。错误报告已确认写入字节数；reset 取消后续块但不撤回已写数据，活动 payload 保留到阻塞事务返回，避免伪造整命令原子性或强制终止下游。
+- 新增 dma_system 的 17 个 C++/SystemC 场景，覆盖尾块、有限容量、主机竞争、双实例、下游拒绝/部分错误、读/写阶段 reset、排空与 annotated delay。连同现有模型共 67 个独立 SystemC 用例、185 次 source/install/relocated CTest 执行通过；安装 Markdown 链接与合同检查通过。证据 esl_repo/runs/dma-b2-final-20260918/checks.json。
+- DMA 采用四段规范 ID，registry aliases 保留原五段 ID；inspect --id 支持规范/别名发现，拒绝歧义，不改变历史 Python 后端。工具 pytest 34 项及修改脚本 ruff 通过，独立于模型验收。公共工具/合同变化后 register_target 6 次 CTest 重验通过，证据 runs/dma-b2-template-20260918/checks.json。
+- 成功验证后 DMA/dma_system 登记 available，validate --evidence 通过；资产账本 ID01 标记 DMA 完成、其他历史 planned ID 在实现时迁移，IP02 下一步 B3 Compute/BMU。Skill 不复制资产，未添加无关方法规则。
+- 用户撤销了中途的综合审查请求，未开展 RTL/HLS/PPA 审查。make check/pre-commit 在 25 秒上限仍停于 bootstrap/runtime-paths guard，不声明全仓门禁通过；日志归档在最终 run。未创建提交或推送。
+
+## 2026-09-18 NPU SRAM 架构查漏补缺与行为流量
+
+- 按用户要求审查并修订 esl_repo/docs/npu_sram_ctrl_architecture.md：交织提升为主寻优空间，补充粒度、XOR 位段、group 位分配、region、布局独立/联合对照、mapper 硬件成本及 XOR 冲突反例。
+- 定义 N1–N8 NPU 闭环流量：GEMM/尾部、prefill/decode、卷积、embedding、转置及 DMA 并发；明确 tensor、tile/loop、复用、burst/4 KiB/窄尾部、AW/W、计算与本地存储、外部供数和回包依赖。仍为模型/benchmark 的待实现合同，不宣称已测试 NPU 性能。
+- 补齐 1R1W 入口、有限 matching、header/完成网络、在途/完成/RMW 容量、同 ID 顺序、防死锁 credit、数据采样/提交、宏写粒度、共享 ECC 网络、错误/drain/reset 和指标合同。原计划同步目录结构、可靠性基线及补充文档索引。
+- 文档链接/围栏/空白检查、stripe 分拆例子、XOR 周期反例与抽样逆映射、等带宽容量/ECC/buffer 算术检查输出 PASS；这是定义自洽检查，不是 SystemC 实现或全地址双射验收。现有 CLI 无架构 Markdown/公式检查 action，使用 uv 根环境进行只读临时检查，外层设 20 秒超时。
+- 本次没有更改模型代码或执行性能仿真，保留其他未提交改动；全仓回归未执行，没有提交或推送。
+
+## 2026-09-18 全仓门禁超时根因定位
+
+- 最小复现：沙箱内 `UV_CACHE_DIR=/tmp/esl-uv-cache uv run --offline --no-sync python -c 'print(...)'` 已打印结束，但 Python 子进程成为 Z/defunct，uv 0.11.27 未退出；8 秒 timeout 加 1 秒强杀后为 137。换成 `/bin/true` 仍挂起，排除 Python 插件、模型代码和依赖下载作为本次挂起的必要条件。
+- 对照：经自动审批的沙箱外同一 uv run --offline --no-sync /bin/true 正常返回 0。故已定位到当前沙箱与 uv 子进程退出/回收链路的兼容问题，未确定更底层具体 syscall/信号原因；沙箱内 strace 因 ptrace 不允许而无法使用。
+- 为隔离 uv 启动层，本次临时诊断直接调用已有 uv 管理的根 .venv/bin/python（未新建环境/安装包）：bootstrap.py --ensure 和 bootstrap.py --skip-materialize --run-hook guard_runtime_paths.py 均在一次短调用内返回 0。这是诊断入口例外，不作为绕过正式门禁的 PASS。
+- make check 停在首个 uv bootstrap，pre-commit 停在内部再次 uv run 的 runtime-paths hook；此前设置的 25 秒上限将挂起终止，不是 ESL CTest 用时超过上限。历史网络 DNS 失败是不同轮次问题，不解释本轮已完成输出后的挂起。尚未在沙箱外重跑完整门禁，不宣称全仓通过。
+
+## 2026-09-18 全仓门禁执行阻塞修复与复验
+
+- 用户授权修复后，采用已验证正常的获授权非沙箱执行环境，继续使用原始 uv、根环境与门禁入口。没有修改 Makefile/pre-commit 检查项，没有禁用 hook，没有改锁文件或新增 Python 环境；未声称修复 uv 二进制或宿主沙箱内部实现。
+- make check 实际退出 0：ruff 通过、6 个 packaged schema 与源一致、125 个 runtime 测试通过；uv run --locked pre-commit run --all-files 实际退出 0，全部 hooks 通过。该结果替代之前“25 秒未完成”的当前门禁状态，历史失败日志保留。
+- 在根 AGENT.md 和 canonical workspace Skill 的 uv-environment.md 固化最小探针、兼容环境执行和实际退出判据；已通过 bootstrap --ensure 重新物化。范围是复现本故障的命令，仍通过宿主权限机制，不改沙箱策略。
+- 证据 reports/gate-repair-20260918/checks.json 及两份日志。根门禁不自动覆盖所有子仓的领域验收；ESL 的 SystemC 证据仍由其自身 run/registry 管理。未提交或推送。
+
+## 2026-09-18 SystemC 公共能力批量落地与统一试用
+
+- 使用 ESL 公共资产方法，维持资产在 esl_repo、方法在 Skill；唯一 TODO 覆盖 PC/PI/PW/PA/PX 共 46 项，逐项保留真实范围，不把部分实现标作完整能力已完成。
+- 公共包 AixEslCommon/aix::esl::common 增加独立 latency/II/实例/输出 credit 资源、RR/WRR/优先级/年龄保护、可逆地址映射、事务/TLM 适配、分片/汇聚、同流退休、确定性随机流、寄存器/中断、SECDED、有限 DAG、链路/CDC、稀疏存储、生命周期/watchdog、流量/事件、scoreboard/守恒/带宽检查及明确时间窗注入。原队列/闸门/存储/统计继续由模型复用。
+- 独立公共 SystemC 场景 39 项，包含双端口四 Bank 组合、暂停恢复、闭环任务和失败分支；任务管线按独立解析值在 13 ns 完成。SECDED 枚举 72 个单错与 2556 个双错组合；模型测试不由 Python 行为代替。
+- 最终完整模型/公共包 source/install/relocated 回归：106 个独立场景、302 次 CTest 执行 PASS，runs/common-public-final3-20260918/checks.json。此前两次最终运行的 CTest 也通过，但安装文档链接失败；已将根和 NPU 模型 README 指向存在的 report.md，保留失败记录，不覆盖伪造 PASS。模板额外 6 次消费测试 PASS，runs/common-public-template-final-20260918/checks.json。
+- 公共包登记 available，仅针对合同声明的能力子集；queue/byte_store 旧 ID 作别名。刷新受影响模型证据。common_explore 对 8 组真实 SystemC 配置分别运行 off/trace，完成时间一致，保留数据 oracle/事件/日志，离线报告包括映射、Bank 平均活动事务热图和服务时间线；不将流水占用称为利用率。报告在 runs/common-public-explore-final-20260918/report.html。
+- 工具合同 pytest 47 项、修改脚本 ruff、Skill 结构验证与物化通过；make check（125 项 runtime、6 schema、lint）和 pre-commit 全部通过。继续使用获授权的兼容环境运行 uv，没有绕过检查或新建环境。
+- 仍未完成的范围包括完整配置装配/协议适配、寄存器 SSOT 生成接入、ECC RMW/scrub、完整检查点、更多分析视图及 RTL/测量校准，均在 TODO 明确跟踪；未将这些范围宣称完成。未主动执行 commit/push；期间共享仓库 HEAD 被其他操作推进，保留其变更。
+
+## 2026-09-18 NPU SRAM 性能模型与最终寻优闭环
+
+- 按 esl-development-suite 方法交付 npu_sram_controller SystemC 库：可逆 modulo/XOR/region 映射、有限请求/返回网络、Bank latency/II、RR/age/固定权重/read-first 仲裁、同 ID 保序、独立 AW/W、ECC/RMW、闭环 NPU DAG。新增 CLI npu-sram run/validate/explore；Python 仅承担工作负载与实验编排。
+- 最终主扫描 1045 次、补充仲裁 8 次全部通过。训练选择 B32_G32_xor0；等权几何平均时长下降训练 3.1718%、保留 0.3180%，保留最坏退化 1.0204%。整体降低 10% 目标未达成，未调低目标或按保留集重选。无冲突完整窗口读吞吐 1019.02 B/cycle，达到 90% 峰值目标；结果未经过 RTL/硅校准。
+- 14 个 SystemC 用例、source/install/relocated 三种独立消费者及 47 项 Python 回归实际退出通过；模型登记 available，当前证据 runs/npu-validation-closeout/checks.json。原始扫描源码哈希另存本地 exploration-summary.json；最终整理仅调整报告路径、文档与 reports 哈希排除规则，模型/负载语义未变。
+- 按用户最终修订，模型 reports/20260918/ 只交付综合结论 report.md 与三张支撑 PNG，不纳入生成的 JSON/YAML/HTML/CSV。清理本任务八个旧运行目录及最终 build/install/relocated 树；验证摘要与精简结果仅在已忽略 runs/ 留作本地核验。未修改其他任务运行目录。
+- Matplotlib 通过已有 uv 离线缓存装入唯一根环境，未新建环境；uv 沙箱退出挂起复现后，按 AGENT.md 使用获授权非沙箱入口。make check（125 项 runtime 测试）、pre-commit --all-files 均实际退出通过；最终归档调整后重验领域用例。不提交、不推送；保留已有其他未提交改动。
+- 最后发现共享仓库新登记的 NPU SRAM 模型指向不存在的 runs/npu-validation-closeout/checks.json。通过现有 `esl npu-sram validate` 实际执行其 14 项独立测试及 source/install/relocated 消费验证，结果 PASS，证据 runs/npu-common-integration-20260918/checks.json；仅修复登记引用，不伪造或复用不覆盖该模型的公共测试证据。最终 `esl validate --evidence` 对全部 available 资产 PASS，RTL calibration 仍 NOT_RUN。
+
+## 2026-09-18 公共存储可靠性与策略能力续作
+
+- 延续 ESL 公共资产方法，保留开工时已有未提交改动。统一 ByteStore/SparseStore 的初始化、范围、burst、循环 byte-enable、clear 合同，新增 storage_access 公共校验；稀疏后端禁用字节不分配页，非法请求不改变数据。
+- 新增 EccMemory<Storage>，组合真实 SECDED 与两类后端：部分写 RMW、不可纠正错误拒绝、单字 scrub 修复、72-bit 注错和精确读写/编解码计数。时序仍由 SystemC owner 组合，未另造内核。共享 bank/codec 对照证明 scrub 将需求写完成从 7 ns 推迟到 12 ns，且不丢失需求更新；不声称多 Bank ECC 调度器或物理可靠性校准。
+- 新增 ComputeTiming，按 work/throughput 向上取整和流水级构建有限资源，II 独立，检查零值与溢出；闭环任务消费者改用此公共换算，13 ns 解析预期不变。InterruptState 补边沿/电平采样、同采样 set 优先 W1C 和 reset 历史语义。
+- 公共 fixture 新增 7 项，共 46 项；完整公共/模型 source/install/relocated 回归 113 个独立场景、323 次执行 PASS，证据 esl_repo/runs/common-reliability-final-20260918/checks.json。模板 6 次消费测试及 NPU 14 项独立测试/三种消费路径 PASS，分别见 common-reliability-template-20260918 与 common-reliability-npu-20260918。NPU 源码依赖哈希补入 storage_access.hpp，避免漏掉传递依赖。
+- 工具合同 pytest 47 项、修改脚本 ruff、make check 的 125 项 runtime/6 schema/lint 全部通过。PC02/PC10/PC11/PW04 在唯一 TODO 按明确服务范围收敛；其他完整能力不继承本次 PASS，未修改 Skill 复制资产清单。未执行提交或推送。
+
+## 2026-09-18 NPU SRAM 全量重跑与结论
+
+- 按用户要求使用现有 npu-sram explore 完整重跑到 runs/npu-rerun-20260918，1045 次仿真全部 PASS（420 mapping、576 training、48 holdout、1 peak）。当前工作区已有未提交改动，逐次记录实际源码、二进制与负载哈希；不作为 clean/locked 发布基线。
+- 独立 npu-sram validate 输出 runs/npu-rerun-validation-20260918，14 项 SystemC 用例和 source/install/relocated 消费者通过；验证与扫描源码哈希一致。ESL Python 47 项回归、make check（125 项 runtime、6 schema、lint）、pre-commit --all-files 均退出 0，日志归档于验证目录。
+- 新生成 conclusion.md、完整 index.html 与 24 组 PNG/SVG 图表，保留原始指标和 trace。训练选择 B32_G32_xor0，训练综合时长降低 3.1718%、保留降低 0.3180%、最坏保留退化 1.0204%；10% 综合改善目标未达成。无冲突长流量完整窗口 1019.02 B/cycle（99.5137% 理论峰值）通过 90% 目标。与旧 ranking.json 的 52 个匹配排名行比较，指定指标差异 0 项。未重跑历史额外 8 次仲裁实验，不将其算入本轮结果。
+- 扫描 Python 正常完成，/proc 子进程 wait_status=0 的证据记录在 process-exit.txt；uv 沙箱父进程出现仓库已知的不回收问题，最小 /bin/true 探针亦复现。后续验证、报告生成、门禁均使用获授权兼容环境且实际退出 0；仅清理本轮三个已完成任务的 uv 挂起父进程，不把被清理父进程的状态当作正常退出。
+- 建议保留 XOR 配置能力，以 C0 为基线，在真实负载和 RTL 校准后决定固定实现。本次未修改模型源码、既有报告或旧运行结果，未提交或推送。
+
+## 2026-09-18 配置驱动 SystemC 多 Bank 闭环
+
+- 新增 systems/multibank 固定拓扑公共系统，使用既有 mapper/arbiter/ByteStore/SparseStore/ResourceTiming/ROB/scoreboard/lifecycle/events；支持参数化端口/Bank、映射/仲裁/后端、独立 latency/II、有限 credit、响应时序、流量/seed/预热。数据仅在服务完成可见，资源 credit 保留到响应消费，SystemC 是唯一目标时间 owner。
+- 配置 schema 是默认值与标量约束 SSOT；YAML 及 resolved cfg 拒绝未知/重复字段并检查跨参数几何。显式连接检查端口、方向、协议、位宽、重绑/漏接和不支持的重连；固定拓扑以外不静默接受。能力声明由 inspect 暴露，不声称任意图装配或完整 AXI。
+- 公共 WorkloadTrace v1 记录/回放数据、循环 mask、ID/source、最早注入周期与前驱依赖；前驱退休后释放依赖，拒绝请求原样保留。与截断观测 trace 分离，独立 reader/writer 场景和真实 SystemC 两消费者验证。运行记录绑定 requested/resolved、拓扑、源码/二进制/工作负载/输出哈希、SystemC/Python 依赖、CMake/编译配置、seed 和窗口；无效 YAML/运行失败保留，禁止覆盖。
+- 离线报告从实际连接表生成 SVG 拓扑，展示映射、排队/服务/响应时间线、Bank 平均活动数、队列积分、返回字节及仲裁/Bank II/Bank 容量/全局响应 credit 等待。预热裁剪与事件/summary 延迟交叉检查；截断不输出完整 percentile。扫描真实执行全部笛卡尔点，失败点不丢弃，只有相同工作负载/时钟/最终数据的成功点比较速度。
+- 专项验收 16 项 PASS，包括记录回放、off/counters/trace、后端/策略替换、XOR 分布、II 吞吐、依赖退休 12-cycle 解析预期、独立 mask oracle、预热、截断、watchdog/无效连接/trace 失败和扫描失败点保留。证据 esl_repo/runs/multibank-final2-20260918/checks.json；负向执行仍保留 FAIL，不冒充正常仿真成功。
+- 公共 CTest 增至 47 项，完整集成 116 个独立场景、332 次 source/install/relocated 执行 PASS，证据 runs/multibank-integration-final2-20260918/checks.json。寄存器模板 6 次与 NPU 独立/三种消费者复验 PASS。配置/工具 pytest 72 项、修改脚本 ruff、make check 的 125 项 runtime/6 schema/lint 通过。
+- 新系统登记 aixsilicon:esl:multibank:0.1.0，更新唯一 TODO 和受影响资产证据。未扩写为检查点、跨 Bank 重组、ECC/AXI profile、完整链路/HOL 分析或 RTL 校准已完成；未执行 commit/push。
+
+## 2026-09-22 PQC 计算验证与 CDC 条件继续
+
+- 按用户要求继续 PQC IP 闭环，并优先验证计算正确性。使用 canonical ip-development-suite；CDC 缺 cdc_adv_checker 按用户原话记录 conditional，实际 SpyGlass 退出 1 与 Reset_sync04 警告保留，不放宽其他门禁。补齐 SGDC 输入分类与独立静态检查。
+- 新增可复现随机 oracle 入口、隔离输出和冻结向量哈希核验。种子 0x20260922 / 仿真 seed 17，六算法 159 条命令全部通过；完整签名、公私钥、密文/共享秘密及拒绝结果逐字节比较。原 KAT 和新随机数据各 264 个 hex 文件重生成一致。当前 RTL 既有 15 项 UVM/159 命令只做证据复核，不冒充重跑。
+- 当前相同 RTL 的冻结副本 47 项模块 UT 通过，工具回归 56 项通过。补集成/软件/寄存器文档并完成输入绑定审查。重提当前综合 E1 与原始覆盖率：仍有 3 个 transition 违例网络，覆盖未达标，Level 2/系统安全/异常退休等未闭环，G3 fail、G4/G5 blocked。统一报告保留真实限制。
+- 运行 make check 首次因根环境缺 ruff 失败；uv sync --locked --extra dev --extra ip-dev --inexact 补齐锁定依赖后，125 项工作区测试、6 schema、lint 和 pre-commit --all-files 均通过。uv 使用既有根环境及获授权非沙箱入口，未创建新环境或改锁文件。
+- 子仓状态/差异通过 aix 核对；开工最初只读 git status 为尚未读到 AGENT.md 前的诊断，不作正式状态证据。收尾发现 IP README/registry/governance/ip_lib 以及 workflow AGENT.md/run_log.md 存在其他并行改动，保留原样；本任务只追加本条记录。未提交、推送或发布。
+
+## 2026-09-22 PQC 异常退休修复与门禁证据续作
+
+- 修复 frontend 在执行中故障进入全局清除后丢失 fatal/错误码/命令标签的问题；清除期间维持 busy，完成后一次 ERROR 通知，禁止伪 DONE、旧标签及空闲清除伪完成。新增测试在修复前产生 20 项断言失败，修复后通过。错误 completion DMA、完整异常/撤销和 Level 2 仍开放。
+- 修复后 27 次 UVM、165 条算法命令通过；真实执行中 tamper 等待聚合清除并检查内存无写、状态保留与中断不重复。初次控制回归的两项失败来自参考模型未预测 busy 保护写拒绝，按独立测试激励修正并重跑 22/22；保留失败日志与前后源码差异。
+- 补齐真实 Encaps/Decaps 调度器独立 UT，49/49 模块测试通过。修复单测报告的执行证据结构后完整重跑 49 项，canonical G3.module_ut 确认模块覆盖、日志与二进制绑定完整。调度器 stub 测试与完整顶层算法 oracle 分别表述；UVM runner 自检 45 项通过。
+- 正式 lint/elab 输入绑定执行通过；首次 lint 适配器的报告解析失败另存，修正后完整重跑，未修改 RTL 或豁免规则。参数合同静态校验 0 error/0 warning，owning 工具生成配置计划；没有把计划当多配置执行。交付目录审计 0 error/0 warning。
+- 实际工具发现中 vc_formal/fml/jaspergold/yosys/sby 不在命令路径，只有 fm_shell；属性 formal 未签核，不沿用 CDC 许可证例外。CDC conditional 仅按既有用户授权继续。当前正式综合与新版随机向量重跑另行收集结果，未提前记为 PASS。
+- 全部 Python 继续使用根 uv 环境及获授权兼容入口。aix tool core provider 为 OPTIONAL_UNAVAILABLE；实际 canonical FuseSoC 编译另有真实执行，不把 provider 缺失写成通过。子仓状态与差异通过 aix 检查，保留其他并行修改，未提交、推送或发布。
+- 最终新版随机回归 6/6、159 条命令实际退出 0，日志/二进制/输入独立审计通过；修复后合计 33 次 UVM、324 条算法命令。归档及导航修正后在最终输入上重跑 49/49 模块 UT（run.6JC6Apir）通过；中间一次输入漂移被 runner 正确拒绝，失败记录保留。
+- 用户要求所有交付报告仅留最新结论。reports 现仅保留统一结论和 PPA 专报；fix_20260916、review_20260915、review_20260916 共 164 个文件无损迁入 archive，另归档旧报告与 7 份教材过程材料。docs 交付入口与教材入口分离，修复原有 LRS 合同断链；按用户委托复核仅导航差异，owning extractor 刷新来源，保留 LLD 技术冻结 open。交付文档链接检查无断链。
+- 当前原始综合实际退出 0；canonical Skill 解析器曾把命名为 error/timeout 的端口信息误判为失败。修复限于已知 DC 警告/常量端口行，保留真实 Error/Fatal/timeout 拒绝测试。原始 FAIL 不覆盖，另存明确的解析重评记录。parser 57 项测试通过，补充 G3 有限 deferred_checks 防止 CDC-only 授权豁免其他失败，并通过相关合同回归（环境相关 1 项 skip）。修改在 canonical Skill，按要求重新物化。
+- 真实映射 DDC 上增量修复电气约束，最终仍为 100 MHz，setup slack 0.000083 ns，transition/capacitance/fanout 违例 0；无需降频。面积 219002.587503 µm²，默认活动率动态功耗 17202 µW；真实宏、物理寄生及功耗预算签核不在 E1 范围。工具零泄漏最小化目标仍未达到，不将其写成物理或功耗达标。
+- 已逐项确认所有非 CDC 的 G3 检查通过，依用户明确限定记为 pass_with_condition，仅豁免缺 CDC license 的继续流程。Level 2 全秘密链、RANDOM 顶层接入、全授权/异常/控制命令等仍未闭环；最终 G4 fail、G5 blocked，未发布。两份最终报告只留一致的当前结论，不保留调试历史。
+
+## 2026-09-22 SPI2APB 契约修复、验证和验收审查
+
+- 按 canonical ip-development-suite 修订中文 LRS/HLD/LLD（75 原子需求、107 契约 ID 映射），10 职责模块加 APB3 wrapper；修复跨复位旧请求、短头中止统计、C 驱动成功短响应及非法参数展开检查。请求/响应缓存单一所有权，移除重复宽缓存和取模。原环境和旧代码隔离保存，SPI UVM agent 参考模板增量集成并独立验证。
+- 真实结果：11 模块 UT 通过；8 风险配置、8 用例、2 种子共128次回归通过；288/288合法访问交叉命中；48合法配置展开及4类非法配置拒绝通过；软件测试、原生 lint/elab/synth通过。9点真实工艺综合为E1，未冒充正式PPA签核。
+- G0/G1/G2 pass，G3 fail，G4/G5 blocked。CDC/RDC许可证及结构问题、URG崩溃、hold遗留、BUF损坏/下溢证明和§50禁用策略可配置性未关闭；统一报告保留这些实质缺口，正式发布拒绝，未创建candidate或提交/推送。
+- canonical 套件DC日志解析器精确修正OPT-1206常量寄存器信息中字段名`[error]`造成的误报，增加回归并重新物化；未放宽真实错误检测。原有工作区改动保留。当前证据、工具日志及缓存仅本地build留存，报告入口位于IP的reports/report.md。

@@ -98,7 +98,18 @@ aix tool schema|hwif|reg|core ...
     但本地开发/回归统一起 workflow 根环境：`cd <workflow-root> && uv sync && uv run python <script>`；
   - 禁止使用系统 `python`/`pip` 直接安装依赖。
 
-## 4.1 环境初始化（首次使用）
+## 4.1 受限执行环境中的 uv 退出挂起
+
+若 `uv run` 已输出完成结果却不退出，先用 `uv run --offline --no-sync /bin/true`
+做短超时探针，区分进程退出问题与依赖下载/测试耗时。已确认当前 Linux 沙箱中
+uv 0.11.27 可出现子进程已退出但父进程不回收；同一命令在非沙箱环境正常返回。
+复现此问题时，通过宿主正常权限机制使用获授权的非沙箱环境执行原始 uv/门禁命令，
+不要反复用短超时中断完整门禁，也不要将已打印的 PASS 当作进程退出成功。
+保留根 uv 环境、锁文件和全部检查，不修改沙箱策略、不跳过 hook。
+详细诊断和运行约定见 canonical workspace Skill 的
+[uv 环境说明](repos/aixsilicon_skill_repo/skills/aixsilicon-workspace-management/references/uv-environment.md)。
+
+## 4.2 环境初始化（首次使用）
 
 ```bash
 # 1. 下载 skill repo + 物化 skills（首次必须；指纹缓存命中时自动跳过复制）
