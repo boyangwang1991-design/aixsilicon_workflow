@@ -641,3 +641,10 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 
 - 并行开发持续产生新改动，共完成多轮收敛提交与推送：hwif（crypto 接口 tb/README/contract/pkg）、cbb（CBB 组合验证 composition、quality events、adder_subtractor 合同/CHANGELOG）、ip（crypto_aes lld/micro_design、crypto_ascon lrs/quality-gate）、vip（crypto_cci reports/tb/mock）。
 - 每轮提交前核对无 EDA 产物；最终 wf status：全部 11 仓 clean、remote=sync：hwif=7c0f8194、cbb=2c698080、ip=d7e4a364、vip=d9a89fd2、skills=08dcfefe、esl=a582e5b；workflow 父仓 run_log 含本记录并已推送。
+
+## 2026-09-24 全仓提交与推送（第四轮）
+
+- 提交并推送 4 个仓：hwif（cci 契约/profile/doc/pkg/tb + chacha_poly project extension）、cbb（batch3 CBB characterization 基线/PDK/workloads、PPA/质量/资格报告、RTL 与验证脚本，702 文件）、ip（crypto_chacha_poly 完整 IP：LRS/HLD/LLD/RTL/UT/包，plic UVM 验证环境与 RAL，226 文件）、skills（ip gate_evidence/generate_ral 加固 + reparse_rtl_execution）。
+- 门禁：make check 全绿、pre-commit run --all-files 全绿；暂存前核对无 EDA 产物/日志（.log/.vcd/fsdb/simv/daidir 等），cbb .gitignore 覆盖构建产物。
+- 推送前 fetch 核对各仓 HEAD 与 origin/main 一致（0/0），提交后快进推送无冲突。
+- 最终 wf status：全部 11 仓 clean、remote=sync：hwif=98498084、cbb=08e2f94a、ip=ead8aa56、skills=6c5c103b、esl=a582e5b。
