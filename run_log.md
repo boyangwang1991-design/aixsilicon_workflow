@@ -618,3 +618,10 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - registry结构与README派生检查通过（293条、31 implemented）。全仓合同检查保留两个范围外历史问题：accumulator源哈希过期、constant_multiplier ID错误。本批合同和RTM严格检查通过。
 - make check全绿（125测试、6 schema、lint）。全部Python使用workflow根锁定uv环境；已确认的沙箱退出挂起通过获授权宿主执行规避。未暂存、提交、推送或发布。
 - 收尾 pre-commit run --all-files 全部通过。最终 aix repo status cbb：staged=0、unstaged=24、untracked=124；保留为可审阅工作树。
+
+## 2026-09-24 全仓提交与推送（第二轮）
+
+- 提交并推送 6 个仓到 GitHub：hwif（crypto 总线接口 cci/entropy/secret/staging + 示例）、cbb（P0 batch2/batch3 组件实现与验证，含 adder_subtractor/comparator/stream_mux 等 RTL 与 mutation 测试）、ip（crypto_component_suite 文档/schema + plic CDC/formal 脚本与验证）、vip（crypto_cci VIP driver/monitor/mock/if + rtm/release-plan）、skills（hwif_tool crypto_implementation）、workflow（run_log.md）。
+- 门禁：make check 全绿（lint/schema/test 125）、pre-commit run --all-files 全绿（含 runtime-paths guard 与 VLNV guard）；暂存前核对无 .log/.vcd/fsdb/simv/daidir 等 EDA 产物，vip 的 build/ 由仓内 .gitignore 忽略。
+- 推送前逐仓 fetch 核对 left-right 计数（各仓 1/0 领先），快进推送无冲突；后续并行开发产生的增量改动（vip crypto_cci negative/semantic 测试、cbb batch3 RTL/mutation）已二次提交推送。
+- 最终 wf status：全部 11 仓 clean、remote=sync：hwif=f39bd435、cbb=d9977d7b、ip=96e62513、vip=6134155d、skills=08dcfefe、esl=a582e5b、workflow 父仓已提交（run_log 含本记录）。
