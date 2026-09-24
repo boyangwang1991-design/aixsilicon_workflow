@@ -625,3 +625,9 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - 门禁：make check 全绿（lint/schema/test 125）、pre-commit run --all-files 全绿（含 runtime-paths guard 与 VLNV guard）；暂存前核对无 .log/.vcd/fsdb/simv/daidir 等 EDA 产物，vip 的 build/ 由仓内 .gitignore 忽略。
 - 推送前逐仓 fetch 核对 left-right 计数（各仓 1/0 领先），快进推送无冲突；后续并行开发产生的增量改动（vip crypto_cci negative/semantic 测试、cbb batch3 RTL/mutation）已二次提交推送。
 - 最终 wf status：全部 11 仓 clean、remote=sync：hwif=f39bd435、cbb=d9977d7b、ip=96e62513、vip=6134155d、skills=08dcfefe、esl=a582e5b、workflow 父仓已提交（run_log 含本记录）。
+
+## 2026-09-24 全仓提交与推送（第三轮，增量收敛）
+
+- 提交推送前一轮后的并行开发增量：vip（crypto_cci negative/semantic 测试、release-plan、self_test Makefile/tb）、cbb（batch3 组件完整验证/characterization/core：adder_subtractor、comparator、pulse_stretcher_compressor、timer_core、cycle_busy_idle_counter、event_counter、data_control_aligner、fixed_delay_line、stream_mux/stream_demux）、ip（crypto_aes hld/models、crypto_ascon lrs/quality-gate/parameter_space）。
+- 逐仓提交前核对无 EDA 产物；推送前 fetch 核对无冲突。
+- 最终 wf status：全部 11 仓 clean、remote=sync：hwif=f39bd435、cbb=df00e35c、ip=2b983525、vip=7831747f、skills=08dcfefe、esl=a582e5b。
