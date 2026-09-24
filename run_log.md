@@ -631,3 +631,8 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - 提交推送前一轮后的并行开发增量：vip（crypto_cci negative/semantic 测试、release-plan、self_test Makefile/tb）、cbb（batch3 组件完整验证/characterization/core：adder_subtractor、comparator、pulse_stretcher_compressor、timer_core、cycle_busy_idle_counter、event_counter、data_control_aligner、fixed_delay_line、stream_mux/stream_demux）、ip（crypto_aes hld/models、crypto_ascon lrs/quality-gate/parameter_space）。
 - 逐仓提交前核对无 EDA 产物；推送前 fetch 核对无冲突。
 - 最终 wf status：全部 11 仓 clean、remote=sync：hwif=f39bd435、cbb=df00e35c、ip=2b983525、vip=7831747f、skills=08dcfefe、esl=a582e5b。
+
+## 2026-09-24 增量收敛提交（并行开发写入）
+
+- 工作区存在持续的并行开发写入，提交推送后仍不断产生新改动；对 ip、vip、hwif、cbb 的增量（crypto_aes hld/review、crypto_cci tb/mock、crypto 接口 README/contract/pkg、CBB 组合验证 composition.sv/run_composition.py）进行了多轮收敛提交与推送，全部经 aix repo commit/push。
+- 最终 wf status：全部 11 仓 clean、remote=sync：hwif=9dc47500、cbb=76bb982b、ip=8930f996、vip=c280857f、skills=08dcfefe、esl=a582e5b；workflow 父仓 run_log 含本记录并已推送。
