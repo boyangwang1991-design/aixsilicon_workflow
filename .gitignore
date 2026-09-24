@@ -4,6 +4,7 @@
 # Vendored third-party reference material (unified under root; never uploaded)
 /reference/
 /.roo/
+/.agents/
 /.claude/
 /.opencode/
 /.cursor/

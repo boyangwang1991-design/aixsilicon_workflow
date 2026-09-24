@@ -585,3 +585,18 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - 真实结果：11 模块 UT 通过；8 风险配置、8 用例、2 种子共128次回归通过；288/288合法访问交叉命中；48合法配置展开及4类非法配置拒绝通过；软件测试、原生 lint/elab/synth通过。9点真实工艺综合为E1，未冒充正式PPA签核。
 - G0/G1/G2 pass，G3 fail，G4/G5 blocked。CDC/RDC许可证及结构问题、URG崩溃、hold遗留、BUF损坏/下溢证明和§50禁用策略可配置性未关闭；统一报告保留这些实质缺口，正式发布拒绝，未创建candidate或提交/推送。
 - canonical 套件DC日志解析器精确修正OPT-1206常量寄存器信息中字段名`[error]`造成的误报，增加回归并重新物化；未放宽真实错误检测。原有工作区改动保留。当前证据、工具日志及缓存仅本地build留存，报告入口位于IP的reports/report.md。
+
+## 2026-09-24 SM2/SM3/SM4 分类归并
+
+- 将 IP registry 中 CRY-001/002/003 的 domain/subdomain 统一为 security/crypto，路径改为 ips/security/crypto/sm2、sm3、sm4；迁移原有空契约文件，保留稳定 ID 与状态。
+- 使用 update_registry_readme.py 重新生成 README：security 27→30，取消独立 crypto 分组。build_ip_registry.py --check 与 README --check 均退出 0；保留既有 PER-009、SEC-015 元数据告警。其他工作树改动未覆盖。
+- uv 沙箱退出挂起由离线 true 探针复现，生成与校验通过获授权宿主执行获得真实退出状态；未提交或推送。
+
+## 2026-09-24 首批十个 P0 CBB 实现与验证
+
+- 使用 cbb-development-suite 完成 reset_synchronizer、single_bit_synchronizer、gray_binary_converter、up_down_counter、sticky_status_register、address_decoder、timeout_monitor、token_credit_counter、handshake_synchronizer、async_fifo 的合同审查/扩展、设计、RTL/SVA、参数验证、Core 与默认点综合。采用用户批准的 CDC 结构；FIFO 修复读输出跨域组合锥，综合清除未映射 SEQGEN。
+- VCS 实际执行 118 个合法配置、31 个非法参数配置；十项原生非法参数断言与逻辑变异检出、FuseSoC 构建和 SpyGlass lint 均通过。四项 CDC/RDC 高级规则因 Ac_license01 许可证不可用，按用户明确授权记录 G3 pass_with_waiver，保留真实诊断、替代证据与到期/失效条件，未豁免结构错误。
+- DC 默认点真实映射，记录面积/slack/默认活动率功耗与库指纹；仅 exploratory_mapped，无 SAIF/物理签核。逐配置证据绑定执行前基线；十项严格合同、RTM 与 G0–G6 证据核验通过。正式 gate --check 返回 10，仅 G7 必需资格未通过（独立下游消费者与干净锁定重放缺失）；G8 未发布，成熟度保持 E0。
+- registry 十项由 planned 更新为 implemented，公共脚本刷新 README（293 项、21 implemented）。总览 docs/p0-development-summary.md；包内 reports 为质量入口。全仓合同检查另有 accumulator 源哈希过期、constant_multiplier ID 不一致，未改动范围外资产。
+- make check 全绿（125 测试、6 schema、lint）；uv 使用根锁定环境与获授权非沙箱执行，避免已确认的沙箱退出挂起。没有提交、推送或发布。
+- 收尾 pre-commit run --all-files 全部通过；aix repo status/diff 核对工作树，未暂存文件。aix diff 不支持 --stat，已改用受支持的 aix repo diff cbb 保存审阅输出。
