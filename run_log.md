@@ -608,3 +608,13 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - 门禁：make check 全绿（lint/schema/test）、pre-commit run --all-files 全绿；子仓提交由各自 pre-commit hook 校验。
 - 临时诊断：ip 仓推送被拒（远端 e2739cf "blog added" 领先本地），aix repo 无 merge/rebase 子命令且 wf sync 不合并已有本地提交，故绕开 aix repo 直接 git fetch + rebase origin/main（无冲突）后经 aix repo push 推送；另补提交 plic 单元测试 ut_plic_read_path.sv。已记录此临时操作原因。
 - 推送后全部仓 clean、ahead=0/behind=0：cbb=aed1d1d、ip=944be52、esl=a582e5b、workflow=47a62fc。
+
+## 2026-09-24 第二批 P0 CBB 研发
+
+- 按 cbb-development-suite 完成 onehot_checker、binary_mux、decoder、priority_encoder、onehot_mux、parameter_register、modulo_counter、event_edge_detector、event_collector、byte_bit_order_converter 的合同/设计、RTL/局部断言、公开Core、独立参数回归与双代表点综合。普通异步复位由用户明确允许；跨时钟/跨复位域及异步握手构件整项暂缓，未将其改造成同步版。
+- 十项最终功能回归、宿主与原生非法参数拒绝、X/Z诊断、逻辑变异检查、lint和FuseSoC构建通过；两条真实组合链通过。逐配置证据绑定执行前基线并校验父子参数映射。20个综合点均完成真实库映射及独立抽取/绘图，已报告路径MET；64位onehot_checker最小报告slack约0.00ns，保留集成余量限制。无许可证豁免、无形式化证明或后布局签核。
+- 修正DC参数化设计名调用错误，以及event_collector与既有子模块的时间单位声明冲突；保存失败诊断并重跑。开发期间发生基线变化的执行记录不用于最终门禁。
+- 十项G0–G6证据核验通过，G7/G8保持blocked：独立产品消费者及干净锁定版本重放未执行。registry登记implemented，成熟度仍E0；正式gate --check返回10，仅G7必需资格缺口。汇总位于CBB仓docs/p0-batch2-development-summary.md。
+- registry结构与README派生检查通过（293条、31 implemented）。全仓合同检查保留两个范围外历史问题：accumulator源哈希过期、constant_multiplier ID错误。本批合同和RTM严格检查通过。
+- make check全绿（125测试、6 schema、lint）。全部Python使用workflow根锁定uv环境；已确认的沙箱退出挂起通过获授权宿主执行规避。未暂存、提交、推送或发布。
+- 收尾 pre-commit run --all-files 全部通过。最终 aix repo status cbb：staged=0、unstaged=24、untracked=124；保留为可审阅工作树。
