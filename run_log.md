@@ -600,3 +600,11 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - registry 十项由 planned 更新为 implemented，公共脚本刷新 README（293 项、21 implemented）。总览 docs/p0-development-summary.md；包内 reports 为质量入口。全仓合同检查另有 accumulator 源哈希过期、constant_multiplier ID 不一致，未改动范围外资产。
 - make check 全绿（125 测试、6 schema、lint）；uv 使用根锁定环境与获授权非沙箱执行，避免已确认的沙箱退出挂起。没有提交、推送或发布。
 - 收尾 pre-commit run --all-files 全部通过；aix repo status/diff 核对工作树，未暂存文件。aix diff 不支持 --stat，已改用受支持的 aix repo diff cbb 保存审阅输出。
+
+## 2026-09-24 全仓提交与推送
+
+- 提交并推送 4 个仓到 GitHub：cbb（10 个 P0 CBB 组件实现与验证）、ip（spi2apb_bridge 完善 + crypto 组件套件 + plic 新 IP + registry/governance 更新）、esl（npu_mesh 模型/工具 + npu_sram_controller 更新）、workflow（run_log.md + .gitignore）。
+- 父仓 .gitignore 新增 /.agents/（agent 物化目录，指向 repos/ 的符号链接，不随父仓入库）。
+- 门禁：make check 全绿（lint/schema/test）、pre-commit run --all-files 全绿；子仓提交由各自 pre-commit hook 校验。
+- 临时诊断：ip 仓推送被拒（远端 e2739cf "blog added" 领先本地），aix repo 无 merge/rebase 子命令且 wf sync 不合并已有本地提交，故绕开 aix repo 直接 git fetch + rebase origin/main（无冲突）后经 aix repo push 推送；另补提交 plic 单元测试 ut_plic_read_path.sv。已记录此临时操作原因。
+- 推送后全部仓 clean、ahead=0/behind=0：cbb=aed1d1d、ip=944be52、esl=a582e5b、workflow=47a62fc。
