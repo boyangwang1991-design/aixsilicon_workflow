@@ -198,6 +198,16 @@ def main(argv: list[str] | None = None) -> int:
             "run `aix` or a guard hook."
         ),
     )
+    parser.add_argument(
+        "--install-codex-skills",
+        action="store_true",
+        help="install canonical skills into Codex user skills",
+    )
+    parser.add_argument(
+        "--replace-codex-skills",
+        action="store_true",
+        help="back up and replace conflicting Codex skills (requires --install-codex-skills)",
+    )
     parser.add_argument("--ensure", action="store_true", help="only materialize skills")
     parser.add_argument(
         "--force",
@@ -227,6 +237,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("rest", nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
+    if args.replace_codex_skills and not args.install_codex_skills:
+        parser.error("--replace-codex-skills requires --install-codex-skills")
 
     try:
         agent_dir = resolve_agent_dir(args.agent_dir)
@@ -241,6 +253,17 @@ def main(argv: list[str] | None = None) -> int:
 
     if not _ensure(force=args.force, agent_dir=agent_dir, skip_materialize=args.skip_materialize):
         return 1
+    if args.install_codex_skills:
+        cmd = [
+            sys.executable,
+            str(WORKFLOW_ROOT / ENV_SCRIPT_REL),
+            "install-codex",
+            "--source",
+            str(WORKFLOW_ROOT / SKILL_REPO_REL / "skills"),
+        ]
+        if args.replace_codex_skills:
+            cmd.append("--replace")
+        return subprocess.run(cmd, check=False).returncode
     if args.ensure or args.force:
         return 0
     return _run_aix(list(args.rest), agent_dir)

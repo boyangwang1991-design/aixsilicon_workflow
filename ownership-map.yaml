@@ -135,6 +135,10 @@ repository_registry:
     type: other
     visibility: public
 
+  - id: wenwang-edgenpu
+    repo: wenwang-edgenpu
+    type: other
+
 # Tool 边界（ADR-0006 / docs/workflow/ownership.md）
 tool_boundary:
   t1_public_product_tools: aixsilicon_tool_repo        # 跨仓公共确定性工具（aixsilicon.commands 插件）

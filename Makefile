@@ -6,7 +6,7 @@
 # 物化 skills 到 ./.roo/skills/（git 忽略），再从 ./.roo/skills/aixsilicon-workspace-management/ 运行。
 # 跨平台入口（F-013 / WF-011）：Python 一律经 uv 解析到根环境。
 
-PYTHON ?= uv run python
+PYTHON ?= uv run --locked --extra dev python
 UV     ?= uv
 AGENT_DIR ?= $(if $(AIX_AGENT_DIR),$(AIX_AGENT_DIR),.roo)
 BOOTSTRAP := $(PYTHON) bootstrap.py --agent-dir $(AGENT_DIR) --ensure
@@ -30,8 +30,7 @@ bootstrap:
 	$(BOOTSTRAP)
 
 install:
-	$(UV) venv .venv --python 3.12 --allow-existing
-	$(UV) sync --extra dev
+	$(UV) sync --locked --extra dev
 
 # 物化 skill 位于 ./.roo/skills/aixsilicon-workspace-management；用 workflow 根环境 + PYTHONPATH 执行。
 export PYTHONPATH := $(SKILL_DIR)/src$(if $(findstring Windows,$(OS)),;,:)$(PYTHONPATH)

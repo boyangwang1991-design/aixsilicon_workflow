@@ -20,7 +20,7 @@ repos:
     hooks:
       - id: aix-guard-runtime-paths
         name: aix-guard-runtime-paths
-        entry: uv run python bootstrap.py --run-hook guard_runtime_paths.py
+        entry: uv run --locked --extra dev python bootstrap.py --run-hook guard_runtime_paths.py
         language: system
         pass_filenames: false
         always_run: true
@@ -28,7 +28,7 @@ repos:
 
       - id: aix-check-vlnv-namespace
         name: aix-check-vlnv-namespace
-        entry: uv run python bootstrap.py --run-hook check_vlnv_namespace.py
+        entry: uv run --locked --extra dev python bootstrap.py --run-hook check_vlnv_namespace.py
         language: system
         pass_filenames: false
         always_run: true

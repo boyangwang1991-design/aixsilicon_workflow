@@ -648,3 +648,71 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - 门禁：make check 全绿、pre-commit run --all-files 全绿；暂存前核对无 EDA 产物/日志（.log/.vcd/fsdb/simv/daidir 等），cbb .gitignore 覆盖构建产物。
 - 推送前 fetch 核对各仓 HEAD 与 origin/main 一致（0/0），提交后快进推送无冲突。
 - 最终 wf status：全部 11 仓 clean、remote=sync：hwif=98498084、cbb=08e2f94a、ip=ead8aa56、skills=6c5c103b、esl=a582e5b。
+
+## 2026-09-26 按 workflow 清单下载仓库（环境阻断）
+
+- 用户要求按 workflow 下载 repos；读取 README、AGENT.md、docs/index.md、getting-started 与 manifests/default.yaml，计划使用 all profile 下载全部 11 个子仓至 repos/。
+- `UV_CACHE_DIR=/tmp/aixsilicon-uv-cache uv sync --locked` 退出码 2：清华依赖源 DNS 解析失败；根 .venv 已创建，依赖安装未完成。
+- 使用 `uv run --no-sync python bootstrap.py --ensure` 尝试纯标准库引导（GIT_SSH_COMMAND 设置 BatchMode 与 15 秒连接超时）：skill repo 克隆失败，SSH 报 `/etc/ssh/ssh_config.d/05-redhat.conf` owner/permissions 异常；文件所有者为 nobody。引导器报错后 uv 父进程仍未退出。
+- 临时只读诊断：`getent hosts github.com` 无解析结果；aix runtime 尚不可用，因此用普通 `git status --short` 检查父仓初始状态（无改动），未以普通 git 代替任何子仓状态证据。
+- 结果：0/11 子仓下载完成，未执行 init/sync/status 或门禁；需恢复网络 DNS 与 SSH 配置后继续标准引导、all profile 初始化和同步。未修改 manifest 或锁文件。
+
+## 2026-09-26 仓库初始化、Codex skills 安装与文王 NPU 接入
+
+- 用户启用沙盒外执行后，原 SSH 引导直接成功；此前 SSH owner/permissions 错误不能据此认定为宿主配置故障。通过 bootstrap 下载 skills 并物化 12 个套件。
+- 使用 Codex 官方 skill-installer 安装 skill repo 的 12 个顶层套件至 `/home/eda/.codex/skills/`；逐文件 SHA-256 对照 canonical 源一致（排除 Python 缓存），下一轮已被 Codex 发现。
+- 初始化 `all` profile，通过 `aix wf sync` 下载资产仓。knowledge 克隆触发 gitops 固定 300 秒超时；保留半成品至 `cache/aixsilicon_chipknowledge.partial-20260926`，按 AGENT.md §4.2 的缺失仓手动克隆说明补下载（显式记录 CLI 超时限制）。随后用户要求暂不下载 chipknowledge，已中止补下载，确认无残留 Git/SSH 下载进程；保留 manifest 中的 knowledge 配置。
+- 应用户要求，新增 `wenwang-edgenpu` manifest/ownership registry 条目，并纳入 all profile；远端 HEAD 只读诊断确认 main，通过 `aix wf sync --repo wenwang-edgenpu` 下载到 `repos/wenwang-edgenpu`，HEAD 为 031af463757c。README 同步说明。
+- 最终 `aix wf status`：11 个已下载仓库全部 main、clean、remote=sync；knowledge 为 MISSING（用户暂缓）。`doctor` 核对已下载仓远端正确、12 仓依赖 DAG 无环；退出码 30，仅因 knowledge 暂缓和 optional FuseSoC 未安装，不标记 doctor 全绿。
+- uv 0.11.0 的镜像 URL 末尾斜杠差异可复现：`uv lock --check --default-index https://pypi.tuna.tsinghua.edu.cn/simple` 失败，改为 `.../simple/` 后 2ms 通过。最初 frozen 安装后，已用明确带斜杠源完成 `uv sync --locked --extra dev`；未修改 uv.lock 或 pyproject.toml。
+- `make check`（PYTHON 显式使用 uv run --locked、带斜杠源、dev extra）通过：lint、6 个 schema 一致性检查、125 项测试。`pre-commit run --all-files` 全部通过；命令使用 `UV_DEFAULT_INDEX=https://pypi.tuna.tsinghua.edu.cn/simple/` 保持锁文件一致。
+- 初始化优化检查记录在本地 `reports/initialization/review-2026-09-26.md`：基础依赖拆分、镜像 URL 一致性、Codex 安装衔接、同步进度与超时、预检错误分类、doctor 可选项降级。未实施这些优化，未提交或推送。
+
+## 2026-09-26 初始化优化落地
+
+- 按用户确认在 workflow 与 skill repo canonical workspace-management 源码中实施初始化优化；知识库继续暂缓，未启动其下载。
+- 基础依赖仅保留 PyYAML/jsonschema/rich；文档解析迁入 docs extra，doc-enhance 包含 docs；更新 uv.lock。镜像 URL 统一末尾 `/simple/`。Makefile 与本地 pre-commit hooks 显式使用 locked/dev，避免开发工具在运行门禁时被 uv 同步移除。
+- sync 支持 --jobs 1..16、重复 --exclude、--clone-timeout（默认 1800s）、--fetch-timeout（默认 300s）、--quiet；显示逐仓开始/结果/耗时与 Git 进度。--lock 发布同步禁止排除仓库。
+- Git clone 先写隐藏临时目录，确认 HEAD 后才发布目标目录；已有无 HEAD 半成品被拒绝。超时处理终止 POSIX Git 进程组，失败数据路径明确提示。远端访问失败保留错误，不再误判为空仓。
+- doctor 增加 --network 只读远端访问检查；可选 FuseSoC/仓库缺失为 WARN，必需仓缺失仍为 FAIL。
+- bootstrap 增加 --install-codex-skills，复用本地 canonical 源，安装到 Codex 用户 skills 目录；来源/指纹回执、相同内容跳过、受管更新、冲突拒绝、显式替换备份、符号链接与源目标重叠保护。已更新全局 workspace-management，旧版本备份在 Codex 的 aix-skill-backups，其他 11 个套件保持一致。
+- 验证：uv lock --check 及 uv sync --locked --extra dev 无额外镜像参数通过（本次解析 2ms，已安装环境检查约 1ms）；base+dev 共 33 包，确认无 torch/docling/torchvision/triton。make check 全绿（lint、6 schemas、134 tests），pre-commit 全绿。
+- 真实同步 `aix wf sync --exclude knowledge --jobs 3` 成功，10 个仓 fetch，dirty skills 保留；未下载知识库。doctor 仅因 knowledge 按用户要求缺失返回 30，FuseSoC 为 WARN。源码测试覆盖超时清理、失败克隆、部分仓拒绝、并发排除/超时参数、doctor 告警退出码与 Codex 更新冲突/备份。
+- README、getting-started、AGENT、canonical references 已更新；未提交或推送任何仓库。
+
+## 2026-09-26 IP DMA / E2E 分类整理
+
+- 排查 accelerator/system DMA 与 automotive/safety E2E：相关工程均为 planned 空 contract 占位，未发现重复 RTL 的证据。
+- tensor_dma、weight_dma 移入 system/dma；e2e_protection_engine 移入 safety/e2e；同步 registry 并通过现有脚本刷新 README，保留名称、稳定 ID、版本和状态。管理文档记录路径映射与候选功能重叠。
+- 保留任务开始前的 crypto 等未提交修改。初始只读 git status 用于识别已有修改；随后按工作区约定调用 aix wf status / aix repo diff。
+- registry 校验输出通过，README --check 输出一致；已有 PER-009、SEC-015 元数据告警。uv 子进程输出后不退出，/bin/true 探针也复现；make check 停留在 bootstrap，pre-commit 仅部分 hook 输出 Passed，完整门禁未完成，不能认定成功退出。未提交或推送。
+
+## 2026-09-26 IP 分类后续修正
+
+- 用户授权“fix them”：MMU/IOMMU 迁入 memory/mmu，PMP 管理器迁入 security/firewall，AXI-Stream mux/demux/interconnect 迁入 infrastructure/axis；稳定 ID 保留。
+- mpu → memory_protection_controller，safety_watchdog → watchdog，sram_patrol_controller → memory_scrubber，收敛三个空契约候选，原文件归档并追加 retired-assets 目标映射；主清单现为 288 条，未复用历史 ID。
+- apb_cdc_bridge 清单对齐实际 cdc 工程与 1.0.0 包版本，保留 planned。AHB 目录中误放的 AXI→APB 草案原样迁至 axi2apb_bridge，SHA256 ba36b7f70f59fae8b2249bf9c0eb6f9f0c1fa7ef38571ee7ce930da74e376ff5；AHB 入口明确规格待编写。
+- registry、README 校验脚本均由根 uv 环境的 Python 子进程执行并返回 0；迁移目录、ID 预留、退出目标、归档空文件、旧路径清除和契约哈希断言通过。结果位于 IP 仓本地 build/classification-review/results.json。
+- PER-009、SEC-015 包元数据告警仍在；本轮未运行 RTL/EDA 检查。uv 外层仍存在退出挂起，前轮 make check/pre-commit 完整门禁未完成，此处不宣称全局门禁通过。保留其他已有修改，未提交/推送。
+
+## 2026-09-26 memory/security 遗漏修正
+
+- 按用户反馈将 memory_firewall 移入 security/firewall、memory_encryption_engine 移入 security/crypto；同步 registry、派生 README 和迁移映射，移除空 memory/security 目录，保留稳定 ID 和 planned 状态，总数仍为 288。
+- build_ip_registry.py --check 与 update_registry_readme.py --check 均正常退出 0；现行索引和引用无旧路径残留，历史映射保留原路径。PER-009、SEC-015 既有元数据告警保留。
+- 重试 make check 与 pre-commit；uv 等待共享 .venv/.lock，lslocks 显示另一进程 138200 持有写锁。停止本轮等待门禁进程，未干预持锁进程，完整门禁未完成。未提交或推送。
+
+## 2026-09-27 GitHub 提交尝试（环境阻断）
+
+- 用户要求提交 GitHub。初始用普通 git 只读诊断父仓改动、分支与 remote，随后读取工作区规范并通过 `aix wf status` 检查多仓：IP、skills 有未提交修改，knowledge 缺失；父仓 main 有 12 个修改文件。
+- `make check` 在 bootstrap 输出物化缓存命中后挂起；`UV_CACHE_DIR=cache/uv timeout -k 1s 8s uv run --offline --no-sync /bin/true` 同样挂起，最终退出 137，复现已知受限执行环境问题。已中断本轮 status 和 make 进程（退出 130），未将已打印输出视为门禁通过，未继续启动 pre-commit。
+- 当前会话权限将父仓 `.git` 设为只读且不允许提权，无法创建提交。未暂存、提交或推送；需在允许 Git 写入、可访问 GitHub 且 uv 能正常退出的执行环境继续验证和提交。
+
+## 2026-09-27 Full access 后提交 GitHub
+
+- 用户切换 full access 并再次授权提交 GitHub，随后要求优先使用 aix 管理 Git。状态、diff 摘要、commit 和 push 使用根 uv 环境的 `bootstrap.py --skip-materialize aix repo`；暂存按规范使用 `git add`。
+- 提交前原生 Git fetch 用于刷新远端基线，三个仓均 main、ahead/behind=0/0；原生 Git 文件枚举和 diff --check 用于 aix 当前不提供的逐文件卫生检查，未替代正式 aix 状态证据。
+- `make check` 正常退出 0：lint、6 个 schema 和 134 项 runtime 测试通过；父仓 `pre-commit run --all-files` 全部通过。额外执行 IP gate evidence、remaining contracts 和 CBB installed PDK tree 测试，退出 0，保留 1 项 skipped。
+- IP registry 共 289 条，`build_ip_registry.py --check-source`、`update_registry_readme.py --check` 通过；PER-009 与 SEC-015 既有包身份/版本告警保留。暂存后 `check_evidence_hygiene.py` 通过，无原始执行证据进入索引。
+- 文件检查未发现构建缓存、EDA 原始日志或凭据特征；crypto_shell_dma 的约 1.6 MB parameter_space.yaml 为参数模型源文件，保留提交。IP 提交为当前研发进度快照，未宣称 RTL/EDA 全量回归或质量签核完成，原报告中的 fail/blocked/skipped 边界保持不变。
+- skills 已提交并推送 main：5908cd5096ed（初始化优化、PDK 目录支持及验证证据处理）；IP 已提交并推送 main：00dc196087d4（IP 实现进度与分类整理）。workflow 本次提交包含初始化依赖拆分、Codex 安装入口、文王 NPU 配置和本记录。
+- knowledge 仍按此前用户要求暂缓下载，本轮未启动同步下载。

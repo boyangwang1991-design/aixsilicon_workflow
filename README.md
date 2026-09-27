@@ -39,6 +39,8 @@
 
 > 仓库布局与分支策略见 [`manifests/default.yaml`](manifests/default.yaml)；工作区环境引导（uv/git/仓库清单/skills 物化）由私有 skill `aixsilicon-workspace-management` 统一管理。
 
+`all` profile 还包含文王 NPU 项目 [`wenwang-edgenpu`](https://github.com/boyangwang1991-design/wenwang-edgenpu)，默认下载到 `repos/wenwang-edgenpu`，跟踪 `main` 分支。
+
 ## 治理与命名规范
 
 - **VLNV 统一 `aixsilicon:*`**：由 canonical guard [`check_vlnv_namespace.py`](repos/aixsilicon_skill_repo/skills/aixsilicon-workspace-management/scripts/hooks/check_vlnv_namespace.py) 强制，policy [`dependency-policy.yaml`](policies/dependency-policy.yaml) 固化；CLI 二进制名保持 `aix`；
@@ -51,11 +53,15 @@
 详见 [`docs/getting-started.md`](docs/getting-started.md)，核心命令：
 
 ```bash
-uv sync --locked                           # 安装依赖（唯一环境根 .venv）
-uv run python bootstrap.py --ensure        # 物化 skills
+uv sync --locked                           # 仅轻量 CLI 依赖（唯一环境根 .venv）
+uv run python bootstrap.py --ensure        # 物化 workflow runtime
+uv run python bootstrap.py --install-codex-skills  # Codex 用户技能（可选）
 uv run aix wf init --profile ip-dev        # 初始化工作区
 uv run aix wf sync                         # clone / fetch / checkout 全部所需仓库
 uv run aix wf status                       # 查看各仓状态
+# uv run aix wf sync --jobs 3 --exclude knowledge  # 并发同步并临时排除知识库
+# uv sync --locked --extra docs             # 文档解析按需安装
+# uv sync --locked --extra dev --extra ip-dev # 开发工具按需组合
 uv run aix wf preflight ip-development     # Flow 执行前检查 required provider
 
 # 单仓 Git 操作（子仓 repos/<id> 与父仓 workflow）

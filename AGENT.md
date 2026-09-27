@@ -134,10 +134,11 @@ uv run python bootstrap.py aix wf status
 uv run python bootstrap.py --skip-materialize aix repo status skills
 ```
 
-**注意**：若 `sync` 后仍有仓库 MISSING，需手动 `git clone` 缺失仓库：
-```bash
-git clone git@github.com:boyangwang1991-design/aixsilicon_<repo>.git repos/aixsilicon_<repo>
-```
+若仓库 MISSING，先用 `aix wf doctor --network` 检查访问，再用 `aix wf sync --repo <id>` 重试。
+大仓可设 `--clone-timeout 3600`；并发 `--jobs 3`；临时排除用 `--exclude <id>`（发布锁定模式禁止）。
+克隆失败保留在打印出的隐藏临时路径，不自动覆盖/删除用户文件。
+Codex 用户技能通过 `uv run --locked python bootstrap.py --install-codex-skills` 安装。
+基础依赖不含文档解析/EDA 工具，按需启用 `--extra docs` / `--extra ip-dev`，门禁使用 `--extra dev`。
 
 ## 5. 工作方法（Step-by-step）
 
