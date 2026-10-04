@@ -6,6 +6,14 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 
 格式：`时间(UTC)` | 阶段 | 动作 | 结果 | 证据/哈希
 
+- `2026-10-04` | **workflow / 全仓提交推送（第二轮）** | 用户再次 `submit all to GitHub`：巡检发现 3 仓
+  dirty（ip / vip / wenwang-edgenpu），逐仓 `aix repo status/diff` 核对后按仓独立快照提交推送 ——
+  ip `bed7a64`（axi_crossbar HLD/model/core 与 axi2apb_bridge docs/rtl/verification 增量，+ hook 格式补提交）、
+  vip `74214d0`（SPI VIP 扩展：XIP/generic model、pin bias、fault/device-shape 测试）、
+  wenwang-edgenpu `faa911b`（ESL v0.4 fabric 模型、oracle v0.8、systemc device-ingress 更新，+ hook 格式补提交）。
+  子仓 git hook 于 commit 时自动修正格式（ip/wenwang 的修正已补提交）。父仓本轮无代码改动，仅记日志。
+  结果：全部 12 仓 clean+sync | PASS |
+
 - `2026-10-04` | **workflow / 全仓提交推送（submit all to GitHub）** | 用户 `submit all to GitHub`：
   巡检发现 4 仓 dirty（`aix wf status`），逐仓 `aix repo status/diff` 核对后按仓独立快照提交推送 ——
   cbb `e6c6ab0`（治理：AXI-022 axi_crossbar 由 withdrawn 恢复为 restored，归属 IP 仓 MIG-IP-AXI-022）、
