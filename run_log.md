@@ -6,6 +6,18 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 
 格式：`时间(UTC)` | 阶段 | 动作 | 结果 | 证据/哈希
 
+- `2026-10-04` | **workflow / 全仓提交推送（submit all to GitHub）** | 用户 `submit all to GitHub`：
+  巡检发现 4 仓 dirty（`aix wf status`），逐仓 `aix repo status/diff` 核对后按仓独立快照提交推送 ——
+  cbb `e6c6ab0`（治理：AXI-022 axi_crossbar 由 withdrawn 恢复为 restored，归属 IP 仓 MIG-IP-AXI-022）、
+  ip `89a3efd`（新增 axi_crossbar 契约/IP、axi2apb_bridge RTL/LLD/验证与 udma 资产增量）、
+  vip `a4634c8`（jtag/i2c/spi VIP 契约与 axi4 self-test；分支 `feat/crypto-cci-0.2.0` 推送并创建远端同名分支）、
+  wenwang-edgenpu `4b1b860`（Gemma/mixed-fp32 目标模型 specs、oracle bundle、ESL 资产与检查脚本）；
+  父仓本提交更新 `uv.toml`/`pyproject.toml` pytorch-cpu 显式源与 `wenwang-model` 依赖组（含 `uv.lock`）。
+  排除清单（保留在工作区未入库）：父仓 `.vc_env_188550.txt`（VCS 环境转储、临时诊断产物）与 wenwang
+  两个 `.log` 检查产物（`reports/esl/systemc_initial.v0.1.precommit.log` / `.workflow-check.log`）。
+  门禁：父仓 `make check`（ruff + schema parity + pytest 全绿）、`pre-commit run --all-files` 11 项全 Pass；
+  子仓 git hook 于 commit 时自动运行。其余 8 仓 clean+sync。证据：各仓 head 快照 | PASS |
+
 - `2026-09-16` | **workflow / 修复 `uv sync` 卡死（构建期全树包发现）** | 症状：`uv sync` 停在
   `Building aixworkflow @ file://...` 永不退出（实测 5m55s 未结束；`timeout` 无法感知阻塞）。
   证据链：ps 显示 uv 等待构建子进程 `backend.build_editable(...)` 持续 100% 单核、无文件 syscall；

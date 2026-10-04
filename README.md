@@ -62,6 +62,7 @@ uv run aix wf status                       # 查看各仓状态
 # uv run aix wf sync --jobs 3 --exclude knowledge  # 并发同步并临时排除知识库
 # uv sync --locked --extra docs             # 文档解析按需安装
 # uv sync --locked --extra dev --extra ip-dev # 开发工具按需组合
+# uv sync --locked --extra dev --extra wenwang-model # 文王模型/CPU Torch 2.8.0
 uv run aix wf preflight ip-development     # Flow 执行前检查 required provider
 
 # 单仓 Git 操作（子仓 repos/<id> 与父仓 workflow）

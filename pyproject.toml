@@ -28,6 +28,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+wenwang-model = [
+    "torch==2.8.0+cpu; sys_platform == 'linux' or sys_platform == 'win32'",
+    "numpy==2.4.6",
+    "Pillow==12.3.0",
+]
 dev = [
     "pytest>=8.0",
     "pytest-cov>=4.1",
@@ -66,11 +71,21 @@ ip-dev = [
 ]
 
 # PyPI 镜像源统一托管在项目级 `uv.toml`（index-url = 清华源），
-# 不在 pyproject 声明 [[tool.uv.index]]，避免与 uv.toml 冲突被忽略。
+# 默认镜像由 uv.toml 决定；PyTorch显式源的元数据声明与uv.toml保持一致。
 
 [project.scripts]
 # `aix` 通过引导器委托：物化 canonical runtime（私有 skill repo）后运行。
 aix = "aix_launcher:main"
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu", extra = "wenwang-model" }
+
+# uv requires source index declarations here; uv.toml carries the matching
+# runtime index configuration alongside the workspace's default mirror.
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [tool.setuptools]
 # 本仓是 manifest 驱动的多仓工作区控制面，根目录只分发两个引导模块；
