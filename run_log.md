@@ -758,3 +758,24 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - 父仓 `.gitignore` 新增 `.vc_env_*.txt`（`git check-ignore` 复核命中），门禁 `make check`（ruff、6 schema、
   runtime 测试）与 `uv run pre-commit run --all-files` 全绿后提交推送 main。
 - 本轮未对 ip/wenwang 执行 add/commit/push；未宣称 RTL/EDA 回归或发布签核完成。
+
+## 2026-10-05 GitHub 提交（第二轮：ip / wenwang 合规提交）
+
+- 用户再次要求“submit all to github”，并选择合规方案：ip 先同步上游-1，为 EDA/PDK scratch 增加忽略；
+  wenwang 为重型生成数据目录增加忽略；均提交源码/文档后 push main。
+- 临时诊断（`aix` 无 fetch/merge 能力，仅用于评估与整合，未替代正式 aix 状态证据）：`git fetch origin`、
+  `git log HEAD..origin/main`、`git merge-tree --write-tree`（预测无冲突）、`git merge --no-edit`、
+  `git ls-files --others --exclude-standard`/`check-ignore` 统计与验证忽略覆盖。均在本节记录。
+- ip：`aix repo` 无 fetch/merge；先 fetch，确认仅上游 1 个提交（axi2apb bridge 实现与验证），
+  merge-tree 判定无冲突。根 `.gitignore` 增加 `/ips/**/ucli.key`、`*.key`、`*.mr`、`*.pvl`、`*.pvk`、
+  `alib-*/`、`cksum_dir/`、`*.daidir/`、`csrc/`、`simv*`，与 axi2apb_bridge 既有 per-IP .gitignore 约定一致；
+  可提交未跟踪项由 9.2 MB 降至 5.1 MB，PDK 库文件 alib-52 与 EDA scratch 不再入库。
+- ip 提交：`chore(ip): ignore EDA/Foundry scratch`（66b9b46）；`feat(ip): IP implementation progress, HAC
+  organization, bridge IPs and report migration`（241df1f，825 文件）；随后 `git merge --no-edit origin/main`
+  干净合并，再补 `chore(ip): align ahb2apb bridge core/verification after hook formatting`。HEAD `6c86855fe2e8`，clean，与 upstream 一致。
+- wenwang-edgenpu：根 `.gitignore` 增加 `/reports/esl/{all_ip_iteration,bmu_iteration,media_ip_iteration,
+  systemc_initial,descriptor_lowering}.v*/`，与仓库“仅跟踪小型 .json/.md 摘要、逐运行数据目录不入库”惯例一致；
+  可提交未跟踪项由 253 MB 降至 5.7 MB（无单文件 >1 MB）。提交 `feat(esl): SystemC/ESL engine models,
+  IP contracts and specs` 与 `docs(esl): refresh descriptor_lowering report summary`；HEAD `0d4f5016a6d8`，clean，与 upstream 一致。
+- 提交前后用 `git diff --cached --name-only` 复核暂存区无 scratch/敏感项；hook 自动格式化后产生的尾随改动已二次提交推送。
+- 四项仓库（skills/hwif/ip/wenwang）与父仓均 clean 且与远端一致；未运行 ip/wenwang 的 RTL/EDA 全量回归，未宣称发布签核完成。
