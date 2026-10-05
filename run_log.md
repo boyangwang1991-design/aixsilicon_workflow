@@ -6,6 +6,19 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 
 格式：`时间(UTC)` | 阶段 | 动作 | 结果 | 证据/哈希
 
+- `2026-10-05` | **workflow / 全仓提交推送（submit all to GitHub）** | 用户 `submit all to GitHub`：
+  `aix wf status` 巡检 12 仓，仅 ip / wenwang-edgenpu dirty，逐仓 `aix repo status/diff` 核对后按仓
+  独立快照提交推送 ——
+  ip `74cfe6d0add5`（axi_crossbar UVM env/coverage 扩展、register adapter/coverage、case_policy，
+  test matrix/coverage plan/report 与 scenario/env 增量）；
+  wenwang-edgenpu `9b47d6c7b533`（service/atomic 契约与 descriptor/spec v0.2、NoC packet profile、
+  page-control/service-device ESL 模型与单测、collect/check 工具、reports/esl/*.v0.1 摘要）。
+  产物屏蔽：ip 新增 `.gitignore` `/ips/**/verdiLog/`（Verdi 运行日志 pes.bat）；
+  wenwang 新增 `/reports/esl/{service_frontends,service_lowering,service_device,page_control,atomic_service}.v*/`
+  忽略约 1.1GB 可再生的 per-run 数据目录，仅跟踪同名 `.json`/`.md` 摘要（与既有 reports/esl 约定一致）。
+  筛查：变更集无凭据、无 >1MB 文件（大目录均已忽略）。父仓无代码改动，仅记日志。
+  结果：12 仓 clean+sync | PASS |
+
 - `2026-10-04` | **workflow / 全仓提交推送（第二轮）** | 用户再次 `submit all to GitHub`：巡检发现 3 仓
   dirty（ip / vip / wenwang-edgenpu），逐仓 `aix repo status/diff` 核对后按仓独立快照提交推送 ——
   ip `bed7a64`（axi_crossbar HLD/model/core 与 axi2apb_bridge docs/rtl/verification 增量，+ hook 格式补提交）、
