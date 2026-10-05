@@ -6,6 +6,25 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 
 格式：`时间(UTC)` | 阶段 | 动作 | 结果 | 证据/哈希
 
+- `2026-10-05` | **workflow / 全仓提交推送（第二轮，submit all to GitHub）** | 用户再次 `submit all to GitHub`：
+  `aix wf status` 巡检 12 仓，仅 ip / wenwang-edgenpu dirty（staged=0），逐仓 `aix repo status/diff`
+  核对后按仓独立快照提交推送 ——
+  ip `0dd1a1f`（axi_crossbar 1.0.0 候选：parameter/formal/equivalence scope 复审、PPA 报告、
+  coverage reachability、release candidate manifest+note；doorbell_controller integration/user manual、
+  coverage inventory、参数矩阵、fault probe fixture；mailbox RTL/UVM(env/tc/th)、SW HAL/linux、
+  generated register glue、trace、reviews、core、verification.yaml）；
+  wenwang-edgenpu `3e63a84`（NoC 架构契约与 capability plan、ADR-0023 资源平面、noc/mesh/segment
+  ARCHITECTURE/CONTRACT、media device/resource 契约；sim/esl NoC/axi/cdc/collective/mesh SystemC
+  模型与单测；noc/media/scheduler/ip-contract 检查器/采集器/sweep 与 verification 契约测试；
+  specs noc.proposed/scheduler_trace/ip_contract_catalog v0.4-0.7 与 reports/esl 同名小摘要）。
+  产物屏蔽：wenwang 新增 `.gitignore` `/reports/esl/noc_contract.v*/`，排除 348 个（约 107MB）
+  可再生的 per-run ESL 数据条目（build/run `.log`、`.bin/.csv/.json.gz`、`.xml`），仅跟踪同名
+  `.json`/`.md` 摘要，与既有 reports/esl 忽略约定及 `reports/engineering/disk_cleanup_*` 所示
+  “重数据本地归档、仅跟踪小摘要”策略一致；ip 的 release `.zip`（`*.zip` 规则）与 `*.key/*.pvl`
+  等 EDA 产物天然忽略，候选 `manifest.yaml`/`release_note.md` 按既有惯例入库（其余 IP 同）。
+  筛查：变更集无凭据、无越界 runtime 产物；ip 215 项（+14586/-1763）、wenwang 143 项（+27020/-249）。
+  收尾：`aix repo status` 12 仓 clean=12 dirty=0 ahead=0；父仓无代码改动，仅记日志 | PASS |
+
 - `2026-10-05` | **workflow / 全仓提交推送（submit all to GitHub）** | 用户 `submit all to GitHub`：
   `aix wf status` 巡检 12 仓，仅 ip / wenwang-edgenpu dirty，逐仓 `aix repo status/diff` 核对后按仓
   独立快照提交推送 ——
