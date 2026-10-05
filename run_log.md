@@ -736,3 +736,25 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - 文件检查未发现构建缓存、EDA 原始日志或凭据特征；crypto_shell_dma 的约 1.6 MB parameter_space.yaml 为参数模型源文件，保留提交。IP 提交为当前研发进度快照，未宣称 RTL/EDA 全量回归或质量签核完成，原报告中的 fail/blocked/skipped 边界保持不变。
 - skills 已提交并推送 main：5908cd5096ed（初始化优化、PDK 目录支持及验证证据处理）；IP 已提交并推送 main：00dc196087d4（IP 实现进度与分类整理）。workflow 本次提交包含初始化依赖拆分、Codex 安装入口、文王 NPU 配置和本记录。
 - knowledge 仍按此前用户要求暂缓下载，本轮未启动同步下载。
+
+## 2026-10-05 GitHub 提交（安全子集）
+
+- 用户要求“submit all to github”。先 `uv run python bootstrap.py --ensure` 与 `uv run aix wf status` /
+  `uv run aix repo status`（含 `aix repo status workflow`）只读巡检：profile=all，12 仓，dirty 为
+  hwif、ip、skills、wenwang-edgenpu，父仓 untracked 1 项。
+- 临时诊断（`aix` 未提供对应只读能力，仅用于风险评估，未替代正式 aix 状态证据）：`git status --porcelain`
+  枚举逐文件、`git check-ignore` 校验忽略覆盖、`git ls-files --others --exclude-standard` 统计可提交字节、
+  `git rev-parse`/`git ls-remote` 核对分支与上游、`git log` 查历史先例。
+- 风险结论：父仓 untracked `.vc_env_188550.txt` 为本机 Synopsys/Verdi 环境转储（含 license server
+  `27080@localhost`、`CODEX_SESSION_ID`、SSH socket 路径），属私有信息不可入库；ip 落后上游 1 个提交
+  且未跟踪项含 EDA scratch（零字节 `ucli.key`、`.mr/.pvl/.pvk`、`alib-52/`、`cksum_dir/`），与历史
+  提交 “drop tracked EDA scratch” 的约定冲突；wenwang-edgenpu 未跟踪可提交数据约 253 MB（单目录
+  `reports/esl/all_ip_iteration.v0.1/` 162 MB），其同类 `reports/esl/*` 目录在 HEAD 中均 0 跟踪。
+- 经用户确认采用安全子集：仅提交 skills 与 hwif，父仓仅做 .gitignore 卫生，ip/wenwang 暂缓并报告。
+- skills 提交并推送 main：报告策略重构（AI 报告入 `reports/`，机器报告留被忽略 `build/`），同步
+  报告/文档/发布相关 skill。
+- hwif 提交并推送 `feat/crypto-cci-profiles-0.2.0`：HAC-IF 升为 1.0.0 draft，生成视图改为 `aix_` 前缀
+  并刷新六族接口契约。
+- 父仓 `.gitignore` 新增 `.vc_env_*.txt`（`git check-ignore` 复核命中），门禁 `make check`（ruff、6 schema、
+  runtime 测试）与 `uv run pre-commit run --all-files` 全绿后提交推送 main。
+- 本轮未对 ip/wenwang 执行 add/commit/push；未宣称 RTL/EDA 回归或发布签核完成。

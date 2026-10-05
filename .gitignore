@@ -40,6 +40,9 @@
 /csrc/
 /simv*
 
+# Machine-local EDA environment dumps (Synopsys license server, session ids, socket paths)
+.vc_env_*.txt
+
 # Python
 __pycache__/
 *.py[cod]
