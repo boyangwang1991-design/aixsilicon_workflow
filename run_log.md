@@ -17,7 +17,10 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
   wenwang 新增 `/reports/esl/{service_frontends,service_lowering,service_device,page_control,atomic_service}.v*/`
   忽略约 1.1GB 可再生的 per-run 数据目录，仅跟踪同名 `.json`/`.md` 摘要（与既有 reports/esl 约定一致）。
   筛查：变更集无凭据、无 >1MB 文件（大目录均已忽略）。父仓无代码改动，仅记日志。
-  结果：12 仓 clean+sync | PASS |
+  排除清单（保留在工作区未入库）：收尾巡检发现 wenwang 仓 `hardware/ip/noc/contract.md`
+  （+21/-1，请求/响应 Mermaid 数据通路与观测回调约束）在快照后数十秒由另一并行 agent 会话写入，
+  且该仓 `build/esl/noc-*` 持续产出，判定为未完成中间状态；按既有先例不代为提交，保留给该会话
+  自行完成并推送。其余全部 12 仓 clean+sync | PASS（含 1 处并行 WIP waiver） |
 
 - `2026-10-04` | **workflow / 全仓提交推送（第二轮）** | 用户再次 `submit all to GitHub`：巡检发现 3 仓
   dirty（ip / vip / wenwang-edgenpu），逐仓 `aix repo status/diff` 核对后按仓独立快照提交推送 ——
