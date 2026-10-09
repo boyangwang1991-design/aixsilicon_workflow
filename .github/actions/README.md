@@ -1,30 +1,15 @@
-# GitHub Actions
+# GitHub Actions CI/CD 状态
 
-## Reusable Workflows（Workflow Repo 提供，版本锁定）
+2026-10-08 按用户要求整体取消 GitHub Actions CI/CD。
 
-| 文件 | 用途 |
-|---|---|
-| `reusable-fusesoc-lint.yml` | 资产仓 FuseSoC lint 薄入口 |
-| `reusable-unit-sim.yml` | 单元仿真薄入口 |
-| `reusable-schema-check.yml` | YAML 事实 Schema 校验 |
-| `reusable-release-gate.yml` | G7 发布就绪 Gate |
-| `integration-baseline.yml` | 多仓 checkout + 兼容性 + 代表性回归 |
+workflow 根仓与 `repos/` 下各仓库不再保留 `.github/workflows/*.yml` 或
+`*.yaml` 定义，包括手动入口和可复用 workflow。提交、推送、PR、发布和定时
+事件不再触发这些流程，也避免无效 workflow 定义在推送时产生配置错误。
 
-## 使用方式（资产仓薄入口）
+检查脚本、测试、FuseSoC target 和本地 pre-commit 保留，按需在本地执行。
+根仓本地检查入口为 `make check` 与 `uv run --locked --extra dev pre-commit run --all-files`；
+子仓使用各自的本地检查入口。
 
-```yaml
-jobs:
-  qualification:
-    uses: boyangwang1991-design/aixsilicon_workflow/.github/workflows/reusable-unit-sim.yml@v1
-    with:
-      repo_type: vip
-      target: unit_sim
-    secrets: inherit
-```
-
-## 规则
-
-- 公共 Workflow 引用必须固定 Release Tag 或 Commit SHA，不能长期引用 `main`；
-- 默认 `contents: read`；只在发布 Job 中临时授予 `contents: write`；
-- 私有仓共享 Actions 时评估日志与访问边界；
-- 所有跨仓事件携带 `correlation_id` + depth，编排层拒绝超过深度的递归事件。
+这些变更须分别提交、推送到 workflow 根仓及 CBB、HWIF、IP 仓才能在远端生效。
+已产生的 Actions 运行记录不会被删除。历史版本中的可复用 workflow 仍可能被外部
+仓库按旧 tag/SHA 调用；本次变更不修改外部仓库或 GitHub 仓库设置。

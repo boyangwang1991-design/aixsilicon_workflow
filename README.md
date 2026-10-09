@@ -18,9 +18,11 @@
 
 ## 技术形态
 
-> **Manifest 驱动的多仓工作区 + 独立 Git Clone + 统一 Python CLI + FuseSoC 聚合配置 + GitHub Actions 协调层**
+> **Manifest 驱动的多仓工作区 + 独立 Git Clone + 统一 Python CLI + FuseSoC 聚合配置**
 
-默认不采用 Git Submodule。子仓统一克隆到 `repos/`，而 `repos/` 被父仓 `.gitignore` 完整忽略；父仓只版本化 Manifest、Schema、流程定义、公共 CI、脚本、政策与文档。
+默认不采用 Git Submodule。子仓统一克隆到 `repos/`，而 `repos/` 被父仓 `.gitignore` 完整忽略；父仓只版本化 Manifest、Schema、流程定义、脚本、政策与文档。
+
+GitHub Actions CI/CD 已整体取消（2026-10-08）：根仓与各资产仓移除 workflow 定义，提交、推送、PR、发布和定时事件均不再触发这些流程。检查在本地按需执行；详见 [CI/CD 状态](.github/actions/README.md)。
 
 ## 仓库生态
 
@@ -40,6 +42,8 @@
 > 仓库布局与分支策略见 [`manifests/default.yaml`](manifests/default.yaml)；工作区环境引导（uv/git/仓库清单/skills 物化）由私有 skill `aixsilicon-workspace-management` 统一管理。
 
 `all` profile 还包含文王 NPU 项目 [`wenwang-edgenpu`](https://github.com/boyangwang1991-design/wenwang-edgenpu)，默认下载到 `repos/wenwang-edgenpu`，跟踪 `main` 分支。
+
+`all` profile 包含 [`sumi-compress`](https://github.com/boyangwang1991-design/sumi-compress)，默认下载到 `repos/sumi-compress`，跟踪 `main` 分支；可用 `uv run aix wf sync --repo sumi-compress` 单独同步。
 
 ## 治理与命名规范
 

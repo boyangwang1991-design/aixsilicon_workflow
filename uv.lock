@@ -91,14 +91,19 @@ ip-dev = [
     { name = "pytest" },
 ]
 wenwang-model = [
+    { name = "cmake" },
     { name = "numpy" },
     { name = "pillow" },
+    { name = "requests" },
+    { name = "safetensors" },
     { name = "torch", version = "2.8.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "transformers" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "aixworkflow", extras = ["docs"], marker = "extra == 'doc-enhance'" },
+    { name = "cmake", marker = "extra == 'wenwang-model'", specifier = "==3.28.4" },
     { name = "dilithium-py", marker = "extra == 'ip-dev'", specifier = "==1.4.0" },
     { name = "docling", marker = "extra == 'docs'", specifier = ">=2.0" },
     { name = "fusesoc", marker = "extra == 'ip-dev'", specifier = ">=2.4.7" },
@@ -126,9 +131,12 @@ requires-dist = [
     { name = "python-docx", marker = "extra == 'doc-enhance'", specifier = ">=1.1" },
     { name = "python-pptx", marker = "extra == 'doc-enhance'", specifier = ">=1.0" },
     { name = "pyyaml", specifier = ">=6.0" },
+    { name = "requests", marker = "extra == 'wenwang-model'", specifier = ">=2.32" },
     { name = "rich", specifier = ">=13.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.4" },
+    { name = "safetensors", marker = "extra == 'wenwang-model'", specifier = ">=0.4" },
     { name = "torch", marker = "(sys_platform == 'linux' and extra == 'wenwang-model') or (sys_platform == 'win32' and extra == 'wenwang-model')", specifier = "==2.8.0+cpu", index = "https://download.pytorch.org/whl/cpu", conflict = { package = "aixworkflow", extra = "wenwang-model" } },
+    { name = "transformers", marker = "extra == 'wenwang-model'", specifier = "==5.16.1" },
 ]
 provides-extras = ["wenwang-model", "dev", "docs", "doc-enhance", "ip-dev"]
 
@@ -543,6 +551,30 @@ wheels = [
 ]
 
 [[package]]
+name = "cmake"
+version = "3.28.4"
+source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
+sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/e7/90/39fc3e549f434ae8e9e9a8af96337de6556c82447321b4bc0e39bc68b55d/cmake-3.28.4.tar.gz", hash = "sha256:b9dd1010ebe951e1acce054c295d5f891a8ae12b295d158b66020c955ae861b4", size = 42771, upload-time = "2024-03-21T23:08:03.207Z" }
+wheels = [
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/25/de/a54dbc80384d3410b02f0389bfcc79de004188708dcfd744d0faacfdcc1b/cmake-3.28.4-py2.py3-none-macosx_10_10_universal2.macosx_10_10_x86_64.macosx_11_0_arm64.macosx_11_0_universal2.whl", hash = "sha256:d642ee5e0f8e7252c75968bae3a1729dbbff6965f9dfb76d2f1611c583de14fd", size = 50230071, upload-time = "2024-03-21T23:06:56.206Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/5b/b7/bfc8fc76f9c4b30c7672e2432ea884b9d5c71039aa4f981fb1fc0adb63f4/cmake-3.28.4-py2.py3-none-manylinux2010_i686.manylinux_2_12_i686.whl", hash = "sha256:b45bc5d881727a6319d7f4b2b44e68e479ac76f18923a8eb551eb3869f2fe82a", size = 26050186, upload-time = "2024-03-21T23:07:01.566Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/57/b5/0cd5ecbe03290da97ee162221cedb762e388f41a46329fe0173b12e82f0e/cmake-3.28.4-py2.py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl", hash = "sha256:f1b1bde70f6467aa7f20c110ca35a80256509311c57e487c2d195c4ea0aed08b", size = 25266966, upload-time = "2024-03-21T23:07:06.365Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/42/97/7fdfaed0de840f9812fde45d1d8f5044f435de8bcb5e32d14560a93d4bd5/cmake-3.28.4-py2.py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:58e8de07e5f1b6dae1b211ce6c7ddfa0aa2fac30676947902c31919c74d765f3", size = 25632112, upload-time = "2024-03-21T23:07:10.737Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/fc/6b/792da96a72f6f30173acd9bbc12f6069bb2755c1e582a362a965be7d77e8/cmake-3.28.4-py2.py3-none-manylinux2014_i686.manylinux_2_17_i686.whl", hash = "sha256:7b874b94776d25d4c4a09b1006755c18a3ed74dc43ec887fa83a1b0e22c87c5d", size = 27375560, upload-time = "2024-03-21T23:07:14.476Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/c2/62/ae4b3982accbbb671f767db27962ec831c9502062c7915e7f1aec5ce6a7e/cmake-3.28.4-py2.py3-none-manylinux2014_ppc64le.manylinux_2_17_ppc64le.whl", hash = "sha256:83c7c569ce4c4a6bc57d2f2512c3ce3232a28aaf9ef1f95200368cf1e417c311", size = 29176357, upload-time = "2024-03-21T23:07:18.246Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/3a/d7/0f7e90bf540d9cb20faab86c332b665ea15d4c529f5225e09036905b4f40/cmake-3.28.4-py2.py3-none-manylinux2014_s390x.manylinux_2_17_s390x.whl", hash = "sha256:a140a6b22fcf8c126932a358b554ee7ee780018153f55cdd8014f7bf970c2dba", size = 25499161, upload-time = "2024-03-21T23:07:22.14Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/2f/a1/aed90f63609db7af7bbd9a6ad8bcc28b710ed58db3ebf0e7c92ce1d04f26/cmake-3.28.4-py2.py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:bc06b483cb2bcaf78184e66ac7fd0f3bbe4ed9a690369b1e4897b19568d566dd", size = 26313120, upload-time = "2024-03-21T23:07:26.238Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/94/f1/c08f1f9997d46fddda66dd7a5ccdfb5e2ff8cfc219d5b972465c5256beaf/cmake-3.28.4-py2.py3-none-musllinux_1_1_aarch64.whl", hash = "sha256:8df18932454a0c10bc4255b71015b0cb46cb5ff815dfa7559580c0fa34d4c7bb", size = 26531879, upload-time = "2024-03-21T23:07:30.645Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/7a/60/e35ade8510d9974ceb66c1b4dd7b3a810232f78715f9193dfc6ab1d5f5b7/cmake-3.28.4-py2.py3-none-musllinux_1_1_i686.whl", hash = "sha256:0c615eba2dc0381675351ccff1485249afb3b3ca3735b6af1b74fef5ef446d1c", size = 29894303, upload-time = "2024-03-21T23:07:35.31Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/2a/5c/f870d4a0f268c66c0c0605592b8c0ee1ea2e9af1fbff504f7856caef0489/cmake-3.28.4-py2.py3-none-musllinux_1_1_ppc64le.whl", hash = "sha256:70e606a33cd4daba2a4ff132bf0358ebeb5f5595bba9ff24023c112604f64d81", size = 30683687, upload-time = "2024-03-21T23:07:39.717Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/b3/1f/e813548ace292f43b41a17d005b869cec41c411318ad7ec12100d466ab65/cmake-3.28.4-py2.py3-none-musllinux_1_1_s390x.whl", hash = "sha256:c21d79c77f83e506f0858bbe01ac4326d3014c8c0079388bd459b905d2acd30f", size = 26646804, upload-time = "2024-03-21T23:07:43.54Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/45/ea/624ff3c5caf6ca2c00b7652f0db792af7fdade49e78939fc6a3cfbc78d69/cmake-3.28.4-py2.py3-none-musllinux_1_1_x86_64.whl", hash = "sha256:802a18564b27728b1251e39eebd8e414dda7c6f220848755d4402cfe8c85c181", size = 28063721, upload-time = "2024-03-21T23:07:47.478Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/bd/5e/d4a0c783d2436e2f42028327932f5899324f55da0f6973f1bd5c25131723/cmake-3.28.4-py2.py3-none-win32.whl", hash = "sha256:8c3a0284763c1a7cd5abbcb4bdd49c2489fe61c92e995cb963bb70eccaa5d4f9", size = 32160692, upload-time = "2024-03-21T23:07:51.917Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/74/26/08746c521e2f32d338b79bbef82032d818990b2b932f900142730062cf09/cmake-3.28.4-py2.py3-none-win_amd64.whl", hash = "sha256:58f065208ed5351314d3accc5bcf88d63d6fad2be933fd364a13abdc6398e832", size = 35709264, upload-time = "2024-03-21T23:07:55.809Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/31/f4/e9697ea95661b9308961208fdbac040a20f5c164156e6c7bdc9f0f4a8f0f/cmake-3.28.4-py2.py3-none-win_arm64.whl", hash = "sha256:213633f9e11c46dccc955169c4b1bac1775c1c9bfca99e393a7bd97bec3b5d11", size = 34431560, upload-time = "2024-03-21T23:07:59.896Z" },
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
@@ -906,6 +938,23 @@ wheels = [
 name = "docling-core"
 version = "2.91.0"
 source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
+resolution-markers = [
+    "python_full_version >= '3.15' and sys_platform == 'win32'",
+    "python_full_version >= '3.15' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.15' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.14.*' and sys_platform == 'win32'",
+    "python_full_version == '3.14.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.14.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.13.*' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version < '3.12' and sys_platform == 'emscripten'",
+    "python_full_version == '3.13.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version < '3.12' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+]
 dependencies = [
     { name = "defusedxml" },
     { name = "doclang" },
@@ -929,8 +978,50 @@ wheels = [
 [package.optional-dependencies]
 chunking = [
     { name = "semchunk" },
-    { name = "transformers", version = "5.8.1", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'darwin'" },
-    { name = "transformers", version = "5.15.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform != 'darwin'" },
+    { name = "transformers" },
+    { name = "tree-sitter" },
+    { name = "tree-sitter-c" },
+    { name = "tree-sitter-javascript" },
+    { name = "tree-sitter-python" },
+    { name = "tree-sitter-typescript" },
+]
+
+[[package]]
+name = "docling-core"
+version = "2.101.0"
+source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
+resolution-markers = [
+    "python_full_version >= '3.15' and sys_platform == 'darwin'",
+    "python_full_version == '3.14.*' and sys_platform == 'darwin'",
+    "python_full_version == '3.13.*' and sys_platform == 'darwin'",
+    "python_full_version == '3.12.*' and sys_platform == 'darwin'",
+    "python_full_version < '3.12' and sys_platform == 'darwin'",
+]
+dependencies = [
+    { name = "defusedxml" },
+    { name = "doclang" },
+    { name = "jsonref" },
+    { name = "jsonschema" },
+    { name = "latex2mathml" },
+    { name = "pandas" },
+    { name = "pillow" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pyyaml" },
+    { name = "requests" },
+    { name = "tabulate" },
+    { name = "typer" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/69/23/e8601adeb96103c6eb079d7411e781e54041604be72a56af549d3177a908/docling_core-2.101.0.tar.gz", hash = "sha256:d03fabd892aaf7fbfc2ff6ead13718e6ec4835e3abe2ba390dd6ffccf6dd49a2", size = 405359, upload-time = "2026-10-08T05:59:46.825Z" }
+wheels = [
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/f3/e6/b75b9879bf00c0e05cb599d23ee641c87c6d807438473a38ec34dc59ce69/docling_core-2.101.0-py3-none-any.whl", hash = "sha256:951e8ac253cac7c287cec8c3422b1ef479a1d20e436c38f0ab1378fd853e1ab2", size = 316739, upload-time = "2026-10-08T05:59:44.762Z" },
+]
+
+[package.optional-dependencies]
+chunking = [
+    { name = "semchunk" },
+    { name = "transformers" },
     { name = "tree-sitter" },
     { name = "tree-sitter-c" },
     { name = "tree-sitter-javascript" },
@@ -940,11 +1031,18 @@ chunking = [
 
 [[package]]
 name = "docling-ibm-models"
-version = "3.14.0"
+version = "3.13.2"
 source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
+resolution-markers = [
+    "python_full_version >= '3.15' and sys_platform == 'darwin'",
+    "python_full_version == '3.14.*' and sys_platform == 'darwin'",
+    "python_full_version == '3.13.*' and sys_platform == 'darwin'",
+    "python_full_version == '3.12.*' and sys_platform == 'darwin'",
+    "python_full_version < '3.12' and sys_platform == 'darwin'",
+]
 dependencies = [
     { name = "accelerate" },
-    { name = "docling-core" },
+    { name = "docling-core", version = "2.101.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" } },
     { name = "huggingface-hub" },
     { name = "jsonlines" },
     { name = "numpy" },
@@ -952,13 +1050,53 @@ dependencies = [
     { name = "pydantic" },
     { name = "rtree" },
     { name = "safetensors", extra = ["torch"] },
-    { name = "torch", version = "2.8.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
-    { name = "torch", version = "2.13.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
-    { name = "torchvision", version = "0.23.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
-    { name = "torchvision", version = "0.28.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
+    { name = "torch", version = "2.13.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" } },
+    { name = "torchvision", version = "0.28.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" } },
     { name = "tqdm" },
-    { name = "transformers", version = "5.8.1", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'darwin'" },
-    { name = "transformers", version = "5.15.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform != 'darwin'" },
+    { name = "transformers" },
+]
+sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/c1/25/84166f5751d7837612138966669019a4ef67c09bf6d3ef8d3cc1aa0e6268/docling_ibm_models-3.13.2.tar.gz", hash = "sha256:195e02dd119df34d2ce5f76ac614da82825851013e4898db7b0468cdf8740a3d", size = 98655, upload-time = "2026-04-23T11:04:23.517Z" }
+wheels = [
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/a4/fc/584f75ca31aa6694fed5338ecb54dc4c8341704b1e5b7b6a4528651f12fa/docling_ibm_models-3.13.2-py3-none-any.whl", hash = "sha256:5fa0838bf15a4e06d2fcb686d756a6f4c329ea0a8820d085f06d07abe96269ed", size = 94013, upload-time = "2026-04-23T11:04:22.227Z" },
+]
+
+[[package]]
+name = "docling-ibm-models"
+version = "3.14.0"
+source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
+resolution-markers = [
+    "python_full_version >= '3.15' and sys_platform == 'win32'",
+    "python_full_version >= '3.15' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.15' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.14.*' and sys_platform == 'win32'",
+    "python_full_version == '3.14.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.14.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.13.*' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version < '3.12' and sys_platform == 'emscripten'",
+    "python_full_version == '3.13.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version < '3.12' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+]
+dependencies = [
+    { name = "accelerate" },
+    { name = "docling-core", version = "2.91.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" } },
+    { name = "huggingface-hub" },
+    { name = "jsonlines" },
+    { name = "numpy" },
+    { name = "pillow" },
+    { name = "pydantic" },
+    { name = "rtree" },
+    { name = "safetensors", extra = ["torch"] },
+    { name = "torch", version = "2.8.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform != 'emscripten'" },
+    { name = "torch", version = "2.13.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'emscripten'" },
+    { name = "torchvision", version = "0.23.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform != 'emscripten'" },
+    { name = "torchvision", version = "0.28.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'emscripten'" },
+    { name = "tqdm" },
+    { name = "transformers" },
 ]
 sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/bd/b5/f95bd7df8acc3b792fd11c6d00c8a9ea3966b10edd734fb194d07be29606/docling_ibm_models-3.14.0.tar.gz", hash = "sha256:def964e3d524f66c7321ef9d48d4021278f14319f01d3f78058cd2324f641e22", size = 100765, upload-time = "2026-08-11T06:58:25.953Z" }
 wheels = [
@@ -970,7 +1108,8 @@ name = "docling-parse"
 version = "7.13.0"
 source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
 dependencies = [
-    { name = "docling-core" },
+    { name = "docling-core", version = "2.91.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform != 'darwin'" },
+    { name = "docling-core", version = "2.101.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'darwin'" },
     { name = "pillow" },
     { name = "pydantic" },
     { name = "pywin32", marker = "sys_platform == 'win32'" },
@@ -1005,7 +1144,8 @@ version = "2.120.1"
 source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
 dependencies = [
     { name = "certifi" },
-    { name = "docling-core" },
+    { name = "docling-core", version = "2.91.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform != 'darwin'" },
+    { name = "docling-core", version = "2.101.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'darwin'" },
     { name = "filetype" },
     { name = "pluggy" },
     { name = "pydantic" },
@@ -1023,8 +1163,10 @@ standard = [
     { name = "accelerate" },
     { name = "beautifulsoup4" },
     { name = "defusedxml" },
-    { name = "docling-core", extra = ["chunking"] },
-    { name = "docling-ibm-models" },
+    { name = "docling-core", version = "2.91.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, extra = ["chunking"], marker = "sys_platform != 'darwin'" },
+    { name = "docling-core", version = "2.101.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, extra = ["chunking"], marker = "sys_platform == 'darwin'" },
+    { name = "docling-ibm-models", version = "3.13.2", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'darwin'" },
+    { name = "docling-ibm-models", version = "3.14.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform != 'darwin'" },
     { name = "docling-parse" },
     { name = "httpx" },
     { name = "huggingface-hub" },
@@ -3537,7 +3679,7 @@ resolution-markers = [
     "python_full_version < '3.12' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "numpy", marker = "python_full_version < '3.12'" },
+    { name = "numpy" },
 ]
 sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/7a/97/5a3609c4f8d58b039179648e62dd220f89864f56f7357f5d4f45c29eb2cc/scipy-1.17.1.tar.gz", hash = "sha256:95d8e012d8cb8816c226aef832200b1d45109ed4464303e997c5b13122b297c0", size = 30573822, upload-time = "2026-02-23T00:26:24.851Z" }
 wheels = [
@@ -3626,7 +3768,7 @@ resolution-markers = [
     "python_full_version == '3.12.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "numpy", marker = "python_full_version >= '3.12'" },
+    { name = "numpy" },
 ]
 sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/a7/25/c2700dfaf6442b4effaa91af24ebce5dc9d31bb4a69706313aae70d72cd0/scipy-1.18.0.tar.gz", hash = "sha256:67b2ad2ad54c72ca6d04975a9b2df8c3638c34ddd5b28738e94fc2b57929d378", size = 30774447, upload-time = "2026-06-19T15:01:43.456Z" }
 wheels = [
@@ -3850,28 +3992,29 @@ wheels = [
 
 [[package]]
 name = "tokenizers"
-version = "0.22.2"
+version = "0.23.2"
 source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
 dependencies = [
     { name = "huggingface-hub" },
 ]
-sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/73/6f/f80cfef4a312e1fb34baf7d85c72d4411afde10978d4657f8cdd811d3ccc/tokenizers-0.22.2.tar.gz", hash = "sha256:473b83b915e547aa366d1eee11806deaf419e17be16310ac0a14077f1e28f917", size = 372115, upload-time = "2026-01-05T10:45:15.988Z" }
+sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/18/1e/bc6587c5ab643b2e17776cace9070a2ae73549c86bffac9934a600bf3c31/tokenizers-0.23.2.tar.gz", hash = "sha256:7f0f085686b9de0d0079e6f874ae053600db64c5d13049e0bbc0119926d25aac", size = 385745, upload-time = "2026-09-03T08:55:42.89Z" }
 wheels = [
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/92/97/5dbfabf04c7e348e655e907ed27913e03db0923abb5dfdd120d7b25630e1/tokenizers-0.22.2-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:544dd704ae7238755d790de45ba8da072e9af3eea688f698b137915ae959281c", size = 3100275, upload-time = "2026-01-05T10:41:02.158Z" },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/2e/47/174dca0502ef88b28f1c9e06b73ce33500eedfac7a7692108aec220464e7/tokenizers-0.22.2-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:1e418a55456beedca4621dbab65a318981467a2b188e982a23e117f115ce5001", size = 2981472, upload-time = "2026-01-05T10:41:00.276Z" },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/d6/84/7990e799f1309a8b87af6b948f31edaa12a3ed22d11b352eaf4f4b2e5753/tokenizers-0.22.2-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2249487018adec45d6e3554c71d46eb39fa8ea67156c640f7513eb26f318cec7", size = 3290736, upload-time = "2026-01-05T10:40:32.165Z" },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/78/59/09d0d9ba94dcd5f4f1368d4858d24546b4bdc0231c2354aa31d6199f0399/tokenizers-0.22.2-cp39-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:25b85325d0815e86e0bac263506dd114578953b7b53d7de09a6485e4a160a7dd", size = 3168835, upload-time = "2026-01-05T10:40:38.847Z" },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/47/50/b3ebb4243e7160bda8d34b731e54dd8ab8b133e50775872e7a434e524c28/tokenizers-0.22.2-cp39-abi3-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:bfb88f22a209ff7b40a576d5324bf8286b519d7358663db21d6246fb17eea2d5", size = 3521673, upload-time = "2026-01-05T10:40:56.614Z" },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/e0/fa/89f4cb9e08df770b57adb96f8cbb7e22695a4cb6c2bd5f0c4f0ebcf33b66/tokenizers-0.22.2-cp39-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:1c774b1276f71e1ef716e5486f21e76333464f47bece56bbd554485982a9e03e", size = 3724818, upload-time = "2026-01-05T10:40:44.507Z" },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/64/04/ca2363f0bfbe3b3d36e95bf67e56a4c88c8e3362b658e616d1ac185d47f2/tokenizers-0.22.2-cp39-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:df6c4265b289083bf710dff49bc51ef252f9d5be33a45ee2bed151114a56207b", size = 3379195, upload-time = "2026-01-05T10:40:51.139Z" },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/2e/76/932be4b50ef6ccedf9d3c6639b056a967a86258c6d9200643f01269211ca/tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:369cc9fc8cc10cb24143873a0d95438bb8ee257bb80c71989e3ee290e8d72c67", size = 3274982, upload-time = "2026-01-05T10:40:58.331Z" },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/1d/28/5f9f5a4cc211b69e89420980e483831bcc29dade307955cc9dc858a40f01/tokenizers-0.22.2-cp39-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:29c30b83d8dcd061078b05ae0cb94d3c710555fbb44861139f9f83dcca3dc3e4", size = 9478245, upload-time = "2026-01-05T10:41:04.053Z" },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/6c/fb/66e2da4704d6aadebf8cb39f1d6d1957df667ab24cff2326b77cda0dcb85/tokenizers-0.22.2-cp39-abi3-musllinux_1_2_armv7l.whl", hash = "sha256:37ae80a28c1d3265bb1f22464c856bd23c02a05bb211e56d0c5301a435be6c1a", size = 9560069, upload-time = "2026-01-05T10:45:10.673Z" },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/16/04/fed398b05caa87ce9b1a1bb5166645e38196081b225059a6edaff6440fac/tokenizers-0.22.2-cp39-abi3-musllinux_1_2_i686.whl", hash = "sha256:791135ee325f2336f498590eb2f11dc5c295232f288e75c99a36c5dbce63088a", size = 9899263, upload-time = "2026-01-05T10:45:12.559Z" },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/05/a1/d62dfe7376beaaf1394917e0f8e93ee5f67fea8fcf4107501db35996586b/tokenizers-0.22.2-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:38337540fbbddff8e999d59970f3c6f35a82de10053206a7562f1ea02d046fa5", size = 10033429, upload-time = "2026-01-05T10:45:14.333Z" },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/fd/18/a545c4ea42af3df6effd7d13d250ba77a0a86fb20393143bbb9a92e434d4/tokenizers-0.22.2-cp39-abi3-win32.whl", hash = "sha256:a6bf3f88c554a2b653af81f3204491c818ae2ac6fbc09e76ef4773351292bc92", size = 2502363, upload-time = "2026-01-05T10:45:20.593Z" },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/65/71/0670843133a43d43070abeb1949abfdef12a86d490bea9cd9e18e37c5ff7/tokenizers-0.22.2-cp39-abi3-win_amd64.whl", hash = "sha256:c9ea31edff2968b44a88f97d784c2f16dc0729b8b143ed004699ebca91f05c48", size = 2747786, upload-time = "2026-01-05T10:45:18.411Z" },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/72/f4/0de46cfa12cdcbcd464cc59fde36912af405696f687e53a091fb432f694c/tokenizers-0.22.2-cp39-abi3-win_arm64.whl", hash = "sha256:9ce725d22864a1e965217204946f830c37876eee3b2ba6fc6255e8e903d5fcbc", size = 2612133, upload-time = "2026-01-05T10:45:17.232Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/4d/ed/8a443528baa6fac8dfe8c3b75b038c63ac92bb539bcabe311e227c718173/tokenizers-0.23.2-cp310-abi3-macosx_10_12_x86_64.whl", hash = "sha256:85a9a357a3764aecc904ee76bdaf8cf1ad8e5a67a1b929a487c4a39b49ed0e90", size = 3148852, upload-time = "2026-09-03T08:55:30.874Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/67/49/22da045a91732384d3a3771816bf188dc5a1f702c32e635afa7c679c0bef/tokenizers-0.23.2-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:986670e43691469dcee610ea0f846f91a8f84e91fc6f7a48d4c064414c0ec2bf", size = 3101593, upload-time = "2026-09-03T08:55:28.587Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/2e/4d/8f569ed49372a3ed8e57099bd515055fd48d7c95912c4307cda6973c2168/tokenizers-0.23.2-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a37039b5dfc4af84eb3ef0a92f4307e28936c8f9adccba2629d36f652e9bf7a2", size = 3516830, upload-time = "2026-09-03T08:55:14.741Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/2a/de/e2f14c8919d5bf51874051d00d6c7b7e0e8bde6c6a2dbeddda7f642896ff/tokenizers-0.23.2-cp310-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:7b7e37ba198f24150f523e1242e83c4970de4a525480586be5dcc24d9add32c5", size = 3407975, upload-time = "2026-09-03T08:55:16.842Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/c5/bd/93c69152d02ef06ce47aed8b2bf4952dcf733c935a62791873932b2934d9/tokenizers-0.23.2-cp310-abi3-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:43e4f2071e3cc8d5d86421c874aebc82659bb51a68bcdef5a0da75ee89511ccb", size = 3748165, upload-time = "2026-09-03T08:55:24.769Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/2d/b7/56b84b80bc96942bba8eb23751a9e8a1fce4faaf4390425e7083f721c98c/tokenizers-0.23.2-cp310-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:325fee2e0418a9dc6c9ecf736a5f5f0db7875183ace9549ae339da76f7a1fbb7", size = 4024165, upload-time = "2026-09-03T08:55:18.806Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/9b/8a/0175e216f005c2fe08238292663aa41e4c802b216e71047a69a0e9fc6fa3/tokenizers-0.23.2-cp310-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:950d7c9426fa72406a0ffeacdbc0bb9985f5db20eb8b263f29c79aaf83105703", size = 3591899, upload-time = "2026-09-03T08:55:22.752Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/2c/ca/ca6b93c7820df123b2662a9469e8facc826ccc94e98fdd0d615f6431e73a/tokenizers-0.23.2-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:41c2f84d172449b4dadb9cdc508e3e364076613c35b16e76ecfe47a60d1e3305", size = 3386843, upload-time = "2026-09-03T08:55:26.584Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/e9/a4/4f9106d317b14a80aefea9f0e3a8d07ef25f856a7607eb7f5ab894281fcb/tokenizers-0.23.2-cp310-abi3-manylinux_2_31_riscv64.whl", hash = "sha256:12f0835dc2ee694746a76adf7b1567d4346a4a502ebe93fb1f5f80ea49799b78", size = 3577314, upload-time = "2026-09-03T08:55:20.825Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/8d/6a/1552b70fb0d9ab074fd3fc961435d01364e79c9058481822c3af6e8d402c/tokenizers-0.23.2-cp310-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:eb2f9c8a24da020ea8c11a01a19c1c2547912d92121ae4a01cfbca46125dee40", size = 9967367, upload-time = "2026-09-03T08:55:33.188Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/06/01/3ccb3a956c7528b2507b8a9714155c4baf86af593039db6ea375dd0c96c3/tokenizers-0.23.2-cp310-abi3-musllinux_1_2_armv7l.whl", hash = "sha256:f486f402f6f9abee5bb032553736813af0c710a86b2e0ca592634c55cea1f835", size = 9811886, upload-time = "2026-09-03T08:55:35.642Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/fa/73/7038e612d48bda1599457f712f6bd3854eae1a9dc9c13aa47f835349db48/tokenizers-0.23.2-cp310-abi3-musllinux_1_2_i686.whl", hash = "sha256:bef235815a067b2648caf6dcc7a71091b0b0fff9ee8057f6451eb9335fae52ef", size = 10146224, upload-time = "2026-09-03T08:55:38.391Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/b5/d8/8e9e4e0b287a338d8f88976729628c9d22e8a54cfaf9777018a7f7cb58a0/tokenizers-0.23.2-cp310-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:5c56bda1511921587789163e524d196ed8284174ac23abd7685d5ea8da6c4718", size = 10256304, upload-time = "2026-09-03T08:55:40.977Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/f3/1f/c79a01f671a49728ebb0b61f7ff9ea45663b66cab40bc0858e9859b25c16/tokenizers-0.23.2-cp310-abi3-win32.whl", hash = "sha256:debf978920d93ba9c219bd67cc4bbfaf912c9039e41e7a28b91ec15e3728c95a", size = 2592809, upload-time = "2026-09-03T08:55:48.02Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/db/f7/0a69ac6b82dbccf3f71add938a161c497952749294b8dd6dfe03a819dc40/tokenizers-0.23.2-cp310-abi3-win_amd64.whl", hash = "sha256:2e96f5699d5249c9c64aa8412e044f727aae3a4098cf830f9901ec1afc361cde", size = 2863236, upload-time = "2026-09-03T08:55:46.193Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/d7/b0/dee84cb44175be1b4c35bd2f770727494e78f0bb38e571a623ade94dbebb/tokenizers-0.23.2-cp310-abi3-win_arm64.whl", hash = "sha256:e49c394456dd9985787fec76132438ba3fb8911f857b1bf3d40119f9292d41aa", size = 2729352, upload-time = "2026-09-03T08:55:44.345Z" },
 ]
 
 [[package]]
@@ -3945,13 +4088,13 @@ resolution-markers = [
     "python_full_version < '3.12' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "filelock", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
-    { name = "fsspec", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
-    { name = "jinja2", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
-    { name = "networkx", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
-    { name = "setuptools", marker = "python_full_version >= '3.12' and sys_platform != 'darwin' and sys_platform != 'emscripten'" },
-    { name = "sympy", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
-    { name = "typing-extensions", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
+    { name = "filelock" },
+    { name = "fsspec" },
+    { name = "jinja2" },
+    { name = "networkx" },
+    { name = "setuptools", marker = "python_full_version >= '3.12'" },
+    { name = "sympy" },
+    { name = "typing-extensions" },
 ]
 wheels = [
     { url = "https://download-r2.pytorch.org/whl/cpu/torch-2.8.0%2Bcpu-cp311-cp311-linux_s390x.whl", hash = "sha256:2bfc013dd6efdc8f8223a0241d3529af9f315dffefb53ffa3bf14d3f10127da6", upload-time = "2025-10-01T23:33:07Z" },
@@ -3991,13 +4134,13 @@ resolution-markers = [
     "python_full_version < '3.12' and sys_platform == 'darwin'",
 ]
 dependencies = [
-    { name = "filelock", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
-    { name = "fsspec", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
-    { name = "jinja2", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
-    { name = "networkx", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
-    { name = "setuptools", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
-    { name = "sympy", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
-    { name = "typing-extensions", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
+    { name = "filelock" },
+    { name = "fsspec" },
+    { name = "jinja2" },
+    { name = "networkx" },
+    { name = "setuptools" },
+    { name = "sympy" },
+    { name = "typing-extensions" },
 ]
 wheels = [
     { url = "https://pypi.tuna.tsinghua.edu.cn/packages/5b/fe/cba54dc58523434919b66f13a667e36e436deddd77ca519e96553617d4ec/torch-2.13.0-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:e76f9bcecc52b8ff711239a2f7547d5353df95878ab232f0773c1d95928b92f8", size = 111187938, upload-time = "2026-07-08T16:05:17.065Z" },
@@ -4024,9 +4167,9 @@ resolution-markers = [
     "python_full_version < '3.12' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "numpy", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
-    { name = "pillow", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
-    { name = "torch", version = "2.8.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
+    { name = "numpy" },
+    { name = "pillow" },
+    { name = "torch", version = "2.8.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" } },
 ]
 wheels = [
     { url = "https://pypi.tuna.tsinghua.edu.cn/packages/dd/14/7b44fe766b7d11e064c539d92a172fa9689a53b69029e24f2f1f51e7dc56/torchvision-0.23.0-cp311-cp311-manylinux_2_28_aarch64.whl", hash = "sha256:01dc33ee24c79148aee7cdbcf34ae8a3c9da1674a591e781577b716d233b1fa6", size = 2395543, upload-time = "2025-08-06T14:58:04.373Z" },
@@ -4060,9 +4203,9 @@ resolution-markers = [
     "python_full_version < '3.12' and sys_platform == 'darwin'",
 ]
 dependencies = [
-    { name = "numpy", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
-    { name = "pillow", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
-    { name = "torch", version = "2.13.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
+    { name = "numpy" },
+    { name = "pillow" },
+    { name = "torch", version = "2.13.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" } },
 ]
 wheels = [
     { url = "https://pypi.tuna.tsinghua.edu.cn/packages/7a/b2/1e010052079e4c577007b789db336ea7075f1a426e84d17121fbc3745516/torchvision-0.28.0-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:83fe6c020866a85acd7d97deccc45ff11d66daf42916d04396a4309c66c0ccb8", size = 1856017, upload-time = "2026-07-08T16:07:55.533Z" },
@@ -4086,66 +4229,22 @@ wheels = [
 
 [[package]]
 name = "transformers"
-version = "5.8.1"
+version = "5.16.1"
 source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
-resolution-markers = [
-    "python_full_version >= '3.15' and sys_platform == 'darwin'",
-    "python_full_version == '3.14.*' and sys_platform == 'darwin'",
-    "python_full_version == '3.13.*' and sys_platform == 'darwin'",
-    "python_full_version == '3.12.*' and sys_platform == 'darwin'",
-    "python_full_version < '3.12' and sys_platform == 'darwin'",
-]
 dependencies = [
-    { name = "huggingface-hub", marker = "sys_platform == 'darwin'" },
-    { name = "numpy", marker = "sys_platform == 'darwin'" },
-    { name = "packaging", marker = "sys_platform == 'darwin'" },
-    { name = "pyyaml", marker = "sys_platform == 'darwin'" },
-    { name = "regex", marker = "sys_platform == 'darwin'" },
-    { name = "safetensors", marker = "sys_platform == 'darwin'" },
-    { name = "tokenizers", marker = "sys_platform == 'darwin'" },
-    { name = "tqdm", marker = "sys_platform == 'darwin'" },
-    { name = "typer", marker = "sys_platform == 'darwin'" },
+    { name = "huggingface-hub" },
+    { name = "numpy" },
+    { name = "packaging" },
+    { name = "pyyaml" },
+    { name = "regex" },
+    { name = "safetensors" },
+    { name = "tokenizers" },
+    { name = "tqdm" },
+    { name = "typer" },
 ]
-sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/e7/e6/4134ea2fbea322cddc7ffc94a0d8ee47fe32ce8e876b320cd37d88edfc4d/transformers-5.8.1.tar.gz", hash = "sha256:4dd5b6de4105725104d84fd6abd74b305f4debfc251b38c648ee5dd087cf543b", size = 8532019, upload-time = "2026-05-13T03:21:57.234Z" }
+sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/ad/2e/ba418680ab901dae269360bb8642485eae04f1af91ee2ebb8bd6f3607305/transformers-5.16.1.tar.gz", hash = "sha256:17b0eac726ddc55e84ac58946063e0c6d37fd000c456b581f050ea0f4e822869", size = 9650542, upload-time = "2026-08-26T14:48:58.789Z" }
 wheels = [
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/fc/b1/8be7e7ef0b5200491312201918b6125ef9c9df9dd0f0240ccef9ac824e6b/transformers-5.8.1-py3-none-any.whl", hash = "sha256:5340fb95962162cdfdae5cc91d7f8fedd92ed75216c1154c5e1f590fcf56dd0e", size = 10632882, upload-time = "2026-05-13T03:21:52.876Z" },
-]
-
-[[package]]
-name = "transformers"
-version = "5.15.0"
-source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
-resolution-markers = [
-    "python_full_version >= '3.15' and sys_platform == 'win32'",
-    "python_full_version >= '3.15' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.15' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version == '3.14.*' and sys_platform == 'win32'",
-    "python_full_version == '3.14.*' and sys_platform == 'emscripten'",
-    "python_full_version == '3.14.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'win32'",
-    "python_full_version < '3.12' and sys_platform == 'win32'",
-    "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.12' and sys_platform == 'emscripten'",
-    "python_full_version == '3.13.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version == '3.12.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version < '3.12' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-]
-dependencies = [
-    { name = "huggingface-hub", marker = "sys_platform != 'darwin'" },
-    { name = "numpy", marker = "sys_platform != 'darwin'" },
-    { name = "packaging", marker = "sys_platform != 'darwin'" },
-    { name = "pyyaml", marker = "sys_platform != 'darwin'" },
-    { name = "regex", marker = "sys_platform != 'darwin'" },
-    { name = "safetensors", marker = "sys_platform != 'darwin'" },
-    { name = "tokenizers", marker = "sys_platform != 'darwin'" },
-    { name = "tqdm", marker = "sys_platform != 'darwin'" },
-    { name = "typer", marker = "sys_platform != 'darwin'" },
-]
-sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/a6/3f/d89353267d511e18f137dfd7769d07837350c11b88408ce1dfe2e93e56c7/transformers-5.15.0.tar.gz", hash = "sha256:bbf98f57b2ddd7c4ecbccfa2c0069017aa6fd01cc204bd50cbc0eeadcf2a13b8", size = 9377983, upload-time = "2026-08-10T10:27:23.261Z" }
-wheels = [
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/d8/43/81355710a4c84e9420e11a86d41a5364deb561f2ef36dfdf254a07371bbb/transformers-5.15.0-py3-none-any.whl", hash = "sha256:d7f007736f67749ae9490c4f8cb5d30b452ae2d68c8675e50ba8d63ea7feb107", size = 11749280, upload-time = "2026-08-10T10:27:20.416Z" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/0d/4d/ee3728674c0bbc637bb4af88ccf0be697f92e4e90b55f5dc110c44d61b61/transformers-5.16.1-py3-none-any.whl", hash = "sha256:2f2d5b98a5ad3718713653734298fa620754ed683702a635ebb587df3ed29c7e", size = 12080592, upload-time = "2026-08-26T14:48:55.083Z" },
 ]
 
 [[package]]

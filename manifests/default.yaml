@@ -189,6 +189,16 @@ repositories:
     groups: [npu]
     required: true
 
+  - id: sumi-compress
+    type: other
+    path: repos/sumi-compress
+    remote: origin
+    repo: sumi-compress.git
+    revision:
+      branch: main
+    groups: [compression]
+    required: true
+
 # ADR-0007 exact Profile：include_repositories 为精确集合（优先），
 # optional_repositories 为可选附加（不视为 required）。
 # 设计原则：IP/CBB/SoC 的具体流程与门禁由对应 Skill（ip-development-suite /
@@ -208,5 +218,5 @@ profiles:
     include_repositories: [hwif, cbb, ip, dv-common, vip, tools, catalog, soc-integration]
     optional_repositories: [skills]
   all:
-    include_repositories: [hwif, cbb, ip, dv-common, vip, tools, catalog, soc-integration, knowledge, esl, wenwang-edgenpu]
+    include_repositories: [hwif, cbb, ip, dv-common, vip, tools, catalog, soc-integration, knowledge, esl, wenwang-edgenpu, sumi-compress]
     optional_repositories: [skills]
