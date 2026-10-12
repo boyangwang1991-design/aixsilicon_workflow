@@ -6,6 +6,20 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 
 格式：`时间(UTC)` | 阶段 | 动作 | 结果 | 证据/哈希
 
+- `2026-10-12` | **workflow / register-studio 提交推送（豁免：未注册子仓）** | 用户 `submit /home/eda/workspace/aixsilicon_workflow/repos/register-studio to github`。
+  register-studio **不在** `manifests/default.yaml`（available ids 无此项，`aix repo status register-studio` 返回 unknown id），
+  为手动 clone 的独立 git 仓库（remote `git@github.com:boyangwang1991-design/register-studio.git`，分支 `main`）；
+  故按 AGENT.md「唯一豁免：`aix` CLI 未提供且无法注册 action 的临时性诊断/操作」在本仓内直接 git 执行并在本日志注明。
+  提交范围：105 项（+2607/-1560）——源码保留型高级编辑（declarations/enums/structures/instances/component_types/UDP/PropertyEditor/IP-XACT import）、
+  实际 RTL 验证（VCS 环境检测/Lint/展开、APB 访问验证、全量寄存器编排，总体 partial 如实报告）、生成中心隔离运行与原子发布、
+  84 项内置属性助手与编译配置持久化、项目历史/草稿隔离、workbench 组合编辑，及 docs/（ai-native、full-feature-roadmap、
+  rtl-verification、project-history、workbench 计划）与 reports/（report.md、run_log.md 验证证据）。
+  门禁：`uv run --locked ruff check src tests scripts` 通过；pytest 按用户要求跳过（未运行）。
+  筛查：凭据模式扫描无命中；`reports/` 未被 .gitignore 忽略且不含 secret（内容为研发/验证记录）；
+  无 pre-commit hook 配置（hooks 目录为空、无 `.pre-commit-config.yaml`）。
+  结果：commit `f5e8986`（feat: source-authoring, RTL verification, feature assistant & workbench），
+  push `1f90d66..f5e8986 main -> main`，fetch 后工作区 clean=0 dirty、HEAD==origin/main | PASS（豁免：未注册子仓，直接 git 操作） |
+
 - `2026-10-05` | **workflow / 全仓提交推送（第二轮，submit all to GitHub）** | 用户再次 `submit all to GitHub`：
   `aix wf status` 巡检 12 仓，仅 ip / wenwang-edgenpu dirty（staged=0），逐仓 `aix repo status/diff`
   核对后按仓独立快照提交推送 ——
