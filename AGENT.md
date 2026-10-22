@@ -43,7 +43,7 @@
 | IP 规格/SystemRDL/RTL/验证 | IP | `repos/aixsilicon_ip_repo` |
 | 协议无关验证基础设施 | DV-Common | `repos/aixsilicon_dv_common` |
 | 协议 VIP/Agent/Checker | VIP | `repos/aixsilicon_vip_repo` |
-| 确定性生成/检查工具 | Tool | `repos/aixsilicon_tool_repo` |
+| 确定性生成/检查工具 | Tool（外部独立管理） | workflow 外独立仓库，如 `../aixsilicon_tool_repo` |
 | 已发布资产索引 | Catalog | `repos/aixsilicon_catalog_repo` |
 | SoC 通用 Schema/规则 | SoC Integration | `repos/aixsilicon_soc_integration` |
 | 研发方法论 Skill | Skill（私有） | `repos/aixsilicon_skill_repo`（canonical `ip-development-suite`） |

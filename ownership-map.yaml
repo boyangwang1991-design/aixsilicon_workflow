@@ -41,6 +41,7 @@ map:
     allowed_paths: [ips]
 
   - asset: Tool 实现
+    # 外部独立管理，不属于 workflow Manifest/Profile；此处仅记录资产归属。
     owner_repo: aixsilicon_tool_repo
     skill_write: 仅 Tool 开发流程可写
     allowed_paths: [packages]
@@ -115,10 +116,6 @@ repository_registry:
   - id: vip
     repo: aixsilicon_vip_repo
     type: vip
-  - id: tools
-    repo: aixsilicon_tool_repo
-    type: tool
-    visibility: private
   - id: catalog
     repo: aixsilicon_catalog_repo
     type: catalog

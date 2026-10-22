@@ -73,6 +73,22 @@ ip-dev = [
     "peakrdl-uvm>=2.4.0",
     "pytest>=9.1.1",
 ]
+efusesight = [
+    "alembic>=1.12.0",
+    "cryptography>=43",
+    "fastapi>=0.100.0",
+    "httpx>=0.28.1",
+    "httpx2>=2.5.0",
+    "jinja2>=3.1.0",
+    "openpyxl>=3.1.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "python-multipart>=0.0.6",
+    "sqlalchemy>=2.0.0",
+    "uvicorn>=0.23.0",
+    "systemrdl-compiler>=1.32,<2",
+]
 
 # PyPI 镜像源统一托管在项目级 `uv.toml`（index-url = 清华源），
 # 默认镜像由 uv.toml 决定；PyTorch显式源的元数据声明与uv.toml保持一致。

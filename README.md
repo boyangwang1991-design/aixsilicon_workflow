@@ -33,13 +33,15 @@ GitHub Actions CI/CD 已整体取消（2026-10-08）：根仓与各资产仓移�
 | ip | [`aixsilicon_ip_repo`](https://github.com/boyangwang1991-design/aixsilicon_ip_repo) | 可独立集成和发布的完整 IP | 开源 |
 | dv-common | [`aixsilicon_dv_common`](https://github.com/boyangwang1991-design/aixsilicon_dv_common) | 协议无关验证公共底座 | 开源 |
 | vip | [`aixsilicon_vip_repo`](https://github.com/boyangwang1991-design/aixsilicon_vip_repo) | 协议与系统验证组件 | 开源 |
-| tools | [`aixsilicon_tool_repo`](https://github.com/boyangwang1991-design/aixsilicon_tool_repo) | 确定性生成、检查、转换、打包工具（私有；交付件随公开资产仓开源） | **私有** |
+| 外部独立管理 | [`aixsilicon_tool_repo`](https://github.com/boyangwang1991-design/aixsilicon_tool_repo) | 确定性生成、检查、转换、打包工具（私有；交付件随公开资产仓开源） | **私有** |
 | catalog | [`aixsilicon_catalog_repo`](https://github.com/boyangwang1991-design/aixsilicon_catalog_repo) | 已发布资产索引、兼容矩阵和成熟度 | 开源 |
 | soc-integration | [`aixsilicon_soc_integration`](https://github.com/boyangwang1991-design/aixsilicon_soc_integration) | 通用 SoC 集成 Schema、模板、规则 | 开源 |
 | skills | [`aixsilicon_skill_repo`](https://github.com/boyangwang1991-design/aixsilicon_skill_repo) | AI 辅助研发 Skill Suite（私有） | **私有** |
 | knowledge | [`aixsilicon_chipknowledge`](https://github.com/boyangwang1991-design/aixsilicon_chipknowledge) | 芯片研发知识库（方法论/术语/参考索引） | 开源 |
 
 > 仓库布局与分支策略见 [`manifests/default.yaml`](manifests/default.yaml)；工作区环境引导（uv/git/仓库清单/skills 物化）由私有 skill `aixsilicon-workspace-management` 统一管理。
+
+`aixsilicon_tool_repo` 在 workflow 外独立管理，本地可放在同级目录 `../aixsilicon_tool_repo`。它不属于任何 Profile，`aix wf sync` 不再下载或更新该仓库；工具插件仍按需独立安装。
 
 `all` profile 还包含文王 NPU 项目 [`wenwang-edgenpu`](https://github.com/boyangwang1991-design/wenwang-edgenpu)，默认下载到 `repos/wenwang-edgenpu`，跟踪 `main` 分支。
 

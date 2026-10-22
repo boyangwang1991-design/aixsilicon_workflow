@@ -41,7 +41,6 @@ repositories:
     dependencies:
       product: [hwif]
       verification: [dv-common]
-      tooling: [tools]
       discovery: [catalog]
       context: [skills, knowledge]
     required: true
@@ -60,7 +59,6 @@ repositories:
     dependencies:
       product: [hwif, cbb]
       verification: [dv-common, vip]
-      tooling: [tools]
       discovery: [catalog]
       context: [skills, knowledge]
     required: true
@@ -91,24 +89,11 @@ repositories:
     dependencies:
       product: [hwif]
       verification: [dv-common]
-      tooling: [tools]
       discovery: [catalog]
       context: [skills, knowledge]
     required: true
     owner: dv-platform
     fusesoc_roots: [.]
-
-  - id: tools
-    type: tool
-    path: repos/aixsilicon_tool_repo
-    remote: origin
-    repo: aixsilicon_tool_repo.git
-    revision:
-      branch: main
-    groups: [base, tools]
-    visibility: private
-    required: true
-    owner: engineering-platform
 
   - id: catalog
     type: catalog
@@ -129,11 +114,10 @@ repositories:
     revision:
       branch: main
     groups: [base, soc]
-    depends_on: [hwif, cbb, ip, catalog, tools]
+    depends_on: [hwif, cbb, ip, catalog]
     dependencies:
       product: [hwif, cbb, ip]
       verification: [dv-common, vip]
-      tooling: [tools]
       discovery: [catalog]
       context: [skills, knowledge]
     required: true
@@ -174,9 +158,8 @@ repositories:
     visibility: private
     required: false
     owner: esl-methodology
-    depends_on: [skills, tools]
+    depends_on: [skills]
     dependencies:
-      tooling: [tools]
       context: [skills]
 
   - id: wenwang-edgenpu
@@ -207,16 +190,16 @@ repositories:
 # 运维基线（minimal / all）。
 profiles:
   minimal:
-    include_repositories: [hwif, tools]
+    include_repositories: [hwif]
   ip-dev:
-    include_repositories: [hwif, cbb, ip, dv-common, vip, tools]
+    include_repositories: [hwif, cbb, ip, dv-common, vip]
     optional_repositories: [catalog, skills]
   cbb-dev:
-    include_repositories: [hwif, cbb, dv-common, tools]
+    include_repositories: [hwif, cbb, dv-common]
     optional_repositories: [vip, catalog, skills]
   soc-integration:
-    include_repositories: [hwif, cbb, ip, dv-common, vip, tools, catalog, soc-integration]
+    include_repositories: [hwif, cbb, ip, dv-common, vip, catalog, soc-integration]
     optional_repositories: [skills]
   all:
-    include_repositories: [hwif, cbb, ip, dv-common, vip, tools, catalog, soc-integration, knowledge, esl, wenwang-edgenpu, sumi-compress]
+    include_repositories: [hwif, cbb, ip, dv-common, vip, catalog, soc-integration, knowledge, esl, wenwang-edgenpu, sumi-compress]
     optional_repositories: [skills]

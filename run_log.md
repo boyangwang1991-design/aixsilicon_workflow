@@ -828,3 +828,27 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
   IP contracts and specs` 与 `docs(esl): refresh descriptor_lowering report summary`；HEAD `0d4f5016a6d8`，clean，与 upstream 一致。
 - 提交前后用 `git diff --cached --name-only` 复核暂存区无 scratch/敏感项；hook 自动格式化后产生的尾随改动已二次提交推送。
 - 四项仓库（skills/hwif/ip/wenwang）与父仓均 clean 且与远端一致；未运行 ip/wenwang 的 RTL/EDA 全量回归，未宣称发布签核完成。
+
+## 2026-10-20 工具仓退出 workflow 自动管理
+
+- 用户要求将工具仓移到 workflow 外并停止自动管理。检查时实际仓库已位于
+  `/home/eda/workspace/aixsilicon_tool_repo`，`repos/` 下没有工具仓，因此无需移动或修改仓库内容。
+- 从 `manifests/default.yaml` 删除 `tools` 仓库、全部 Profile 和仓库依赖中的引用，
+  避免后续 sync 重新克隆；继承此 manifest 的 minimal/ip-dev/soc-integration 同步生效。
+- README、AGENT.md 与 ownership-map.yaml 明确工具仓独立管理，保留工具资产/Schema 的归属定义。
+- 修改前父仓已有 pyproject.toml、uv.lock 改动及一个未跟踪项，未覆盖或暂存这些内容。
+- 验证：make check 通过（ruff、6 个 schema parity、134 项测试）；pre-commit --all-files 通过；
+  修改后 wf status 不再列出 tools，wf doctor 退出 0，12 个仓库依赖无环。
+- 额外 wf graph 检查退出 10：ESL 的 product 依赖引用 optional skills，但 graph 默认排除 optional。
+  该问题来自原有 manifest 的 esl depends_on: [skills, tools]，本次仅移除 tools，未扩展修改该解析问题。
+- 未提交、推送或修改外部工具仓。
+
+## 2026-10-21 父仓同步与提交
+
+- 用户授权更新当前仓库并上传未推送改动；范围为 workflow 父仓，不修改独立子仓。
+- 提交工具仓退出自动管理的现有修改，以及 pyproject.toml 的 efusesight 可选依赖和对应 uv.lock。
+- fsdb2vcdLog/ 为 EDA 生成日志，保留本地，不进入提交。
+- bootstrap --ensure、wf status 和 wf doctor 成功；make check 通过（134 项测试、ruff、6 个 Schema parity），pre-commit --all-files 全部通过。
+- 初始普通 Git 状态/diff 用于临时诊断；正式状态通过 aix repo status workflow 复核。
+  aix repo 无 fetch 子命令，因此使用 git fetch origin 获取远端；获取后 ahead=0、behind=0，无需合并，无冲突。
+- 后续提交与推送使用 aix repo commit/push workflow；不进行 force-push。
