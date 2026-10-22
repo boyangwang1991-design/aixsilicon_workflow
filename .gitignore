@@ -43,6 +43,9 @@
 # Machine-local EDA environment dumps (Synopsys license server, session ids, socket paths)
 .vc_env_*.txt
 
+# fsdb2vcd (Verdi) conversion scratch and logs
+/fsdb2vcdLog/
+
 # Python
 __pycache__/
 *.py[cod]

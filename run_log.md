@@ -852,3 +852,24 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - 初始普通 Git 状态/diff 用于临时诊断；正式状态通过 aix repo status workflow 复核。
   aix repo 无 fetch 子命令，因此使用 git fetch origin 获取远端；获取后 ahead=0、behind=0，无需合并，无冲突。
 - 后续提交与推送使用 aix repo commit/push workflow；不进行 force-push。
+
+## 2026-10-22 GitHub 上传（workflow + repos）
+
+- 用户要求“将 workflow 和 repos 上传 GitHub”。先经 bootstrap --ensure 与 `aix wf status` 只读巡检：
+  profile=all，12 个 manifest 仓均 main；逐仓 `git fetch origin` 刷新后 ahead/behind 均为 0/0，
+  仅 ip 仓 dirty（README、registry、doc 修改，chip 下 ePad 契约删除，power/clock_reset/epad 新增未跟踪项）。
+- 父仓仅有未跟踪 `fsdb2vcdLog/`（Verdi fsdb2vcd 的 `pes.bat`/`turbo.log`），按既有“EDA 日志留本地”约定
+  不入库；本轮在根 `.gitignore` 增加 `/fsdb2vcdLog/`，`git status` 复核不再出现。
+- ip 仓暂存前枚举 162 个未跟踪文件：141 md、7 py、3 cpp/hpp、4 .gitignore、1 json、CMakeLists.txt；
+  合计约 1.1 MB，无 >2 MB 文件、无 scratch/PDK/证据目录命中、私钥/license server 特征扫描为空
+  （唯一 `token=` 匹配为 Arm 文档公开链接）。reports 下均为此前约定的 AI 报告（report.md、run_log.md、
+  reviews/*.md），raw evidence 已被仓库 .gitignore 规则排除。
+- 提交前校验：`build_ip_registry.py --check-source` 与 `update_registry_readme.py --check` 均退出 0
+  （293 条，PER-009/SEC-015/INF-008 既有元数据告警保留）。注意：这两个脚本需 Python ≥3.9，
+  系统 python3 会因 `Path.is_relative_to` 缺失报错，本轮显式使用 workflow 根 `.venv` 解释器。
+- `check_evidence_hygiene.py` 退出 1，原因是历史提交 a599061 已跟踪 26 个 can_suite 原始证据文件，
+  与本次暂存内容无关；本轮未擅自 untrack，作为既有缺陷记录待单独处理。
+- ip 提交 `486b2ce`（188 文件，+16261/-38）：ePad 套件目录统一（CHP-001/002/003/004/006/007/008 迁入
+  `system/epad_suite`，附 MIGRATION.md 与指纹）、power/clock_reset 套件契约/ESL/oracle、registry 与
+  README 刷新；已 `aix repo push ip` 推送 main，远端 HEAD 与本地一致。
+- 其余 11 个子仓无待提交内容，本轮未执行 add/commit/push；未运行 RTL/EDA 全量回归，未宣称发布签核。
