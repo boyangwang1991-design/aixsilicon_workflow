@@ -73,6 +73,9 @@ ip-dev = [
     "peakrdl-uvm>=2.4.0",
     "pytest>=9.1.1",
 ]
+crypto-model = [
+    "cryptography==50.0.0",
+]
 efusesight = [
     "alembic>=1.12.0",
     "cryptography>=43",

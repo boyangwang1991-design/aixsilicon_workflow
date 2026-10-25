@@ -943,3 +943,15 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - Validation: HAC design/evidence checks PASS (22 components, 110 requirements); planning and 31-diagram checks PASS; `make check` and all workflow pre-commit hooks PASS.
 - Fresh ESL rebuild and all 18 CTests PASS; cross-repo uDMA path resolves to its unchanged source. IP registry check PASS with pre-existing package identity/version warnings. Local-only evidence retains the IP repo ignore policy and is not newly published.
 - Published standalone HAC `main` at `1d419e2c` after extracting the original HAC-only commit (`0750ba7e`). IP migration committed separately; uDMA source not changed. Workflow Manifest registers a verification dependency on `ip` for actual uDMA replay.
+
+## 2026-10-24 Crypto repository extraction
+
+- User requested moving the entire security/crypto suite into `repos/xuanwu-crypto`, published at boyangwang1991-design/xuanwu-crypto, following the HAC extraction.
+- Initial workflow/IP status clean; doctor passed. Target remote readable with no refs.
+- Temporary Git diagnostics/history clone/filter-branch/init/remote configuration are needed because `aix repo` has no subtree extraction or empty-repository initialization operation; formal status/diff/commit/push use `aix repo`.
+- Moved and byte-verified all 1,702 tracked Crypto files before adapting paths; extracted 35 history commits into the standalone repository. Local ignored assets moved with the suite; stale per-member build directories are preserved under `cache/crypto-before-extraction-*-build`.
+- Moved 14 registry entries into xuanwu-crypto/registry.yaml with original IDs and statuses; IP retains reserved IDs and explicit migrated records. IP README regenerated at 273 entries; registry/readme validation PASS (existing unrelated package warnings retained).
+- Adapted AES/SHA2/DMA script workspace roots and cross-repo HWIF paths; refreshed the path-bearing Ascon Core with its existing generator, preserving pre-migration generated RTL. All RTL and C++ sources are byte-identical.
+- Added the root optional `crypto-model` extra for the already-locked cryptography 50.0.0 Oracle dependency; no locked package versions or registries changed.
+- Validation PASS: public contract checks (14 planning members, 11 implementation contracts / 242 requirements), four LRS provenance audits, schema check, 167 suite/Oracle tests, shell/Python syntax, runtime root checks, six Core source-reference checks, workflow doctor and FuseSoC aggregate generation. Generated PDK build inputs remain local-only. `make check` and pre-commit all passed.
+- Fresh ESL build at repos/xuanwu-crypto/esl/build PASS; selected migration CTest smoke PASS (67 cases: algorithms, streams, PIO, services, resources, composition and DMA AEAD). This is migration validation, not full RTL/EDA requalification. New repository main pushed successfully.

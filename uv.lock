@@ -54,6 +54,9 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+crypto-model = [
+    { name = "cryptography" },
+]
 dev = [
     { name = "mypy" },
     { name = "pre-commit" },
@@ -121,6 +124,7 @@ requires-dist = [
     { name = "aixworkflow", extras = ["docs"], marker = "extra == 'doc-enhance'" },
     { name = "alembic", marker = "extra == 'efusesight'", specifier = ">=1.12.0" },
     { name = "cmake", marker = "extra == 'wenwang-model'", specifier = "==3.28.4" },
+    { name = "cryptography", marker = "extra == 'crypto-model'", specifier = "==50.0.0" },
     { name = "cryptography", marker = "extra == 'efusesight'", specifier = ">=43" },
     { name = "dilithium-py", marker = "extra == 'ip-dev'", specifier = "==1.4.0" },
     { name = "docling", marker = "extra == 'docs'", specifier = ">=2.0" },
@@ -168,7 +172,7 @@ requires-dist = [
     { name = "transformers", marker = "extra == 'wenwang-model'", specifier = "==5.16.1" },
     { name = "uvicorn", marker = "extra == 'efusesight'", specifier = ">=0.23.0" },
 ]
-provides-extras = ["wenwang-model", "dev", "docs", "doc-enhance", "ip-dev", "efusesight"]
+provides-extras = ["wenwang-model", "dev", "docs", "doc-enhance", "ip-dev", "crypto-model", "efusesight"]
 
 [[package]]
 name = "alembic"
@@ -1000,19 +1004,19 @@ resolution-markers = [
     "python_full_version < '3.12' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "defusedxml" },
-    { name = "doclang" },
-    { name = "jsonref" },
-    { name = "jsonschema" },
-    { name = "latex2mathml" },
-    { name = "pandas" },
-    { name = "pillow" },
-    { name = "pydantic" },
-    { name = "pydantic-settings" },
-    { name = "pyyaml" },
-    { name = "tabulate" },
-    { name = "typer" },
-    { name = "typing-extensions" },
+    { name = "defusedxml", marker = "sys_platform != 'darwin'" },
+    { name = "doclang", marker = "sys_platform != 'darwin'" },
+    { name = "jsonref", marker = "sys_platform != 'darwin'" },
+    { name = "jsonschema", marker = "sys_platform != 'darwin'" },
+    { name = "latex2mathml", marker = "sys_platform != 'darwin'" },
+    { name = "pandas", marker = "sys_platform != 'darwin'" },
+    { name = "pillow", marker = "sys_platform != 'darwin'" },
+    { name = "pydantic", marker = "sys_platform != 'darwin'" },
+    { name = "pydantic-settings", marker = "sys_platform != 'darwin'" },
+    { name = "pyyaml", marker = "sys_platform != 'darwin'" },
+    { name = "tabulate", marker = "sys_platform != 'darwin'" },
+    { name = "typer", marker = "sys_platform != 'darwin'" },
+    { name = "typing-extensions", marker = "sys_platform != 'darwin'" },
 ]
 sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/e5/f5/5aaf6f1221242a4dd598b515786ffca796352a8d960a9c6a0deb614301f4/docling_core-2.91.0.tar.gz", hash = "sha256:dc40fe76524a2700f869265015a9ef86027888e73b5652f324b3b5c52a2df240", size = 344852, upload-time = "2026-08-06T14:23:07.919Z" }
 wheels = [
@@ -1021,13 +1025,13 @@ wheels = [
 
 [package.optional-dependencies]
 chunking = [
-    { name = "semchunk" },
-    { name = "transformers" },
-    { name = "tree-sitter" },
-    { name = "tree-sitter-c" },
-    { name = "tree-sitter-javascript" },
-    { name = "tree-sitter-python" },
-    { name = "tree-sitter-typescript" },
+    { name = "semchunk", marker = "sys_platform != 'darwin'" },
+    { name = "transformers", marker = "sys_platform != 'darwin'" },
+    { name = "tree-sitter", marker = "sys_platform != 'darwin'" },
+    { name = "tree-sitter-c", marker = "sys_platform != 'darwin'" },
+    { name = "tree-sitter-javascript", marker = "sys_platform != 'darwin'" },
+    { name = "tree-sitter-python", marker = "sys_platform != 'darwin'" },
+    { name = "tree-sitter-typescript", marker = "sys_platform != 'darwin'" },
 ]
 
 [[package]]
@@ -1042,20 +1046,20 @@ resolution-markers = [
     "python_full_version < '3.12' and sys_platform == 'darwin'",
 ]
 dependencies = [
-    { name = "defusedxml" },
-    { name = "doclang" },
-    { name = "jsonref" },
-    { name = "jsonschema" },
-    { name = "latex2mathml" },
-    { name = "pandas" },
-    { name = "pillow" },
-    { name = "pydantic" },
-    { name = "pydantic-settings" },
-    { name = "pyyaml" },
-    { name = "requests" },
-    { name = "tabulate" },
-    { name = "typer" },
-    { name = "typing-extensions" },
+    { name = "defusedxml", marker = "sys_platform == 'darwin'" },
+    { name = "doclang", marker = "sys_platform == 'darwin'" },
+    { name = "jsonref", marker = "sys_platform == 'darwin'" },
+    { name = "jsonschema", marker = "sys_platform == 'darwin'" },
+    { name = "latex2mathml", marker = "sys_platform == 'darwin'" },
+    { name = "pandas", marker = "sys_platform == 'darwin'" },
+    { name = "pillow", marker = "sys_platform == 'darwin'" },
+    { name = "pydantic", marker = "sys_platform == 'darwin'" },
+    { name = "pydantic-settings", marker = "sys_platform == 'darwin'" },
+    { name = "pyyaml", marker = "sys_platform == 'darwin'" },
+    { name = "requests", marker = "sys_platform == 'darwin'" },
+    { name = "tabulate", marker = "sys_platform == 'darwin'" },
+    { name = "typer", marker = "sys_platform == 'darwin'" },
+    { name = "typing-extensions", marker = "sys_platform == 'darwin'" },
 ]
 sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/69/23/e8601adeb96103c6eb079d7411e781e54041604be72a56af549d3177a908/docling_core-2.101.0.tar.gz", hash = "sha256:d03fabd892aaf7fbfc2ff6ead13718e6ec4835e3abe2ba390dd6ffccf6dd49a2", size = 405359, upload-time = "2026-10-08T05:59:46.825Z" }
 wheels = [
@@ -1064,13 +1068,13 @@ wheels = [
 
 [package.optional-dependencies]
 chunking = [
-    { name = "semchunk" },
-    { name = "transformers" },
-    { name = "tree-sitter" },
-    { name = "tree-sitter-c" },
-    { name = "tree-sitter-javascript" },
-    { name = "tree-sitter-python" },
-    { name = "tree-sitter-typescript" },
+    { name = "semchunk", marker = "sys_platform == 'darwin'" },
+    { name = "transformers", marker = "sys_platform == 'darwin'" },
+    { name = "tree-sitter", marker = "sys_platform == 'darwin'" },
+    { name = "tree-sitter-c", marker = "sys_platform == 'darwin'" },
+    { name = "tree-sitter-javascript", marker = "sys_platform == 'darwin'" },
+    { name = "tree-sitter-python", marker = "sys_platform == 'darwin'" },
+    { name = "tree-sitter-typescript", marker = "sys_platform == 'darwin'" },
 ]
 
 [[package]]
@@ -1085,19 +1089,19 @@ resolution-markers = [
     "python_full_version < '3.12' and sys_platform == 'darwin'",
 ]
 dependencies = [
-    { name = "accelerate" },
-    { name = "docling-core", version = "2.101.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" } },
-    { name = "huggingface-hub" },
-    { name = "jsonlines" },
-    { name = "numpy" },
-    { name = "pillow" },
-    { name = "pydantic" },
-    { name = "rtree" },
-    { name = "safetensors", extra = ["torch"] },
-    { name = "torch", version = "2.13.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" } },
-    { name = "torchvision", version = "0.28.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" } },
-    { name = "tqdm" },
-    { name = "transformers" },
+    { name = "accelerate", marker = "sys_platform == 'darwin'" },
+    { name = "docling-core", version = "2.101.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'darwin'" },
+    { name = "huggingface-hub", marker = "sys_platform == 'darwin'" },
+    { name = "jsonlines", marker = "sys_platform == 'darwin'" },
+    { name = "numpy", marker = "sys_platform == 'darwin'" },
+    { name = "pillow", marker = "sys_platform == 'darwin'" },
+    { name = "pydantic", marker = "sys_platform == 'darwin'" },
+    { name = "rtree", marker = "sys_platform == 'darwin'" },
+    { name = "safetensors", extra = ["torch"], marker = "sys_platform == 'darwin'" },
+    { name = "torch", version = "2.13.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'darwin'" },
+    { name = "torchvision", version = "0.28.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'darwin'" },
+    { name = "tqdm", marker = "sys_platform == 'darwin'" },
+    { name = "transformers", marker = "sys_platform == 'darwin'" },
 ]
 sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/c1/25/84166f5751d7837612138966669019a4ef67c09bf6d3ef8d3cc1aa0e6268/docling_ibm_models-3.13.2.tar.gz", hash = "sha256:195e02dd119df34d2ce5f76ac614da82825851013e4898db7b0468cdf8740a3d", size = 98655, upload-time = "2026-04-23T11:04:23.517Z" }
 wheels = [
@@ -1126,21 +1130,21 @@ resolution-markers = [
     "python_full_version < '3.12' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "accelerate" },
-    { name = "docling-core", version = "2.91.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" } },
-    { name = "huggingface-hub" },
-    { name = "jsonlines" },
-    { name = "numpy" },
-    { name = "pillow" },
-    { name = "pydantic" },
-    { name = "rtree" },
-    { name = "safetensors", extra = ["torch"] },
-    { name = "torch", version = "2.8.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform != 'emscripten'" },
+    { name = "accelerate", marker = "sys_platform != 'darwin'" },
+    { name = "docling-core", version = "2.91.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform != 'darwin'" },
+    { name = "huggingface-hub", marker = "sys_platform != 'darwin'" },
+    { name = "jsonlines", marker = "sys_platform != 'darwin'" },
+    { name = "numpy", marker = "sys_platform != 'darwin'" },
+    { name = "pillow", marker = "sys_platform != 'darwin'" },
+    { name = "pydantic", marker = "sys_platform != 'darwin'" },
+    { name = "rtree", marker = "sys_platform != 'darwin'" },
+    { name = "safetensors", extra = ["torch"], marker = "sys_platform != 'darwin'" },
+    { name = "torch", version = "2.8.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
     { name = "torch", version = "2.13.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'emscripten'" },
-    { name = "torchvision", version = "0.23.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform != 'emscripten'" },
+    { name = "torchvision", version = "0.23.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
     { name = "torchvision", version = "0.28.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'emscripten'" },
-    { name = "tqdm" },
-    { name = "transformers" },
+    { name = "tqdm", marker = "sys_platform != 'darwin'" },
+    { name = "transformers", marker = "sys_platform != 'darwin'" },
 ]
 sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/bd/b5/f95bd7df8acc3b792fd11c6d00c8a9ea3966b10edd734fb194d07be29606/docling_ibm_models-3.14.0.tar.gz", hash = "sha256:def964e3d524f66c7321ef9d48d4021278f14319f01d3f78058cd2324f641e22", size = 100765, upload-time = "2026-08-11T06:58:25.953Z" }
 wheels = [
@@ -1503,8 +1507,8 @@ name = "httpcore2"
 version = "2.13.1"
 source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
 dependencies = [
-    { name = "h11" },
-    { name = "truststore" },
+    { name = "h11", marker = "sys_platform != 'emscripten'" },
+    { name = "truststore", marker = "sys_platform != 'emscripten'" },
 ]
 sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/cb/f3/1db7aa2bc2524062192bb0e0323969492d1883152a232fe36eea65f4e35c/httpcore2-2.13.1.tar.gz", hash = "sha256:e0aa977abe17e69a3b820a24542a6fa88702676d83880b8d194dcd18408e5103", size = 68071, upload-time = "2026-09-23T07:47:22.372Z" }
 wheels = [
@@ -3812,7 +3816,7 @@ resolution-markers = [
     "python_full_version < '3.12' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "numpy" },
+    { name = "numpy", marker = "python_full_version < '3.12'" },
 ]
 sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/7a/97/5a3609c4f8d58b039179648e62dd220f89864f56f7357f5d4f45c29eb2cc/scipy-1.17.1.tar.gz", hash = "sha256:95d8e012d8cb8816c226aef832200b1d45109ed4464303e997c5b13122b297c0", size = 30573822, upload-time = "2026-02-23T00:26:24.851Z" }
 wheels = [
@@ -3901,7 +3905,7 @@ resolution-markers = [
     "python_full_version == '3.12.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "numpy" },
+    { name = "numpy", marker = "python_full_version >= '3.12'" },
 ]
 sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/a7/25/c2700dfaf6442b4effaa91af24ebce5dc9d31bb4a69706313aae70d72cd0/scipy-1.18.0.tar.gz", hash = "sha256:67b2ad2ad54c72ca6d04975a9b2df8c3638c34ddd5b28738e94fc2b57929d378", size = 30774447, upload-time = "2026-06-19T15:01:43.456Z" }
 wheels = [
@@ -4316,13 +4320,13 @@ resolution-markers = [
     "python_full_version < '3.12' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "filelock" },
-    { name = "fsspec" },
-    { name = "jinja2" },
-    { name = "networkx" },
-    { name = "setuptools", marker = "python_full_version >= '3.12'" },
-    { name = "sympy" },
-    { name = "typing-extensions" },
+    { name = "filelock", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
+    { name = "fsspec", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
+    { name = "jinja2", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
+    { name = "networkx", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
+    { name = "setuptools", marker = "python_full_version >= '3.12' and sys_platform != 'darwin' and sys_platform != 'emscripten'" },
+    { name = "sympy", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
+    { name = "typing-extensions", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
 ]
 wheels = [
     { url = "https://download-r2.pytorch.org/whl/cpu/torch-2.8.0%2Bcpu-cp311-cp311-linux_s390x.whl", hash = "sha256:2bfc013dd6efdc8f8223a0241d3529af9f315dffefb53ffa3bf14d3f10127da6", upload-time = "2025-10-01T23:33:07Z" },
@@ -4362,13 +4366,13 @@ resolution-markers = [
     "python_full_version < '3.12' and sys_platform == 'darwin'",
 ]
 dependencies = [
-    { name = "filelock" },
-    { name = "fsspec" },
-    { name = "jinja2" },
-    { name = "networkx" },
-    { name = "setuptools" },
-    { name = "sympy" },
-    { name = "typing-extensions" },
+    { name = "filelock", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
+    { name = "fsspec", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
+    { name = "jinja2", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
+    { name = "networkx", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
+    { name = "setuptools", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
+    { name = "sympy", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
+    { name = "typing-extensions", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
 ]
 wheels = [
     { url = "https://pypi.tuna.tsinghua.edu.cn/packages/5b/fe/cba54dc58523434919b66f13a667e36e436deddd77ca519e96553617d4ec/torch-2.13.0-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:e76f9bcecc52b8ff711239a2f7547d5353df95878ab232f0773c1d95928b92f8", size = 111187938, upload-time = "2026-07-08T16:05:17.065Z" },
@@ -4395,9 +4399,9 @@ resolution-markers = [
     "python_full_version < '3.12' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "numpy" },
-    { name = "pillow" },
-    { name = "torch", version = "2.8.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" } },
+    { name = "numpy", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
+    { name = "pillow", marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
+    { name = "torch", version = "2.8.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform != 'darwin' and sys_platform != 'emscripten'" },
 ]
 wheels = [
     { url = "https://pypi.tuna.tsinghua.edu.cn/packages/dd/14/7b44fe766b7d11e064c539d92a172fa9689a53b69029e24f2f1f51e7dc56/torchvision-0.23.0-cp311-cp311-manylinux_2_28_aarch64.whl", hash = "sha256:01dc33ee24c79148aee7cdbcf34ae8a3c9da1674a591e781577b716d233b1fa6", size = 2395543, upload-time = "2025-08-06T14:58:04.373Z" },
@@ -4431,9 +4435,9 @@ resolution-markers = [
     "python_full_version < '3.12' and sys_platform == 'darwin'",
 ]
 dependencies = [
-    { name = "numpy" },
-    { name = "pillow" },
-    { name = "torch", version = "2.13.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" } },
+    { name = "numpy", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
+    { name = "pillow", marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
+    { name = "torch", version = "2.13.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "sys_platform == 'darwin' or sys_platform == 'emscripten'" },
 ]
 wheels = [
     { url = "https://pypi.tuna.tsinghua.edu.cn/packages/7a/b2/1e010052079e4c577007b789db336ea7075f1a426e84d17121fbc3745516/torchvision-0.28.0-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:83fe6c020866a85acd7d97deccc45ff11d66daf42916d04396a4309c66c0ccb8", size = 1856017, upload-time = "2026-07-08T16:07:55.533Z" },

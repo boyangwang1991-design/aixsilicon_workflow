@@ -45,6 +45,11 @@ map:
     skill_write: 可写项目工作树
     allowed_paths: [components, docs, esl, hardware_baseline, interfaces, reports, tools]
 
+  - asset: Crypto Suite RTL / Oracle / ESL / 文档
+    owner_repo: xuanwu-crypto
+    skill_write: 可写项目工作树
+    allowed_paths: [crypto_*, esl, oracle, registry.yaml]
+
   - asset: Tool 实现
     # 外部独立管理，不属于 workflow Manifest/Profile；此处仅记录资产归属。
     owner_repo: aixsilicon_tool_repo
@@ -142,6 +147,10 @@ repository_registry:
 
   - id: tengshe-hac
     repo: tengshe-hac
+    type: other
+
+  - id: xuanwu-crypto
+    repo: xuanwu-crypto
     type: other
 
 # tool_repo 与 chipknowledge 不由本工作区管理；以下 Tool 归属仅描述外部接口职责。

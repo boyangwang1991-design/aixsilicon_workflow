@@ -182,6 +182,21 @@ repositories:
       verification: [ip]  # Optional actual uDMA RTL replay uses the sibling IP repo.
     required: true
 
+  - id: xuanwu-crypto
+    type: other
+    path: repos/xuanwu-crypto
+    remote: origin
+    repo: xuanwu-crypto.git
+    revision:
+      branch: main
+    groups: [security, crypto]
+    depends_on: [hwif, cbb]
+    dependencies:
+      product: [hwif, cbb]
+      verification: [dv-common, vip]
+    required: true
+    fusesoc_roots: [.]
+
 # ADR-0007 exact Profile：include_repositories 为精确集合（优先），
 # optional_repositories 为可选附加（不视为 required）。
 # 设计原则：IP/CBB/SoC 的具体流程与门禁由对应 Skill（ip-development-suite /
@@ -201,5 +216,5 @@ profiles:
     include_repositories: [hwif, cbb, ip, dv-common, vip, catalog, soc-integration]
     optional_repositories: [skills]
   all:
-    include_repositories: [hwif, cbb, ip, dv-common, vip, catalog, soc-integration, esl, wenwang-edgenpu, sumi-compress, tengshe-hac]
+    include_repositories: [hwif, cbb, ip, dv-common, vip, catalog, soc-integration, esl, wenwang-edgenpu, sumi-compress, tengshe-hac, xuanwu-crypto]
     optional_repositories: [skills]
