@@ -127,11 +127,6 @@ repository_registry:
     repo: aixsilicon_skill_repo
     type: skill
     visibility: private
-  - id: knowledge
-    repo: aixsilicon_chipknowledge
-    type: other
-    visibility: public
-
   - id: wenwang-edgenpu
     repo: wenwang-edgenpu
     type: other
@@ -140,6 +135,7 @@ repository_registry:
     repo: sumi-compress
     type: other
 
+# tool_repo 与 chipknowledge 不由本工作区管理；以下 Tool 归属仅描述外部接口职责。
 # Tool 边界（ADR-0006 / docs/workflow/ownership.md）
 tool_boundary:
   t1_public_product_tools: aixsilicon_tool_repo        # 跨仓公共确定性工具（aixsilicon.commands 插件）

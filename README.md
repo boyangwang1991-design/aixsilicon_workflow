@@ -12,9 +12,9 @@
 >
 > **Skill 集中管理**：`aix` CLI 的源码/测试/脚本由私有 skill `aixsilicon-workspace-management` 统一管理；[`bootstrap.py`](bootstrap.py) 把 skills 物化到 `/<agent-dir>/skills/`（默认 `/.roo/skills/`，git 忽略）后运行。首次使用：`uv sync --locked` + `uv run python bootstrap.py --ensure`。
 
-![AIXSILICON 项目全景：Workflow 控制面协调十个独立资产仓，并通过设计、生成、验证、证据、审批、发布和消费形成闭环](docs/assets/project-panorama.png)
+![AIXSILICON 项目全景：Workflow 控制面协调独立资产仓，并通过设计、生成、验证、证据、审批、发布和消费形成闭环](docs/assets/project-panorama.png)
 
-全景图将项目分为控制面、十个平级资产仓和工程交付闭环：Workflow 通过 Manifest/Lock 与 Flow 组织仓库协作；各资产仓保存 SSOT 与交付物；Skill 负责领域方法。图中的连线用于解释职责和生命周期，不代替 [`manifests/default.yaml`](manifests/default.yaml)、[`ownership-map.yaml`](ownership-map.yaml) 或 [`workflows/`](workflows/) 中的精确依赖、所有权与执行定义。
+全景图将项目分为控制面、平级资产仓和工程交付闭环：Workflow 通过 Manifest/Lock 与 Flow 组织仓库协作；各资产仓保存 SSOT 与交付物；Skill 负责领域方法。图中的连线用于解释职责和生命周期，不代替 [`manifests/default.yaml`](manifests/default.yaml)、[`ownership-map.yaml`](ownership-map.yaml) 或 [`workflows/`](workflows/) 中的精确依赖、所有权与执行定义。
 
 ## 技术形态
 
@@ -33,11 +33,11 @@ GitHub Actions CI/CD 已整体取消（2026-10-08）：根仓与各资产仓移�
 | ip | [`aixsilicon_ip_repo`](https://github.com/boyangwang1991-design/aixsilicon_ip_repo) | 可独立集成和发布的完整 IP | 开源 |
 | dv-common | [`aixsilicon_dv_common`](https://github.com/boyangwang1991-design/aixsilicon_dv_common) | 协议无关验证公共底座 | 开源 |
 | vip | [`aixsilicon_vip_repo`](https://github.com/boyangwang1991-design/aixsilicon_vip_repo) | 协议与系统验证组件 | 开源 |
-| 外部独立管理 | [`aixsilicon_tool_repo`](https://github.com/boyangwang1991-design/aixsilicon_tool_repo) | 确定性生成、检查、转换、打包工具（私有；交付件随公开资产仓开源） | **私有** |
 | catalog | [`aixsilicon_catalog_repo`](https://github.com/boyangwang1991-design/aixsilicon_catalog_repo) | 已发布资产索引、兼容矩阵和成熟度 | 开源 |
 | soc-integration | [`aixsilicon_soc_integration`](https://github.com/boyangwang1991-design/aixsilicon_soc_integration) | 通用 SoC 集成 Schema、模板、规则 | 开源 |
 | skills | [`aixsilicon_skill_repo`](https://github.com/boyangwang1991-design/aixsilicon_skill_repo) | AI 辅助研发 Skill Suite（私有） | **私有** |
-| knowledge | [`aixsilicon_chipknowledge`](https://github.com/boyangwang1991-design/aixsilicon_chipknowledge) | 芯片研发知识库（方法论/术语/参考索引） | 开源 |
+
+`aixsilicon_tool_repo` 与 `aixsilicon_chipknowledge` 不在工作区管理范围内；已有本地目录保留，`sync/status/doctor` 不再管理它们。
 
 > 仓库布局与分支策略见 [`manifests/default.yaml`](manifests/default.yaml)；工作区环境引导（uv/git/仓库清单/skills 物化）由私有 skill `aixsilicon-workspace-management` 统一管理。
 
@@ -65,7 +65,7 @@ uv run python bootstrap.py --install-codex-skills  # Codex 用户技能（可选
 uv run aix wf init --profile ip-dev        # 初始化工作区
 uv run aix wf sync                         # clone / fetch / checkout 全部所需仓库
 uv run aix wf status                       # 查看各仓状态
-# uv run aix wf sync --jobs 3 --exclude knowledge  # 并发同步并临时排除知识库
+# uv run aix wf sync --jobs 3 --exclude wenwang-edgenpu  # 并发同步并临时排除 NPU 项目
 # uv sync --locked --extra docs             # 文档解析按需安装
 # uv sync --locked --extra dev --extra ip-dev # 开发工具按需组合
 # uv sync --locked --extra dev --extra wenwang-model # 文王模型/CPU Torch 2.8.0

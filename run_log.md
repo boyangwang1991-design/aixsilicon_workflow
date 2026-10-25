@@ -873,3 +873,59 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
   `system/epad_suite`，附 MIGRATION.md 与指纹）、power/clock_reset 套件契约/ESL/oracle、registry 与
   README 刷新；已 `aix repo push ip` 推送 main，远端 HEAD 与本地一致。
 - 其余 11 个子仓无待提交内容，本轮未执行 add/commit/push；未运行 RTL/EDA 全量回归，未宣称发布签核。
+
+## 2026-10-21 Workspace update
+
+- User requested updating workflow and managed repositories, then removing tools and knowledge from management while retaining local clones.
+- `aix repo` has no fetch/pull operation; use Git fast-forward-only pull for workflow before editing its manifest. Status and diff evidence remain through `aix repo`.
+- Current `aix wf sync` fetches and checks out existing local branches without fast-forwarding; no registered CLI/action exposes merge/pull. Fast-forward the four verified clean, behind-only repositories (hwif/cbb/ip/skills) using `git merge --ff-only origin/main`, then verify through `aix repo status`.
+- Removed tools/knowledge repository definitions, profile membership, dependency references and registry entries; retained both local clones. Updated README and getting-started examples. External tool ownership contracts remain documented.
+- Validation: all five profiles have valid repository references; manifest JSON Schema passes; make check passes (134 tests); pre-commit all-files passes.
+- Sync completed successfully for all 11 managed repositories, including new sumi-compress clone. Apply the same fast-forward-only CLI gap workaround to verified clean wenwang-edgenpu after its fetch completed.
+
+### 2026-10-21 — Wenwang 本地产物清理
+
+- 用户授权清理 `repos/wenwang` 的可再生成/历史未追踪产物；实际目录为 `repos/wenwang-edgenpu`。
+- 依据该仓 `.gitignore` 和 `artifacts/README.md`，仅清理 Git 忽略的 `build/`、`cache/`、`reports/esl/` 历史明细和 Python `__pycache__/`，共 67 项；保留已下载模型、Oracle 原始结果/源码快照、参考输入和所有受追踪摘要。
+- 目录占用由 23.106 GiB 降至 3.780 GiB，释放 19.326 GiB。
+- `aix repo status wenwang-edgenpu` 清理前为 clean；删除后核对 Git index 完全一致、`git diff --name-only` 为空。未改源码，无需运行功能回归。
+- 临时诊断豁免：CLI 无 ignored 文件盘点/定向 clean 能力，直接使用 Git 的 `ls-files`、`clean -ndX/-fdX -- <明确路径>` 和只读 diff；此前普通 Git 状态用于定位，正式状态证据使用 aix。
+- 本机详细清单：`/tmp/wenwang-cleanup-20261021-112928.json`。
+
+### 2026-10-21 — 六个 IP build 产物清理
+
+- 用户授权：清理 doorbell_controller、mailbox、axi_crossbar、ahb2axi_bridge、axi_register_slice、udma 的编译/仿真/参数回归/覆盖率/综合产物。
+- 仅删除 47 个显式指定、Git 忽略且无受追踪文件的产物子目录；保留 build 顶层脚本、design、reports 等其他内容。删除前将文本脚本/源文件/报告压缩归档为各 IP build/cleanup_preserved_20261021-113628.tar.gz，并完整读取校验归档。
+- 六个 IP 的受追踪文件 SHA256 清理前后完全一致；不涉及当前 PLIC 实验和其他已有修改。
+- ips/peripheral/intercore/doorbell_controller: 释放 17.018 GiB；保留 15692 个归档文件。
+- ips/peripheral/intercore/mailbox: 释放 10.175 GiB；保留 50527 个归档文件。
+- ips/infrastructure/axi/axi_crossbar: 释放 8.136 GiB；保留 23323 个归档文件。
+- ips/infrastructure/bridge/ahb2axi_bridge: 释放 5.775 GiB；保留 22422 个归档文件。
+- ips/infrastructure/axi/axi_register_slice: 释放 5.208 GiB；保留 6639 个归档文件。
+- ips/system/dma/udma: 释放 4.088 GiB；保留 19296 个归档文件。
+- 合计释放 50.400 GiB；结构化清单：cache/cleanup/ip-build-cleanup-20261021-113628.json。
+- 诊断豁免：aix 无定向 ignored 产物盘点/清理能力，直接 Git check-ignore/ls-files 验证范围。Git clean dry-run 会扩大到整个 ignored build，故未使用其删除操作；使用逐项显式路径删除，避免损失保留材料。未改源码，不运行功能回归。
+
+### 2026-10-21 — IP Skill 脚本保留与 build 边界
+
+- 用户要求优化 skill，避免有用脚本被清理。仅修改 canonical ip-development-suite 的 SKILL.md、artifact-contract.md、build-storage.md、reporting-policy.md；保留已有其他修改。
+- 明确项目必需入口/一次性编辑脚本/工具生成脚本分类；正式流程不得依赖 build 中独有手写逻辑；清理前检查调用与读取，未知用途保留；新增或变更入口在隔离目录验证不依赖旧 build。机器报告布局不变，仍须保护有效证据闭包。
+- quick_validate 与 diff --check 通过；make check（134 测试）通过。bootstrap --ensure 已物化，--install-codex-skills 已更新 Codex 副本并自动备份原版本；四个文件与 canonical 字节一致。
+
+
+## 2026-10-22 Workspace 与受管仓库更新
+
+- 用户要求更新 workspace 及下属 repos；范围为当前 all profile 的 11 个受管仓库和 workflow 根仓库。保留本地 tools/knowledge 不受管理的既有配置。
+- `aix repo` 无 fetch/pull/merge 入口，且现有 `aix wf sync` 不快进已有本地分支，并跳过 dirty 仓。本轮例外使用 Git fetch 和 merge --ff-only；状态及诊断仍通过 aix repo/wf 获取。
+- workflow 更新至 c7b3f943d0d6，ip 至 486b2cebcef4，skills 至 daf2cb5fb7b0，wenwang-edgenpu 至 8efc26ae6a61；其余 8 仓已是最新，12 仓均与各自 origin/main 一致。未创建提交或推送。
+- workflow/ip/skills 的本地改动先保存文件备份、二进制补丁及独立 stash，再快进并恢复。合并 7 个冲突文件，保留本地 Markdown-first/脚本保留约定，同时纳入远端 ip-research-contract 前置；保留双方日志与仓库管理范围。恢复后暂存区仍为空。
+- 所有更新前修改和未跟踪文件均检查存在，IP 与 sumi-compress 原有文件内容哈希完全保留；根仓及 skills 的重叠文件按双方修改合并。恢复 stash 未删除。备份与逐步结果存于被忽略的 build/reports/workspace-update/。
+- bootstrap --ensure 完成 skills 重新物化；aix wf doctor 全部 OK，make check 通过（134 项测试），pre-commit --all-files 全通过，三处冲突相关仓库 diff --check 通过。未执行下属 IP/SoC 的全量 RTL/EDA 回归。
+
+## 2026-10-24 — 剩余工作整体上传
+
+- 用户明确要求“全部上传”；收尾 workflow 管理范围配置与文档、VIP 的 CAN 规划及 APB PLIC-consumer 报告。SUMI 开发目标保持暂停，不启动新开发或 EDA 回归。
+- workflow `make check` 通过（134 项测试，含 lint/schema parity）；VIP catalog 一致性、CAN YAML 状态及 11 个本地链接通过。
+- APB 原始执行证据核对：16 份报告日志、29 份执行产物及基线哈希一致，10 条原始命令退出码为 0；未将旧证据描述为本轮新仿真。
+- VIP 完整结构准入检查仍有 9 个物理目录失败，涉及交付文件、资格元数据或分类要求；CAN 保持 planned/M0/NOT_RUN。限制同步记录到 VIP CHANGELOG，按工作快照上传，不宣称资格门禁通过。
+- CLI 仅提供 diff 摘要；详细补丁、索引及远端 SHA 的只读核验使用现有 aixworkflow.gitops provider。暂存使用 git add，提交和推送使用 aix repo；忽略的构建产物、缓存和原始日志不上传。

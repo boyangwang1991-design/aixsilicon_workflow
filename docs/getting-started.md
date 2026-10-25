@@ -64,7 +64,7 @@ Profile 使用 `include_repositories` 精确集合语义（`optional_repositorie
 
 | Profile | 用途 |
 |---|---|
-| `minimal` | 精确包含 HWIF、Tools；不是 base 组的全部仓 |
+| `minimal` | 精确包含 HWIF；不是 base 组的全部仓 |
 | `ip-dev` | IP 设计验证开发（流程由 ip-development-suite 约束） |
 | `cbb-dev` | CBB 设计验证开发（流程由 cbb-development-suite 约束） |
 | `soc-integration` | SoC 集成（流程由 soc-integration-suite 约束） |
@@ -73,14 +73,14 @@ Profile 使用 `include_repositories` 精确集合语义（`optional_repositorie
 ```bash
 aix wf init --profile ip-dev      # IP 设计验证开发
 aix wf sync                       # clone / fetch / checkout 全部所需仓库
-# 可选：并发同步；临时排除知识库，不改变 manifest/profile
-# aix wf sync --jobs 3 --exclude knowledge
+# 可选：并发同步；临时排除 NPU 项目，不改变 manifest/profile
+# aix wf sync --jobs 3 --exclude wenwang-edgenpu
 # 大仓/慢网络：默认 clone 1800 秒、fetch 300 秒，可按次调整
-# aix wf sync --repo knowledge --clone-timeout 3600
+# aix wf sync --repo wenwang-edgenpu --clone-timeout 3600
 aix wf status                     # 查看各仓状态
 ```
 
-> `ip-dev` 会启用：HWIF、CBB、IP、DV Common、VIP、Tools、Catalog、Skills。
+> `ip-dev` 会启用：HWIF、CBB、IP、DV Common、VIP、Catalog、Skills。
 > `skills` 是 optional repo；同步阶段无权限时会显示 `OPTIONAL_UNAVAILABLE`。首次启动 CLI
 > 仍需要 canonical skill repo 或可信的既有物化副本。
 
