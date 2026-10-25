@@ -40,6 +40,11 @@ map:
     skill_write: 可写指定 IP 目录
     allowed_paths: [ips]
 
+  - asset: HAC Suite 架构 / 模型 / RTL / 文档
+    owner_repo: tengshe-hac
+    skill_write: 可写项目工作树
+    allowed_paths: [components, docs, esl, hardware_baseline, interfaces, reports, tools]
+
   - asset: Tool 实现
     # 外部独立管理，不属于 workflow Manifest/Profile；此处仅记录资产归属。
     owner_repo: aixsilicon_tool_repo
@@ -133,6 +138,10 @@ repository_registry:
 
   - id: sumi-compress
     repo: sumi-compress
+    type: other
+
+  - id: tengshe-hac
+    repo: tengshe-hac
     type: other
 
 # tool_repo 与 chipknowledge 不由本工作区管理；以下 Tool 归属仅描述外部接口职责。

@@ -929,3 +929,17 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - APB 原始执行证据核对：16 份报告日志、29 份执行产物及基线哈希一致，10 条原始命令退出码为 0；未将旧证据描述为本轮新仿真。
 - VIP 完整结构准入检查仍有 9 个物理目录失败，涉及交付文件、资格元数据或分类要求；CAN 保持 planned/M0/NOT_RUN。限制同步记录到 VIP CHANGELOG，按工作快照上传，不宣称资格门禁通过。
 - CLI 仅提供 diff 摘要；详细补丁、索引及远端 SHA 的只读核验使用现有 aixworkflow.gitops provider。暂存使用 git add，提交和推送使用 aix repo；忽略的构建产物、缓存和原始日志不上传。
+
+## 2026-10-24 HAC repository extraction
+
+- User requested moving HAC Suite from IP into the independent `tengshe-hac` GitHub repository, managed alongside wenwang-edgenpu and sumi-compress.
+- Baseline `aix wf status/doctor` and `aix repo status workflow/ip`: clean, remotes matched.
+- Temporary Git diagnostics (`ls-remote`, `ls-files`, history extraction/init/fetch) are necessary because `aix repo` does not expose subtree extraction or empty-repository initialization. Target remote was readable with no refs. All status/diff/commit/push operations use `aix repo`.
+- Referenced `docs/workflow/ownership.md` is absent in the existing baseline; ownership-map.yaml is available and used.
+
+- Extracted HAC-only Git history into `repos/tengshe-hac`; all 2,574 tracked assets retained and local ignored assets moved with the suite. Old CMake build directories preserved under `cache/hac-before-extraction-*` and fresh ESL build completed at the new path.
+- uDMA source stays in the IP repo; HAC references the sibling IP repo, with optional `HAC_UDMA_ROOT` override. Existing archived source snapshots retain their historical identities.
+- Updated Manifest/all profile, ownership registry, current HAC documentation and IP navigation/retirement references. Immutable report archives untouched; documentation provenance deltas remain reversible.
+- Validation: HAC design/evidence checks PASS (22 components, 110 requirements); planning and 31-diagram checks PASS; `make check` and all workflow pre-commit hooks PASS.
+- Fresh ESL rebuild and all 18 CTests PASS; cross-repo uDMA path resolves to its unchanged source. IP registry check PASS with pre-existing package identity/version warnings. Local-only evidence retains the IP repo ignore policy and is not newly published.
+- Published standalone HAC `main` at `1d419e2c` after extracting the original HAC-only commit (`0750ba7e`). IP migration committed separately; uDMA source not changed. Workflow Manifest registers a verification dependency on `ip` for actual uDMA replay.
