@@ -55,6 +55,11 @@ map:
     skill_write: 可写项目工作树
     allowed_paths: [rtl, regs, model, docs, scripts, verification, pqc_accel_model, reports, constraints, sw, trace, archive]
 
+  - asset: Interrupt Suite RTL / ESL / 文档
+    owner_repo: baihu-irq
+    skill_write: 可写项目工作树
+    allowed_paths: [clint, plic, aia, gic, its, interrupt_*, event_router, wakeup_event_controller, esl, reports, registry.yaml]
+
   - asset: Tool 实现
     # 外部独立管理，不属于 workflow Manifest/Profile；此处仅记录资产归属。
     owner_repo: aixsilicon_tool_repo
@@ -160,6 +165,10 @@ repository_registry:
 
   - id: xiezhi-pqc
     repo: xiezhi-pqc
+    type: other
+
+  - id: baihu-irq
+    repo: baihu-irq
     type: other
 
 # tool_repo 与 chipknowledge 不由本工作区管理；以下 Tool 归属仅描述外部接口职责。

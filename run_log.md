@@ -966,3 +966,16 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - IP 仓通过 owning 脚本刷新 README，SEC-027 记录为 migrated，保留编号；原有 INF-008/PER-009/SEC-015 的包身份告警未作范围外修改，registry 校验退出 0。
 - 24 个 NTT stage/lane 调度组合检查通过；45 项运行器 Python 测试通过；三份 shell 脚本 bash -n 与 UVM make -n 路径检查通过；这些不是 RTL/UVM/EDA/PPA 签核。
 - workflow make check 通过；详细日志留在 `/tmp/xiezhi-workflow-check.log`，控制面检查不能替代子仓领域门禁。
+
+
+## 2026-10-25 — 完整中断套件迁入 baihu-irq
+
+- 按用户要求将 `ips/system/interrupt` 整体迁入 `repos/baihu-irq`，登记 Manifest/all profile 与 ownership-map，13 个资产保留原 ID/VLNV 和原状态。
+- 初始 1,120 个跟踪文件和 tree `edb8f01fb5088e3e035e2479291edf5239cbbf9a` 完全一致；11 次目录历史提取保留。约 1.5 GB 本地产物和临时文件一并复制并验证，继续忽略。
+- 临时 bare clone 的 subdirectory filter 和首次 SSH clone/fetch 是 aix 不具备的历史提取/空远端引导；没有改写原仓历史。状态、提交、推送与后续同步通过 aix。
+- 新仓补根 ignore/资产清单/工作入口/迁移记录；适配 PLIC 脚本工作区深度和 shell 定位，ESL 外部 SAF-010 合同支持相邻 IP 仓或显式路径。不改 RTL/SystemRDL、canonical 模型、冻结契约或历史签核哈希。
+- 新路径验证：22 项 PLIC 模型测试、9 项 construction 身份检查、79 个 ESL SystemC 场景、手工/突变/非法配置检查、122 项 IPC 清单和闭环追踪检查通过；71 PARTIAL/51 NOT_MODELED 保持。
+- ESL 首轮结束时暴露 SAF-010 旧相对路径；失败产物保留，修正解析后重跑通过。源码/安装/移动 prefix 消费者重新构建运行通过。
+- IP 仓 registry 与 README 派生视图通过 owning 工具校验，保留 INF-008/PER-009/SEC-015 原身份告警；迁移不提升门禁、不恢复暂停研发、不构成 RTL/EDA/PPA 签核。
+- 新仓 main `bb2c65a8dc6e1fd904eda3487b4c7443acf6d66b` 已推送并通过 ls-remote 核对；随后移除 IP 仓原目录。9,994 个剩余本地文件/链接均保留，5 个被新验证更新的同名旧版本另存新仓忽略目录 `build/migration-source-artifacts/`。
+- workflow make check、pre-commit 全部通过；控制面日志留在 `/tmp/baihu-workflow-check.log` 和 `/tmp/baihu-workflow-precommit.log`。

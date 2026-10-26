@@ -208,6 +208,21 @@ repositories:
     required: true
     fusesoc_roots: [.]
 
+  - id: baihu-irq
+    type: other
+    path: repos/baihu-irq
+    remote: origin
+    repo: baihu-irq.git
+    revision:
+      branch: main
+    groups: [interrupt]
+    dependencies:
+      product: [hwif, cbb]
+      verification: [dv-common, vip]
+      context: [ip]  # SAF-010 contract remains owned by the IP repo.
+    required: true
+    fusesoc_roots: [.]
+
 # ADR-0007 exact Profile：include_repositories 为精确集合（优先），
 # optional_repositories 为可选附加（不视为 required）。
 # 设计原则：IP/CBB/SoC 的具体流程与门禁由对应 Skill（ip-development-suite /
@@ -227,5 +242,5 @@ profiles:
     include_repositories: [hwif, cbb, ip, dv-common, vip, catalog, soc-integration]
     optional_repositories: [skills]
   all:
-    include_repositories: [hwif, cbb, ip, dv-common, vip, catalog, soc-integration, esl, wenwang-edgenpu, sumi-compress, tengshe-hac, xuanwu-crypto, xiezhi-pqc]
+    include_repositories: [hwif, cbb, ip, dv-common, vip, catalog, soc-integration, esl, wenwang-edgenpu, sumi-compress, tengshe-hac, xuanwu-crypto, xiezhi-pqc, baihu-irq]
     optional_repositories: [skills]
