@@ -51,6 +51,8 @@ GitHub Actions CI/CD 已整体取消（2026-10-08）：根仓与各资产仓移�
 
 `all` profile 包含 [`xuanwu-crypto`](https://github.com/boyangwang1991-design/xuanwu-crypto)，完整 Crypto Suite 从 IP 仓独立迁出，默认位于 `repos/xuanwu-crypto`，跟踪 `main` 分支；可用 `uv run aix wf sync --repo xuanwu-crypto` 单独同步。
 
+`all` profile 包含 [`xiezhi-pqc`](https://github.com/boyangwang1991-design/xiezhi-pqc)，PQC 从 IP 仓独立迁出，默认位于 `repos/xiezhi-pqc`，跟踪 `main` 分支；可用 `uv run aix wf sync --repo xiezhi-pqc` 单独同步。
+
 ## 治理与命名规范
 
 - **VLNV 统一 `aixsilicon:*`**：由 canonical guard [`check_vlnv_namespace.py`](repos/aixsilicon_skill_repo/skills/aixsilicon-workspace-management/scripts/hooks/check_vlnv_namespace.py) 强制，policy [`dependency-policy.yaml`](policies/dependency-policy.yaml) 固化；CLI 二进制名保持 `aix`；

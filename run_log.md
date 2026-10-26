@@ -955,3 +955,14 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - Added the root optional `crypto-model` extra for the already-locked cryptography 50.0.0 Oracle dependency; no locked package versions or registries changed.
 - Validation PASS: public contract checks (14 planning members, 11 implementation contracts / 242 requirements), four LRS provenance audits, schema check, 167 suite/Oracle tests, shell/Python syntax, runtime root checks, six Core source-reference checks, workflow doctor and FuseSoC aggregate generation. Generated PDK build inputs remain local-only. `make check` and pre-commit all passed.
 - Fresh ESL build at repos/xuanwu-crypto/esl/build PASS; selected migration CTest smoke PASS (67 cases: algorithms, streams, PIO, services, resources, composition and DMA AEAD). This is migration validation, not full RTL/EDA requalification. New repository main pushed successfully.
+
+
+## 2026-10-25 — PQC 独立迁入 xiezhi-pqc
+
+- 按用户要求将 IP 仓 `ips/security/post_quantum/pqc` 迁入 `repos/xiezhi-pqc`，登记 Manifest/all profile、ownership-map 和根 README。
+- 通过临时 bare clone 提取目录历史；初始 762 个文件及 tree `9d13a9a3876030ea4ed28b312c5846f505f30f4b` 完全相等。保留 SEC-027、VLNV、规格/RTL/模型/批准及原 Gate 状态，不恢复研发。
+- `aix wf sync` 明确拒绝空远端且没有目录历史提取能力，故首次 SSH clone、fetch 本地提取历史使用 Git；后续 sync/status/doctor/commit/push 使用 aix。
+- 新仓增加独立导航、原身份清单、迁移说明、必要 ignore；修正当前执行路径和 UVM Makefile 的 workflow 根定位。历史报告及 archive 不作全局替换。
+- IP 仓通过 owning 脚本刷新 README，SEC-027 记录为 migrated，保留编号；原有 INF-008/PER-009/SEC-015 的包身份告警未作范围外修改，registry 校验退出 0。
+- 24 个 NTT stage/lane 调度组合检查通过；45 项运行器 Python 测试通过；三份 shell 脚本 bash -n 与 UVM make -n 路径检查通过；这些不是 RTL/UVM/EDA/PPA 签核。
+- workflow make check 通过；详细日志留在 `/tmp/xiezhi-workflow-check.log`，控制面检查不能替代子仓领域门禁。

@@ -50,6 +50,11 @@ map:
     skill_write: 可写项目工作树
     allowed_paths: [crypto_*, esl, oracle, registry.yaml]
 
+  - asset: PQC RTL / 模型 / 文档
+    owner_repo: xiezhi-pqc
+    skill_write: 可写项目工作树
+    allowed_paths: [rtl, regs, model, docs, scripts, verification, pqc_accel_model, reports, constraints, sw, trace, archive]
+
   - asset: Tool 实现
     # 外部独立管理，不属于 workflow Manifest/Profile；此处仅记录资产归属。
     owner_repo: aixsilicon_tool_repo
@@ -151,6 +156,10 @@ repository_registry:
 
   - id: xuanwu-crypto
     repo: xuanwu-crypto
+    type: other
+
+  - id: xiezhi-pqc
+    repo: xiezhi-pqc
     type: other
 
 # tool_repo 与 chipknowledge 不由本工作区管理；以下 Tool 归属仅描述外部接口职责。
