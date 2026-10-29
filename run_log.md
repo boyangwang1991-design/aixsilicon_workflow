@@ -979,3 +979,12 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - IP 仓 registry 与 README 派生视图通过 owning 工具校验，保留 INF-008/PER-009/SEC-015 原身份告警；迁移不提升门禁、不恢复暂停研发、不构成 RTL/EDA/PPA 签核。
 - 新仓 main `bb2c65a8dc6e1fd904eda3487b4c7443acf6d66b` 已推送并通过 ls-remote 核对；随后移除 IP 仓原目录。9,994 个剩余本地文件/链接均保留，5 个被新验证更新的同名旧版本另存新仓忽略目录 `build/migration-source-artifacts/`。
 - workflow make check、pre-commit 全部通过；控制面日志留在 `/tmp/baihu-workflow-check.log` 和 `/tmp/baihu-workflow-precommit.log`。
+
+## 2026-10-27 — 用户请求更新 workflow 与 repos 全部仓库
+
+- 先通过 aix wf status/doctor 和 aix repo status 检查，skills 有两个原有未提交文件，workflow 有一个原有未跟踪文件；保留本地工作。
+- workflow 使用 aix repo shell 执行 fetch/merge --ff-only。受管理子仓通过 aix wf sync fetch，再通过 aix repo shell 快进已有分支（当前 sync 不快进本地分支）；skills fetch 后仅尝试 Git 可安全保留工作区的 ff-only 合并。
+- aixsilicon_chipknowledge 和 pulao-can 未登记 Manifest，现有 aix repo 不支持其 ID；本次按用户全 repos 更新范围，使用 Git 只读检查和 fetch/merge --ff-only，不修改 Manifest。
+- 结果：18 个仓库（workflow + repos 下 17 个）均成功 fetch 并与 origin/main 对齐；VIP fff707f→f396592、sumi-compress c6c7b76→bc277e1、tengshe-hac 0efab29→ef89476，其余无新提交。
+- 同步期间 wenwang-edgenpu 出现外部本地修改；已保留并单独补做 fetch，远端无新增提交。skills 原有修改保持。
+- bootstrap 物化指纹未变化，wf doctor 通过；make check 通过（134 项测试及 schema/lint 检查）。检查日志位于 .aix/update-*.log。
