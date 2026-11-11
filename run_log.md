@@ -988,3 +988,53 @@ skill repo 变更、物化、校验、发布协调等。IP 工作区内的阶段
 - 结果：18 个仓库（workflow + repos 下 17 个）均成功 fetch 并与 origin/main 对齐；VIP fff707f→f396592、sumi-compress c6c7b76→bc277e1、tengshe-hac 0efab29→ef89476，其余无新提交。
 - 同步期间 wenwang-edgenpu 出现外部本地修改；已保留并单独补做 fetch，远端无新增提交。skills 原有修改保持。
 - bootstrap 物化指纹未变化，wf doctor 通过；make check 通过（134 项测试及 schema/lint 检查）。检查日志位于 .aix/update-*.log。
+
+## 2026-10-29 — 更新 workflow 与 repos
+
+- 用户要求更新 workflow 与 repos；workflow fast-forward 641e2f5 → 1afdf50，VIP f396592 → 87bfae4，skills f30d8df → de39d34。
+- 受管理子仓先经 aix wf sync fetch，再通过 aix repo shell 执行 merge --ff-only（sync 不快进已有本地分支）。skills 远端变更与本地改动路径不重叠，ff-only 合并保留现有工作。
+- aix 无 workflow pull 或未登记仓 ID 支持；workflow pull --ff-only 及未登记 qingniao-plc 的诊断/fetch 使用 Git。skills/sumi-compress 在 sync 跳过后补 fetch；正式受管理状态仍通过 aix repo 检查。
+- skills、sumi-compress、qingniao-plc 原有本地改动保留；qingniao-plc 与 sumi-compress 的 origin/main 无新提交。bootstrap 已重新物化 skills。
+- make check 通过（134 tests、schema/lint）；详细更新与检查日志保留在 .aix/update-*.log。
+
+## 2026-10-30 — 更新检查 workflow 与 repos
+
+- workflow 与 repos 下 16 个正式仓库均成功 fetch，全部与 origin/main 对齐，无新增提交；所有原有本地改动保留。
+- 受管理仓通过 aix wf sync，workflow 通过 aix repo shell fetch/merge --ff-only。dirty skills/sumi-compress 补 fetch；未登记 qingniao-plc 的诊断/fetch 使用 Git，因为 aix 不支持其仓 ID。隐藏的历史临时克隆未作为正式仓库同步。
+- 更新前快照和同步证据保留于 .aix/update-20261030-*。
+
+
+## 2026-11-04 — IP Skill 正文 SSOT 与文档粒度调整
+
+- 按用户要求修改 canonical skills/ip-development-suite：正文表达完整设计，META 仅身份/定位/关联，YAML 按具体消费者需要导出。
+- 移除按行数/META 数强制拆分、固定六卷/index/独立 Gate、逐册重复抽取；每阶段默认完整单文档，必要时才分册。
+- 重写 VPLAN 正文模板和追踪指导，同一测试可关联多个 feature；旧模板保留作 legacy 核对，不迁移现有 IP 文档。
+- 结构 CLI 默认简短摘要，JSON/YAML 显式导出；旧 trace 消费者遇到新正文先报告能力缺口，保留旧缓存与证据。
+- 套件 scripts/tests 回归通过（2 项跳过）；新增单文档 VPLAN、长文多条目、多 feature 共用测试及旧 trace 拒绝过期缓存验证。物化与 Codex 安装使用 bootstrap 正式入口。
+- 本次早期 git status/diff 用于只读定位；发现 AGENT.md 后改用 aix repo status/diff，不以早期诊断作为正式状态证据。
+
+
+## 2026-11-04 — IP 文档人读模板与验证消费适配
+
+- 按用户评审反馈重组 LRS/HLD/LLD/VPLAN：写作规则留在 Skill，交付模板使用正文占位；LLD 按模块连续组织，HLD 按典型事务阅读，VPLAN 集中公共规则。
+- 新增 config-snapshot 四文档示例，正文以名称和章节链接串联需求、架构、逐拍行为与检错场景。示例为草稿，不包含已验证实现。
+- 回归清单、正式 trace 与 G4 验证资产/追踪输入直接读取当前 Markdown 的身份/关联和三项可见执行属性；多 feature 共用 testcase 去重，trace 绑定 Markdown 哈希，正文变化使旧 trace 失效。
+- 参数/PPA 旧语义接口不在本次适配范围；未降低真实执行、覆盖和审批要求。旧格式模型接口继续兼容。
+- 套件 scripts/tests 全部完成（2 项 skip）；新增端到端检查覆盖无 model 缓存、共享 testcase、过期 trace、非法入口以及缺执行证据时 G4 失败。validate_suite 为 0 errors，保留既有 504 行 Skill 提示。
+
+## 2026-11-04 — IP 检查一致性与报告归属
+
+- 修复 trace 有效 ID 错配仍通过、空参数报告被接受、RTM 与 G4 对 skipped JUnit 判断不一致的问题；参数报告绑定当前输入与配置覆盖，嵌套 JUnit 计数也参与校验。
+- 原生 Markdown LRS 显式声明交付方式、寄存器和 PPA 适用性；固定 IP 不再依赖旧 requirements.yaml。设计检查只扫描四类设计文档，每次评估共享快照，用户手册不再污染 trace 指纹。
+- 明确 IP 内 reports/ 保存 AI 人读分析并纳入 Git，build/reports/ 保存机器检查、参数证据、质量门禁与 trace/RTM，原始运行材料留 build。同步目录模板、README、消费者和发布筛选；旧根 trace 仅兼容读取，未批量迁移现有 IP。
+- 套件 scripts/tests 回归通过（2 项跳过），流程语义检查 C1-C7 通过，validate_suite 为 0 errors/1 个既有 504 行警告，make check 通过。通过 bootstrap 正式入口物化并安装 Codex skills。
+- 本次报告边界仅针对 IP 工程；workflow 控制面仍遵守自身 reports/ 禁止入库规则。
+
+## 2026-11-11 — SUMI 暂停交接与阶段上传
+
+- 按用户要求上传 SUMI 当前阶段，提交 7e2ce46（search PPA、exact-prefix 候选、模型、UT、脚本和暂停交接文档），已通过 aix repo push 推送 main。
+- 开发目标保持暂停；prefix bank 的局部时序与六配置 UT 通过，尚未接入产品。REF records 主产品仍为 0.630839 B/cycle，不将候选模型性能或本次上传认定为全项目验收通过。
+- 构建产物、仿真中间文件及综合数据库未入库；skills 仓的独立未提交修改保留，不混入本次 SUMI 上传。既有综合任务由原监督脚本管理，上传不启动新 EDA。
+- SUMI 暂存内容通过 whitespace 检查、93 个 Python 文件语法检查及 Core 输入路径检查；workflow make check 通过（134 tests、schema/lint）。
+- 上传恢复时以普通 Git 读取最近提交和工作区作临时诊断；正式状态和提交/推送继续使用 aix repo。
+- workflow 全文件 pre-commit 检查全部通过；本次仅提交 run_log.md，保留其中此前已有记录。
